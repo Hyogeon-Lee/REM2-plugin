@@ -1,3 +1,15 @@
+---
+title: md-convert
+type: skill
+language: python
+category: document-conversion
+author: REM2
+year: 2026
+dependencies: [python-docx, python-pptx, openpyxl, PyMuPDF, lxml, olefile, Pillow, markitdown]
+status: stable
+tags: [markdown, conversion, docx, pdf, hwp, hwpx, pptx, xlsx]
+---
+
 # md-convert
 
 문서를 마크다운으로 변환하면서 **이미지를 본문 위치에 맞게 in-place로 매칭**하는 Claude Skill. 모든 이미지는 **PNG로 통일 변환**되어 격리된 문서별 폴더에 저장됨.

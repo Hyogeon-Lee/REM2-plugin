@@ -1,2 +1,41 @@
-# REM2
-Common Resources for Yonsei REM2 Members and other graduate-stduents who want to use AI in their research workflows.
+# REM2 — 연구실 공용 리소스
+
+연세대학교 정밀생산메카트로닉스 연구실(REM2) 구성원 및 AI를 연구 워크플로우에 활용하려는 대학원생을 위한 **공용 리소스 모음**입니다. 재사용 가능한 코드·함수, AI 스킬/에이전트 워크플로우, 참고자료, 데이터·템플릿을 한곳에 모아 공유합니다.
+
+> **처음 올리는 분께:** 복잡하게 생각하지 마세요. 알맞은 폴더에 파일을 넣고, 파일 맨 위에 **5줄짜리 헤더**만 붙이면 끝입니다. 자세한 규칙은 [`CONTRIBUTING.md`](CONTRIBUTING.md)를 보세요.
+
+---
+
+## 폴더 지도
+
+| 폴더 | 담는 내용 | 예시 |
+|---|---|---|
+| [`00_AI Workflow`](00_AI%20Workflow) | AI 스킬, 에이전트 워크플로우, 프롬프트, Claude/LLM 활용 구성 | Claude skill, MCP 설정, 에이전트 팀 구성 |
+| [`01_Software Functions`](01_Software%20Functions) | 재사용 가능한 코드·함수·스크립트 (`MATLAB`, `LabVIEW` 하위 분류) | 해석 함수, 신호처리 스크립트, VI |
+| [`02_References`](02_References) | 큐레이션·참고자료·외부 도구 링크 모음 | 추천 GitHub, 논문, 튜토리얼 |
+| [`03_Data & Templates`](03_Data%20%26%20Templates) | 예제 데이터셋, 보고서·문서 템플릿, 매뉴얼 | 샘플 데이터, 보고서 양식 |
+| [`_templates`](_templates) | 업로드 시 복사해 쓰는 헤더/README 양식 | `HEADER.md`, `README_TEMPLATE.md` |
+
+각 카테고리 폴더 안의 `README.md`에 해당 폴더의 세부 규칙과 현재 등록된 항목 목록이 있습니다.
+
+---
+
+## 쓰는 법 (가져다 쓰기)
+
+1. 폴더 지도에서 필요한 카테고리를 찾습니다.
+2. 폴더 안 `README.md`의 목록에서 원하는 항목을 고릅니다.
+3. 각 항목의 헤더에 적힌 **용도·사용법·의존성**을 확인하고 사용합니다.
+
+## 올리는 법 (공유하기)
+
+1. 알맞은 카테고리 폴더에 파일(또는 폴더)을 넣습니다.
+2. 파일 맨 위에 [`_templates/HEADER.md`](_templates/HEADER.md)를 복사해 5줄 헤더를 채웁니다.
+3. 끝입니다. 전체 규칙과 파일명 권장안은 [`CONTRIBUTING.md`](CONTRIBUTING.md) 참고.
+
+---
+
+## 원칙
+
+- **단순함 우선** — 진입장벽을 낮춰 누구나 부담 없이 공유할 수 있게 합니다.
+- **자기 설명** — 모든 항목은 헤더만 봐도 무엇이고 어떻게 쓰는지 알 수 있어야 합니다.
+- **검증 후 사용** — 외부 도구·코드는 사용 전 라이선스와 동작을 직접 확인하세요.

@@ -1,3 +1,14 @@
+---
+title: recommend_GitHub
+type: reference
+language: none
+category: curation
+author: REM2
+year: 2026
+status: stable
+tags: [github, tools, ai-agent, matlab, robotics, document-conversion]
+---
+
 # 연구실 활용 GitHub Repository 모음
 
 정밀생산메카트로닉스 연구실에서 전자기 해석, 모델링, 제어기 설계, 로보틱스, 문서 처리, AI 기반 연구 보조에 활용할 수 있는 GitHub repository를 정리한 문서입니다.
