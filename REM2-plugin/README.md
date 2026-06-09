@@ -36,13 +36,6 @@ REM2-plugin/
 /plugin install REM2@rem2-lab
 ```
 
-로컬 클론에서 테스트하려면:
-
-```
-/plugin marketplace add E:\Documents\GitHub\REM2
-/plugin install REM2@rem2-lab
-```
-
 ## 현재 수록 스킬
 
 | 스킬 | 용도 | 상태 |

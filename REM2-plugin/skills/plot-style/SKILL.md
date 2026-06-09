@@ -1,6 +1,6 @@
 ---
 name: plot-style
-description: apply consistent scientific and engineering plotting conventions when writing or modifying code that creates figures, axes, legends, labels, limits, aspect ratios, subplots, frequency-response plots, or transfer-function plots. use for matlab plotting by default when no language is specified. when the user requests another language (python matplotlib, pandas, seaborn, plotly, etc.), apply the closest equivalent of every matlab rule defined in this skill. use when modifying user-provided plotting code, generating new plotting scripts, styling frf/bode/nyquist/step/impulse/frequency-response visualizations, or enforcing lab/report plot formatting.
+description: apply consistent scientific and engineering plotting conventions when writing or modifying code that creates figures, axes, legends, labels, limits, aspect ratios, subplots, or any visualization. use for matlab plotting by default when no language is specified. covers common rules plus case modules (time-series, xy-plot, 3d-plot, frequency-response) loaded on demand. when the user requests another language (python matplotlib, pandas, seaborn, plotly, etc.), apply the closest equivalent of every matlab rule. use when modifying user-provided plotting code, generating new plotting scripts, styling frf/bode/nyquist/step/impulse/time-series/xy/scatter/surface visualizations, or enforcing lab/report plot formatting.
 ---
 
 # Plot Style
@@ -9,18 +9,40 @@ description: apply consistent scientific and engineering plotting conventions wh
 
 User instructions override every default below. When modifying user code, preserve existing variable, function, and data-structure names; return the complete updated script (not a diff). Default language is MATLAB.
 
+## How to use this skill
+
+1. Apply **all Common rules** below to every plot.
+2. Identify the plot type, then read and apply the matching **case module** in `references/`:
+
+| Plot type | Read |
+|---|---|
+| Time / signal vs time, step, impulse, transient | [`references/time-series.md`](references/time-series.md) |
+| X–Y curve, scatter, trajectory, phase portrait, parametric | [`references/xy-plot.md`](references/xy-plot.md) |
+| Surface, mesh, `plot3`, scatter3, volumetric | [`references/3d-plot.md`](references/3d-plot.md) |
+| Bode, FRF, Nyquist, magnitude/phase vs frequency | [`references/frequency-response.md`](references/frequency-response.md) |
+
+A case module **inherits** Common and overrides only the listed items. If a plot mixes types, apply each relevant module to its panel. If no module fits, Common alone is sufficient.
+
 ## Other languages
 
-All rules in this skill are written for MATLAB. If the user requests Python (matplotlib, pandas `.plot`, seaborn, Plotly) or any other plotting language, translate every MATLAB rule into the closest equivalent of that language: same style block structure, same axes properties, same colors, same legend logic, same series-count rule, same logarithmic frequency-axis rule, same English-in-figures / Korean-in-comments convention. When a target package cannot implement a rule exactly, use the closest available equivalent and keep the rest intact.
+All rules are written for MATLAB. For Python (matplotlib, pandas `.plot`, seaborn, Plotly) or any other plotting language, translate every rule into the closest equivalent: same style-block structure, same axes properties, same colors, same legend logic, same series-count rule, same log-frequency rule, same English-in-figures / Korean-in-comments convention. When a target cannot implement a rule exactly, use the closest available equivalent and keep the rest intact.
+
+---
+
+# Common rules (apply to every plot)
 
 ## Style block (top of script)
 
 ```matlab
-% 플롯 스타일 기본 설정
-fontSize = 24;
-fontName = 'Times New Roman';
-lineWidth = 3;
-maxDefaultSeries = 8;
+set(0, 'DefaultFigureWindowStyle', 'docked');
+
+% 플롯 스타일 기본 설정 (Common)
+fontSize   = 24;
+fontName   = 'Times New Roman';
+lineWidth  = 3.0;
+gridStyle  = '--';                 % 점선 그리드
+gridAlpha  = 0.25;                 % 그리드 투명도
+maxDefaultSeries = 6;              % 기본 시리즈 최대 개수 (= 범례 항목 최대)
 legendLocationCandidates = {'northeast', 'northwest', 'southeast', 'southwest', 'northoutside'};
 colorOrder = [
     0, 0, 0;
@@ -44,97 +66,111 @@ Reference these throughout the script instead of hard-coding repeated values.
 
 ## Figure organization
 
-- **Always dock figures by default.** Place `set(0, 'DefaultFigureWindowStyle', 'docked');` at the top of every script so all figures collect into a single MATLAB window. Apply even when only one figure is created. Override only when the user explicitly asks for floating/undocked figures.
-- Consolidate related plots into one figure with multiple panels rather than creating many separate figures, unless the user asks for separates.
+- **Always dock figures by default** via `set(0, 'DefaultFigureWindowStyle', 'docked');` at the top, even for a single figure. Override only when the user explicitly asks for floating/undocked.
+- Consolidate related plots into one figure with multiple panels rather than many separate figures, unless the user asks for separates.
 - Prefer `figure` + `subplot`. Do not use `tiledlayout` by default; use it only when explicitly requested, when existing user code already uses it, or when the layout cannot be done with `subplot`.
 
 ## Series-count rule
 
-- ≤8 candidate series: plot all of them.
-- More than 6 candidates: plot only the first 8 by default. Plot more only if the user explicitly asks.
-- If the user requests more than 8 series, plot them and cycle the color order; all other rules still apply.
+- ≤6 candidate series: plot all.
+- More than 6 candidates: plot only the first `maxDefaultSeries` (6) by default. Plot more only if the user explicitly asks; then cycle the color order.
+- The legend always describes exactly the series plotted, capped at `maxDefaultSeries` (6). If the user forces more than 6 series, list the first 6 in the legend and note the omission.
 
 ## Universal axes rules
 
 Apply to every axes object (incl. subplots and secondary axes):
 
-1. Font: **Times New Roman**, size **24**, referenced through the style block.
-2. Box/border visible.
-3. Grid on.
+1. Font set from the style block (`fontName`, `fontSize`) — applied to every axes.
+2. Box/border visible (`'Box', 'on'`).
+3. Grid on, with `gridStyle`/`gridAlpha` from the style block (see per-axes styling below).
 4. `xlabel` and `ylabel` present.
-5. `xlim` and `ylim` set. If the user does not provide limits, compute padded limits from data or use domain-appropriate values.
-6. Aspect ratio set with `pbaspect` (default `[2 1 1]` unless data or user dictates otherwise).
+5. `xlim` and `ylim` set. If the user gives no limits, compute padded limits from data or use domain-appropriate values.
+6. Aspect ratio set (default `pbaspect([2 1 1])`; case modules may override).
 7. Legend present.
 8. **No title** unless the user explicitly requests one.
 9. Units in **parentheses**, not brackets: `Time (s)`, never `Time [s]`.
+10. Ticks: **target 3–5 grid lines per axis**; keep MATLAB's automatic ticks (never force `linspace`). See Tick rule.
+
+## Tick rule
+
+- **Default: leave MATLAB's automatic ticks.** They fall on round values and usually include `0` and characteristic points.
+- Do **not** use `xticks(ax, linspace(...))` to force a count — that drops meaningful numbers (`0`, peaks, crossings) onto arbitrary positions.
+- If an axis needs adjustment, use **round spacing that includes the characteristic values**, e.g. `xticks(ax, 0:0.25:1)` — keep the visible count in 3–5.
+- Log axis (frequency response): let the decade ticks stand; do not override.
+
+## Render–review–revise workflow (run for every figure)
+
+Produce every figure in two passes — never report a plot done from code alone; verify the rendered image.
+
+1. **Draft (1st figure).** Build the figure applying all Common rules + the relevant case module.
+2. **Save.** Write to an `image_fig/` subfolder (create if missing): a review PNG + an editable FIG.
+
+```matlab
+% 결과 figure 저장 (검토용 PNG + 편집용 FIG)
+if ~exist('image_fig', 'dir'); mkdir('image_fig'); end
+figName = 'plot_name';                         % 의미 있는 이름으로
+exportgraphics(fig, fullfile('image_fig', [figName '.png']), 'Resolution', 200);
+savefig(fig, fullfile('image_fig', [figName '.fig']));
+```
+
+3. **Review.** Read the saved PNG back (via the MATLAB MCP) and check it against the checklist below — actually look at the rendered image, not just the code.
+4. **Ask before fixing.** For any item that looks violated or ambiguous (sparse ticks, clipped data, legend overlap, distorted aspect), tell the user what looks off and **propose a fix — do not silently change it**.
+5. **Revise (2nd figure).** Apply only the user-approved changes, re-save, re-review until the checklist passes.
+
+### Verification checklist
+
+- [ ] Font Times New Roman, size 24 on all axes (incl. colorbar)
+- [ ] Box on; grid on, dashed, alpha 0.25
+- [ ] `xlabel` + `ylabel` (+ `zlabel` for 3-D); units in parentheses, not brackets
+- [ ] `xlim`/`ylim` (/`zlim`) set; data not clipped; ~5% padding
+- [ ] 3–5 grid lines per axis; `0`/characteristic values visible (no `linspace`-forced ticks)
+- [ ] Aspect ratio set — `pbaspect`/`daspect`/`axis equal` as the case dictates
+- [ ] Legend present, ≤6 entries, describes only plotted series, minimal overlap
+- [ ] No title (unless the user asked)
+- [ ] All figure text English; explicit `Color`/`LineStyle`/`LineWidth` (no `'r-'` shorthand)
+- [ ] ≤6 series unless the user asked for more
+
+**Tick check (most common miss):** if an axis shows fewer than 3 grid lines, ask the user for a round tick set (suggest one including `0`/characteristic values) or to leave the default — never force ticks silently.
 
 ## Color and line rules
 
 - Never use shorthand format strings (`'r-'`, `'b--'`, `'k:'`).
-- Always set `LineStyle` and `Color` explicitly via name-value pairs.
-- Use the color order from the style block. Drop the alpha (4th element) when the target function does not support it. Cycle through the sequence when more than 8 series are explicitly plotted.
+- Always set `LineStyle` and `Color` explicitly via name-value pairs, `LineWidth` from the style block.
+- Use the color order from the style block; drop the alpha (4th element) when the target function does not support it. Cycle the sequence only when more than 6 series are explicitly plotted.
+
+```matlab
+plot(ax, x, y, 'LineStyle', '-', 'Color', colorOrder(1, :), 'LineWidth', lineWidth);
+```
 
 ## Legend rules
 
-- Choose location from the candidates in the style block only (unless overridden). Pick the one that minimizes data overlap; prefer outside/top (`northoutside`) for crowded plots or many entries.
-- Columns by displayed entry count: 1–3 → 1 column, 4–6 → 2 columns, 7+ → up to 4 columns, never exceeding the entry count.
-- The legend describes only series actually plotted.
-
-## MATLAB code patterns
-
-Axes via handles when possible:
+- Choose location from `legendLocationCandidates` only (unless overridden). Pick the one minimizing data overlap; prefer `northoutside` for crowded plots.
+- Columns by displayed entry count: **1–3 → 1 column, 4–6 → 2 columns**.
+- The legend describes only series actually plotted (≤6).
 
 ```matlab
-set(ax, 'FontSize', fontSize, 'FontName', fontName, 'Box', 'on');
-grid(ax, 'on');
-```
-
-Explicit line properties:
-
-```matlab
-plot(ax, t, y, 'LineStyle', '-', 'Color', colorOrder(1, :), 'LineWidth', lineWidth);
-```
-
-Every figure must include `xlabel`, `ylabel`, `xlim`, `ylim`, `pbaspect`, and `legend`.
-
-Multi-panel structure:
-
-```matlab
-set(0, 'DefaultFigureWindowStyle', 'docked');
-fig = figure;
-ax1 = subplot(2, 1, 1, 'Parent', fig);
-ax2 = subplot(2, 1, 2, 'Parent', fig);
-```
-
-Series-count and legend-column patterns:
-
-```matlab
-% 표시할 시리즈 개수 제한
-numSeriesToPlot = numSeries;
-if numSeries > 6
-    numSeriesToPlot = min(maxDefaultSeries, numSeries);
-end
-
-% 범례 항목 개수에 따라 열 수 설정
-numLegendEntries = numel(legendLabelsDisplayed);
+% 범례 항목 개수에 따라 열 수 설정 (최대 6개)
+numLegendEntries = min(numel(legendLabelsDisplayed), maxDefaultSeries);
 if numLegendEntries <= 3
     numLegendColumns = 1;
-elseif numLegendEntries <= 6
-    numLegendColumns = 2;
 else
-    numLegendColumns = min(4, numLegendEntries);
+    numLegendColumns = 2;
 end
 
-legend(ax, hPlot, legendLabelsDisplayed, ...
+legend(ax, hPlot(1:numLegendEntries), legendLabelsDisplayed(1:numLegendEntries), ...
        'Location', 'northoutside', ...
        'NumColumns', numLegendColumns, ...
        'FontSize', fontSize, ...
        'FontName', fontName);
 ```
 
-## Frequency-response and transfer-function plots
+## Per-axes styling
 
-For Bode, FRF, Nyquist-related frequency plots, and TF magnitude/phase plots: use logarithmic frequency scaling (`semilogx`, `loglog`). Magnitude versus frequency → log-log when physically meaningful. All other rules above still apply.
+Apply to every axes (font, box, grid) in one place:
+
+```matlab
+set(ax, 'FontSize', fontSize, 'FontName', fontName, 'Box', 'on', 'XGrid', 'on', 'YGrid', 'on', 'ZGrid', 'on', 'GridLineStyle', gridStyle, 'GridAlpha', gridAlpha);
+```
 
 ## Output behavior
 
