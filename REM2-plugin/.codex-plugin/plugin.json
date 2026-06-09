@@ -1,0 +1,39 @@
+{
+  "name": "rem2-plugin",
+  "version": "0.1.0",
+  "description": "Consistent scientific and engineering plot styling for MATLAB and related plotting libraries, including axes, legends, labels, time-series, X-Y, 3-D, and frequency-response rules.",
+  "author": {
+    "name": "Hyogeon Lee",
+    "url": "https://github.com/Hyogeon-Lee"
+  },
+  "homepage": "https://github.com/Hyogeon-Lee/REM2",
+  "repository": "https://github.com/Hyogeon-Lee/REM2",
+  "license": "MIT",
+  "keywords": [
+    "matlab",
+    "plot",
+    "plotting",
+    "visualization",
+    "research"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "REM2 Plot Style",
+    "shortDescription": "REM2 plotting rules for MATLAB and engineering figures.",
+    "longDescription": "Apply consistent scientific and engineering plot styling to MATLAB plotting code and the closest equivalents in Python plotting libraries. Includes common figure rules plus time-series, X-Y, 3-D, and frequency-response modules.",
+    "developerName": "Hyogeon Lee",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills",
+      "Plotting",
+      "MATLAB"
+    ],
+    "websiteURL": "https://github.com/Hyogeon-Lee/REM2",
+    "defaultPrompt": [
+      "Apply REM2 plot style to this MATLAB script.",
+      "Generate a REM2-style Bode plot in MATLAB.",
+      "Convert these plotting rules to matplotlib."
+    ],
+    "brandColor": "#2563EB"
+  }
+}
