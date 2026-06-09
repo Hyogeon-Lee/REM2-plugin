@@ -2,6 +2,8 @@
 
 Signals versus time — step, impulse, transient, sensor traces, controller I/O. Inherits all Common rules; overrides/adds below.
 
+> Runnable before/after example: [`../examples/time_series_example.m`](../examples/time_series_example.m)
+
 ## Axes
 
 - **X axis = time, linear.** Label `Time (s)` (or correct unit in parentheses). Never log x.

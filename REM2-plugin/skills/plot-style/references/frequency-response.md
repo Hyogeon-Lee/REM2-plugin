@@ -2,6 +2,8 @@
 
 Bode, FRF, Nyquist, magnitude/phase vs frequency, transfer-function plots. Inherits all Common rules; overrides/adds below.
 
+> Runnable before/after example: [`../examples/frequency_response_example.m`](../examples/frequency_response_example.m)
+
 ## Frequency axis
 
 - **Log frequency** always. Magnitude in physical units (default) → **`loglog`** (log magnitude vs log frequency). Magnitude in dB → `semilogx` (dB is already logarithmic). **Phase → always `semilogx`** (linear deg vs log frequency).

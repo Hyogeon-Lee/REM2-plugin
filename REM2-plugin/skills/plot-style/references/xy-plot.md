@@ -2,6 +2,8 @@
 
 Curve of y vs an independent x that is **not** time — scatter, trajectory, phase portrait, parametric curve, spatial path, I–V / B–H / force–displacement characteristic. Inherits all Common rules; overrides/adds below.
 
+> Runnable before/after example: [`../examples/xy_plot_example.m`](../examples/xy_plot_example.m)
+
 ## Aspect ratio — the key decision
 
 - **X and Y share physical meaning / same units** (spatial path, trajectory, phase portrait, B–H loop in same scale): use **equal scaling** so geometry is undistorted.
