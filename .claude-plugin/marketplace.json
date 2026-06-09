@@ -8,7 +8,7 @@
     {
       "name": "REM2",
       "source": "./REM2-plugin",
-      "description": "Lab plugin — skills and workflows for electromagnetic design, manufacturing, MATLAB analysis, scientific plotting, and control system design."
+      "description": "Yonsei REM2 lab plugin — consistent scientific/engineering plot styling for MATLAB: axes, legends, labels, time-series, X–Y, 3-D, and frequency-response rules with runnable examples."
     }
   ]
 }

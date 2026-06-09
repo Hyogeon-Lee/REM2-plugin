@@ -21,9 +21,21 @@ related: ["[[plot-style]]"]
 
 ```
 REM2-plugin/
-  .claude-plugin/plugin.json   ← 매니페스트 (이름·버전·설명)
+  .claude-plugin/plugin.json       ← 매니페스트 (이름·버전·설명)
   skills/
-    plot-style/SKILL.md        ← 과학/공학 플롯 스타일 규칙
+    plot-style/
+      SKILL.md                     ← 항상 로드되는 공통 규칙 + case 디스패치
+      references/                  ← case별 규칙 모듈 (필요 시 on-demand 로드)
+        time-series.md
+        xy-plot.md
+        3d-plot.md
+        frequency-response.md
+      examples/                    ← case별 실행 가능 MATLAB 예제 (before/after)
+        time_series_example.m
+        xy_plot_example.m
+        three_d_plot_example.m
+        frequency_response_example.m
+        image_fig/                 ← 예제가 생성하는 PNG (before/after)
   README.md
 ```
 
@@ -52,4 +64,3 @@ REM2-plugin/
 ## 비고
 
 - 플러그인 스킬은 lab vault frontmatter 규칙과 별개로 Claude 표준 `name`/`description` frontmatter를 씁니다 (스킬 자동 발견에 필요).
-- `00_AI Workflow/01_Agentic Skills/plot-style/`의 원본 스킬과 내용이 동일합니다. 향후 이 플러그인 사본을 정본으로 유지합니다.

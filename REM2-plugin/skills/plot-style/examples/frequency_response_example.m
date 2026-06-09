@@ -43,6 +43,7 @@ axPhase = subplot(2, 1, 2, 'Parent', figAfter);
 loglog(axMag, f, mag, 'LineStyle', '-', 'Color', colorOrder(1,:), 'LineWidth', lineWidth);
 ylabel(axMag, 'Magnitude (mm/A)');          % 출력/입력 물리 단위 명시
 xlim(axMag, [f(1), f(end)]);
+ylim(axMag, [1e-2, 1e2]);                   % 데이터(약 0.013~20) 포함, decade tick
 
 % 위상: 항상 semilogx
 semilogx(axPhase, f, phase, 'LineStyle', '-', 'Color', colorOrder(1,:), 'LineWidth', lineWidth);
@@ -55,8 +56,11 @@ ylim(axPhase, [-190, 10]);
 for ax = [axMag, axPhase]
     set(ax, 'FontSize', fontSize, 'FontName', fontName, 'Box', 'on', ...
             'XGrid', 'on', 'YGrid', 'on', 'GridLineStyle', gridStyle, 'GridAlpha', gridAlpha);
+    pbaspect(ax, [2 1 1]);                  % 종횡비 명시 (Common 기본; freq 모듈은 미지정)
 end
-legend(axMag, {'FRF'}, 'Location', 'northeast', 'FontSize', fontSize, 'FontName', fontName);
+% 범례: 모든 axes에 존재 (단일 시리즈라도 두 패널 모두)
+legend(axMag,   {'FRF'}, 'Location', 'northeast', 'FontSize', fontSize, 'FontName', fontName);
+legend(axPhase, {'FRF'}, 'Location', 'northeast', 'FontSize', fontSize, 'FontName', fontName);
 linkaxes([axMag, axPhase], 'x');
 exportgraphics(figAfter, fullfile(outDir, 'frequency_response_after.png'), 'Resolution', 300);
 

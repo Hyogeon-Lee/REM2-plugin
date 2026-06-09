@@ -1,7 +1,7 @@
 {
   "name": "REM2",
   "version": "0.1.0",
-  "description": "Yonsei REM2 plugin — reusable skills and workflows for electromagnetic design, manufacturing, MATLAB analysis, scientific plotting, and control system design.",
+  "description": "Yonsei REM2 lab plugin — consistent scientific/engineering plot styling for MATLAB: axes, legends, labels, time-series, X–Y, 3-D, and frequency-response rules with runnable examples.",
   "author": {
     "name": "Yonsei REM2 (Research laboratory of Manufacturing Mechatronics-Control Versatile Design Intelligence & Precision)"
   },
@@ -9,10 +9,9 @@
   "license": "MIT",
   "keywords": [
     "matlab",
-    "simulink",
-    "electromagnetic-design",
-    "control systems",
     "plot",
+    "plotting",
+    "visualization",
     "research"
   ]
 }

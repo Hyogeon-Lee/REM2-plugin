@@ -1,6 +1,6 @@
 ---
 name: plot-style
-description: apply consistent scientific and engineering plotting conventions when writing or modifying code that creates figures, axes, legends, labels, limits, aspect ratios, subplots, or any visualization. use for matlab plotting by default when no language is specified. covers common rules plus case modules (time-series, xy-plot, 3d-plot, frequency-response) loaded on demand. when the user requests another language (python matplotlib, pandas, seaborn, plotly, etc.), apply the closest equivalent of every matlab rule. use when modifying user-provided plotting code, generating new plotting scripts, styling frf/bode/nyquist/step/impulse/time-series/xy/scatter/surface visualizations, or enforcing lab/report plot formatting.
+description: apply consistent scientific/engineering style to plotting code (figures, axes, legends, labels, limits, aspect ratios, subplots). use only when writing or modifying code that generates plots — matlab by default, or the closest equivalent when the user names another language (python matplotlib, pandas, seaborn, plotly). covers common rules plus case modules (time-series, xy-plot, 3d-plot, frequency-response) loaded on demand. triggers: styling user-provided plotting code, generating new plotting scripts, or formatting frf/bode/nyquist/step/impulse/time-series/xy/scatter/surface plots for lab reports. not for non-code image generation or general visualization requests.
 ---
 
 # Plot Style
@@ -60,7 +60,7 @@ colorOrder = [
 
 ## Required on every axes
 
-Apply to every axes object — including subplots, secondary (`yyaxis`) axes, and colorbars.
+Apply to every plotting **axes** — including subplots and secondary (`yyaxis`) axes. Box and grid are **always on** for a plotting axes. A `colorbar` is **not** an axes object — it has its own `Box` (keep the default on) but **no** `XGrid`/`YGrid`/`ZGrid` (grid does not apply to a colorbar). Do **not** pass it to the `set(ax, ...)` line below — the grid properties error on a colorbar; style it separately (see "Colorbar").
 
 - **Font / box / grid** — set in one line:
 
@@ -80,6 +80,18 @@ plot(ax, x, y, 'LineStyle', '-', 'Color', colorOrder(1, :), 'LineWidth', lineWid
 
 - **No title** unless the user explicitly asks for one.
 - **Language** — all figure-rendered text (labels, legend, ticks, annotations, colorbar) in **English**; code comments in **Korean**. Override only on explicit request.
+
+### Colorbar (only when present)
+
+A colorbar is a separate object — style it through its own handle, **not** the axes `set(ax, ...)` line. Set only the properties it actually has:
+
+```matlab
+cb = colorbar(ax);
+set(cb, 'FontSize', fontSize, 'FontName', fontName);   % Box는 기본 on 유지, grid는 colorbar에 해당 없음
+cb.Label.String = 'Flux Density (mT)';                 % 매핑된 양 + 단위 (괄호)
+```
+
+Add a colorbar only when color encodes a quantity not already on an axis (see 3-D case: no colorbar when the z axis already carries the value).
 
 ## Series and legend
 
@@ -123,8 +135,15 @@ savefig(fig, fullfile('image_fig', [figName '.fig']));
 ```
 
 3. **Review.** Read the saved PNG back (via the MATLAB MCP) and verify it against **every rule in "Required on every axes" and "Series and legend"**, plus rendered-image faults: clipped data, legend overlap, distorted aspect, or fewer than 3 grid lines on an axis.
-4. **Ask before fixing.** Report anything that looks violated or ambiguous and **propose a fix — do not silently change it**. For a sparse axis (<3 grid lines), offer a round tick set including `0`/characteristic values, or leave the default.
-5. **Revise.** Apply only the user-approved changes, re-save, re-review until clean.
+4. **Fix vs ask.** **Fix unambiguous style violations directly** — missing units, shorthand color, wrong font/grid/linewidth, absent limits, distorted aspect, clipped data, legend overlap — and note what you changed. **Ask only when the fix changes interpretation**: which tick values to force on a sparse axis (<3 grid lines), whether a non-zero time start is intended, choosing a colormap/representation, or anything where multiple valid readings of the data exist.
+5. **Revise.** Apply the fixes (and any user-approved interpretive changes), re-save, re-review until clean.
+
+**Fallback when no MATLAB MCP (or non-MATLAB language).** If you cannot render/read the image back — MATLAB MCP unavailable, or the target is Python/another package run elsewhere — skip the image-reading step but keep the rest:
+
+- Still emit the save block (PNG + FIG, or the language's equivalent) so the user can render and review.
+- Self-check the **code** against every rule in "Required on every axes" and "Series and legend".
+- State explicitly that the image was **not** visually verified, and list the rendered-image faults the user should check by eye (clipped data, legend overlap, distorted aspect, <3 grid lines).
+- Never claim a plot is verified from code alone.
 
 ## Output behavior
 

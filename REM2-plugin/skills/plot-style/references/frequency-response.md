@@ -15,7 +15,7 @@ hold(ax, 'on');                                                                 
 loglog(ax, f, mag2, 'LineStyle', '-', 'Color', colorOrder(2, :), 'LineWidth', lineWidth);
 ```
 - Label `Frequency (Hz)` or `Frequency (rad/s)` — match the data; state which in a comment.
-- Set `xlim` to the analyzed band.
+- Set `xlim` to the analyzed frequency range.
 
 ## Bode = two stacked panels sharing x
 
