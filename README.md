@@ -37,7 +37,12 @@ MATLAB 과학/공학 플롯 스타일을 일관되게 적용해주는 AI 코딩 
 
 ### Codex CLI
 
-저장소 루트의 `.agents/plugins/marketplace.json`이 이 저장소를 Codex marketplace로 등록합니다. Codex의 plugin marketplace 명령으로 이 저장소를 추가한 뒤 `rem2-plugin`을 설치하세요.
+```
+codex plugin marketplace add Hyogeon-Lee/REM2
+codex /plugins
+```
+
+저장소 루트의 `.agents/plugins/marketplace.json`이 이 저장소를 Codex marketplace(`rem2-lab`)로 등록합니다. `codex /plugins`로 열리는 plugin 디렉터리(TUI)에서 `rem2-lab` 탭의 `rem2-plugin`을 선택해 설치하세요. 갱신: `codex plugin marketplace upgrade rem2-lab`.
 
 ### ChatGPT (workspace skill)
 

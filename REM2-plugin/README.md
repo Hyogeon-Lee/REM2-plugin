@@ -2,10 +2,10 @@
 title: REM2-plugin
 type: skill
 language: none
-category: claude-plugin
+category: [claude-plugin, codex-plugin]
 author: Hyogeon Lee
 year: 2026
-dependencies: [Claude Code, MATLAB MCP]
+dependencies: [Claude Code, Codex CLI, MATLAB MCP]
 status: draft
 tags: [plugin, skill, matlab, plotting]
 related: ["[[plot-style]]"]
@@ -55,7 +55,12 @@ REM2-plugin/
 
 ### Codex CLI
 
-Codex의 plugin marketplace 명령으로 이 저장소를 추가한 뒤 `rem2-plugin`을 설치하세요.
+```
+codex plugin marketplace add Hyogeon-Lee/REM2
+codex /plugins
+```
+
+`codex /plugins`로 열리는 plugin 디렉터리(TUI)에서 `rem2-lab` 탭의 `rem2-plugin`을 선택해 설치합니다. 마켓플레이스 갱신: `codex plugin marketplace upgrade rem2-lab`.
 
 ### ChatGPT (workspace skill)
 
@@ -71,9 +76,7 @@ Codex의 plugin marketplace 명령으로 이 저장소를 추가한 뒤 `rem2-pl
 
 ## 로드맵 (다음 드래프트 후보)
 
-- `matlab-analysis` — MATLAB MCP 연동 데이터 해석·신호처리 스캐폴드
 - `em-design-maxwell` — ANSYS Maxwell/AEDT IronPython 스크립팅
-- `control-design` — TF/상태공간, Bode/Nyquist/step 튜닝, PID/loop-shaping
 - `manufacturing` — 제조 워크플로우 헬퍼
 
 ## 비고
