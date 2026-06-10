@@ -48,7 +48,7 @@ At the repository root, `.claude-plugin/marketplace.json` (Claude Code) and `.ag
 
 ```
 /plugin marketplace add Hyogeon-Lee/REM2
-/plugin install REM2@rem2-lab
+/plugin install rem2@rem2-lab
 ```
 
 Update: `/plugin marketplace update rem2-lab`

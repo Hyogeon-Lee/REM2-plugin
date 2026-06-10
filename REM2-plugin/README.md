@@ -48,7 +48,7 @@ REM2-plugin/
 
 ```
 /plugin marketplace add Hyogeon-Lee/REM2
-/plugin install REM2@rem2-lab
+/plugin install rem2@rem2-lab
 ```
 
 업데이트: `/plugin marketplace update rem2-lab`

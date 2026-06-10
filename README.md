@@ -18,7 +18,7 @@ MATLAB 과학/공학 플롯 스타일을 일관되게 적용해주는 AI 코딩 
 
 ```
 /plugin marketplace add Hyogeon-Lee/REM2
-/plugin install REM2@rem2-lab
+/plugin install rem2@rem2-lab
 ```
 
 업데이트:
@@ -30,9 +30,9 @@ MATLAB 과학/공학 플롯 스타일을 일관되게 적용해주는 AI 코딩 
 제거 후 재설치:
 
 ```
-/plugin uninstall REM2@rem2-lab
+/plugin uninstall rem2@rem2-lab
 /plugin marketplace update rem2-lab
-/plugin install REM2@rem2-lab
+/plugin install rem2@rem2-lab
 ```
 
 ### Codex CLI
