@@ -1,41 +1,72 @@
-# REM2 — 연구실 공용 리소스
+# REM2 Plugin
 
-연세대학교 정밀생산메카트로닉스 연구실(REM2) 구성원 및 AI를 연구 워크플로우에 활용하려는 대학원생을 위한 **공용 리소스 모음**입니다. 재사용 가능한 코드·함수, AI 스킬/에이전트 워크플로우, 참고자료, 데이터·템플릿을 한곳에 모아 공유합니다.
+MATLAB 과학/공학 플롯 스타일을 일관되게 적용해주는 AI 코딩 에이전트용 플러그인입니다.
 
-> **처음 올리는 분께:** 복잡하게 생각하지 마세요. 알맞은 폴더에 파일을 넣고, 파일 맨 위에 **5줄짜리 헤더**만 붙이면 끝입니다. 자세한 규칙은 [`CONTRIBUTING.md`](CONTRIBUTING.md)를 보세요.
+> **비공식 안내** — 연세대학교 또는 REM2 연구실의 공식 산출물이 아닙니다. 후배들의 도전적인 figure를 보다 못한 한 대학원생이 조금이나마 해소하고자 만든 개인 프로젝트입니다.
 
----
+## 수록 스킬
 
-## 폴더 지도
+| 스킬 | 내용 |
+|---|---|
+| `plot-style` | MATLAB 플롯 공통 규칙(폰트·격자·범례·라벨·축 한계·종횡비) + 케이스별 모듈(time-series / X–Y / 3-D / frequency-response) + 실행 가능한 before/after 예제 |
 
-| 폴더 | 담는 내용 | 예시 |
-|---|---|---|
-| [`00_AI Workflow`](00_AI%20Workflow) | AI 스킬, 에이전트 워크플로우, 프롬프트, Claude/LLM 활용 구성 | Claude skill, MCP 설정, 에이전트 팀 구성 |
-| [`01_Software Functions`](01_Software%20Functions) | 재사용 가능한 코드·함수·스크립트 (`MATLAB`, `LabVIEW` 하위 분류) | 해석 함수, 신호처리 스크립트, VI |
-| [`02_References`](02_References) | 큐레이션·참고자료·외부 도구 링크 모음 | 추천 GitHub, 논문, 튜토리얼 |
-| [`03_Data & Templates`](03_Data%20%26%20Templates) | 예제 데이터셋, 보고서·문서 템플릿, 매뉴얼 | 샘플 데이터, 보고서 양식 |
-| [`_templates`](_templates) | 업로드 시 복사해 쓰는 헤더/README 양식 | `HEADER.md`, `README_TEMPLATE.md` |
+플롯 코드를 새로 작성하거나 수정할 때 자동으로 적용됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다.
 
-각 카테고리 폴더 안의 `README.md`에 해당 폴더의 세부 규칙과 현재 등록된 항목 목록이 있습니다.
+## 설치
 
----
+### Claude Code
 
-## 쓰는 법 (가져다 쓰기)
+```
+/plugin marketplace add Hyogeon-Lee/REM2
+/plugin install REM2@rem2-lab
+```
 
-1. 폴더 지도에서 필요한 카테고리를 찾습니다.
-2. 폴더 안 `README.md`의 목록에서 원하는 항목을 고릅니다.
-3. 각 항목의 헤더에 적힌 **용도·사용법·의존성**을 확인하고 사용합니다.
+업데이트:
 
-## 올리는 법 (공유하기)
+```
+/plugin marketplace update rem2-lab
+```
 
-1. 알맞은 카테고리 폴더에 파일(또는 폴더)을 넣습니다.
-2. 파일 맨 위에 [`_templates/HEADER.md`](_templates/HEADER.md)를 복사해 5줄 헤더를 채웁니다.
-3. 끝입니다. 전체 규칙과 파일명 권장안은 [`CONTRIBUTING.md`](CONTRIBUTING.md) 참고.
+제거 후 재설치:
 
----
+```
+/plugin uninstall REM2@rem2-lab
+/plugin marketplace update rem2-lab
+/plugin install REM2@rem2-lab
+```
 
-## 원칙
+### Codex CLI
 
-- **단순함 우선** — 진입장벽을 낮춰 누구나 부담 없이 공유할 수 있게 합니다.
-- **자기 설명** — 모든 항목은 헤더만 봐도 무엇이고 어떻게 쓰는지 알 수 있어야 합니다.
-- **검증 후 사용** — 외부 도구·코드는 사용 전 라이선스와 동작을 직접 확인하세요.
+저장소 루트의 `.agents/plugins/marketplace.json`이 이 저장소를 Codex marketplace로 등록합니다. Codex의 plugin marketplace 명령으로 이 저장소를 추가한 뒤 `rem2-plugin`을 설치하세요.
+
+### ChatGPT (workspace skill)
+
+`dist/chatgpt/plot-style.zip`을 ChatGPT workspace skill 관리 화면에서 업로드합니다. 절차는 [`dist/chatgpt/README.md`](dist/chatgpt/README.md) 참고.
+
+## 사용법
+
+설치 후 별도 호출 없이, 플롯 관련 요청 시 스킬이 자동 트리거됩니다.
+
+```
+이 MATLAB 스크립트에 REM2 plot style 적용해줘
+REM2 스타일로 Bode plot 그려줘
+이 플롯 규칙을 matplotlib로 변환해줘
+```
+
+규칙 전문은 [`REM2-plugin/skills/plot-style/SKILL.md`](REM2-plugin/skills/plot-style/SKILL.md), 케이스별 세부 규칙은 [`references/`](REM2-plugin/skills/plot-style/references), 실행 예제는 [`examples/`](REM2-plugin/skills/plot-style/examples) 참고.
+
+## 저장소 구조
+
+```
+.agents/plugins/marketplace.json     ← Codex marketplace 등록
+.claude-plugin/marketplace.json      ← Claude Code marketplace 등록
+REM2-plugin/                         ← 플러그인 본체
+  .claude-plugin/plugin.json         ← Claude Code 매니페스트
+  .codex-plugin/plugin.json          ← Codex 매니페스트
+  skills/plot-style/                 ← 스킬 (SKILL.md + references/ + examples/)
+dist/chatgpt/                        ← ChatGPT 업로드용 zip
+```
+
+## 라이선스
+
+MIT — [Hyogeon Lee](https://github.com/Hyogeon-Lee)
