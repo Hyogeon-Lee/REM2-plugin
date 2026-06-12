@@ -1,7 +1,7 @@
 {
   "name": "rem2",
-  "version": "0.2.1",
-  "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB: axes, legends, labels, time-series, X–Y, 3-D, and frequency-response rules with runnable examples.",
+  "version": "0.3.0",
+  "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB (axes, legends, labels, time-series, X–Y, 3-D, frequency-response) plus concise code-comment style rules — minimal, algorithm-critical comments with units, conventions, and equation sources.",
   "author": {
     "name": "Hyogeon Lee"
   },

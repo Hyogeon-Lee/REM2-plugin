@@ -1,0 +1,26 @@
+{
+  "skill_name": "comment-style",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "declutter-verbose-comments",
+      "prompt": "this function has way too many comments. clean up the comments so only the important ones remain. don't touch the code itself. file: coilFluxCalc.m",
+      "expected_output": "Same code logic, comment count drastically reduced; remaining comments concise English phrases covering only units/conventions/key step; no narration comments; no header/H1 added",
+      "files": ["inputs/coilFluxCalc.m"]
+    },
+    {
+      "id": 1,
+      "eval_name": "comment-bare-algorithm",
+      "prompt": "add comments to computeThd.m so a junior student can follow the signal processing steps",
+      "expected_output": "Few concise English comments at algorithm-critical points only (windowing, single-sided spectrum scaling, harmonic peak search, THD definition); units in parentheses; code unchanged; no H1/help block added",
+      "files": ["inputs/computeThd.m"]
+    },
+    {
+      "id": 2,
+      "eval_name": "korean-comment-request",
+      "prompt": "abc2dq.m 함수에 주석 좀 달아줘. 주석은 한국어로 부탁해",
+      "expected_output": "Concise Korean comments (identifiers/units stay English) at critical points: Clarke/Park transform identification, theta convention; code unchanged; no header added",
+      "files": ["inputs/abc2dq.m"]
+    }
+  ]
+}
