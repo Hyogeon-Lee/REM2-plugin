@@ -9,6 +9,8 @@ MATLAB 과학/공학 플롯 스타일을 일관되게 적용해주는 AI 코딩 
 | 스킬 | 내용 |
 |---|---|
 | `plot-style` | MATLAB 플롯 공통 규칙(폰트·격자·범례·라벨·축 한계·종횡비) + 케이스별 모듈(time-series / X–Y / 3-D / frequency-response) + 실행 가능한 before/after 예제 |
+| `figure-export` | 논문 투고용 figure 내보내기 — 저널 칼럼 폭 원본 크기 제작(cm), 인쇄 크기 폰트, 벡터 PDF(`exportgraphics`), 흑백 인쇄 생존성(선 스타일·마커 구분 + 회색조 검증). IEEE Transactions(기본)·Elsevier 프리셋 |
+| `comment-style` | 간결한 MATLAB 코드 주석 규칙 — 알고리즘 핵심부만, 단위·매직넘버·수식 출처·부호 규약 중심 |
 
 플롯 코드를 새로 작성하거나 수정할 때 자동으로 적용됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다.
 
@@ -46,7 +48,7 @@ codex /plugins
 
 ### ChatGPT (workspace skill)
 
-`dist/chatgpt/plot-style.zip`을 ChatGPT workspace skill 관리 화면에서 업로드합니다. 절차는 [`dist/chatgpt/README.md`](dist/chatgpt/README.md) 참고.
+`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `figure-export.zip`, `comment-style.zip`)을 ChatGPT workspace skill 관리 화면에서 업로드합니다. 절차는 [`dist/chatgpt/README.md`](dist/chatgpt/README.md) 참고.
 
 ## 사용법
 
@@ -58,7 +60,7 @@ REM2 스타일로 Bode plot 그려줘
 이 플롯 규칙을 matplotlib로 변환해줘
 ```
 
-규칙 전문은 [`REM2-plugin/skills/plot-style/SKILL.md`](REM2-plugin/skills/plot-style/SKILL.md), 케이스별 세부 규칙은 [`references/`](REM2-plugin/skills/plot-style/references), 실행 예제는 [`examples/`](REM2-plugin/skills/plot-style/examples) 참고.
+규칙 전문은 각 스킬의 `SKILL.md`, 케이스·프리셋별 세부 규칙은 각 스킬의 `references/`, 실행 예제는 `examples/` 참고 — 예: [`plot-style/SKILL.md`](REM2-plugin/skills/plot-style/SKILL.md), [`figure-export/SKILL.md`](REM2-plugin/skills/figure-export/SKILL.md).
 
 ## 저장소 구조
 
@@ -69,7 +71,9 @@ REM2-plugin/                         ← 플러그인 본체
   .claude-plugin/plugin.json         ← Claude Code 매니페스트
   .codex-plugin/plugin.json          ← Codex 매니페스트
   skills/plot-style/                 ← 스킬 (SKILL.md + references/ + examples/)
-dist/chatgpt/                        ← ChatGPT 업로드용 zip
+  skills/figure-export/              ← 논문 투고용 figure 내보내기 스킬
+  skills/comment-style/              ← 코드 주석 스타일 스킬
+dist/chatgpt/                        ← ChatGPT 업로드용 zip (스킬별)
 ```
 
 ## 라이선스

@@ -1,7 +1,7 @@
 {
   "name": "rem2-plugin",
-  "version": "0.5.0",
-  "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB (axes, legends, labels, time-series, X-Y, 3-D, frequency-response) plus concise code-comment style rules.",
+  "version": "0.6.0",
+  "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB (axes, legends, labels, time-series, X-Y, 3-D, frequency-response), journal-submission figure export (IEEE/Elsevier presets), plus concise code-comment style rules.",
   "author": {
     "name": "Hyogeon Lee",
     "url": "https://github.com/Hyogeon-Lee"
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "REM2 Plot Style",
     "shortDescription": "REM2 plotting rules for MATLAB and engineering figures.",
-    "longDescription": "Unofficial personal project — not an official Yonsei University or REM2 lab product. Apply consistent scientific and engineering plot styling to MATLAB plotting code and the closest equivalents in Python plotting libraries. Includes common figure rules plus time-series, X-Y, 3-D, and frequency-response modules, and a concise code-comment style skill for MATLAB.",
+    "longDescription": "Unofficial personal project — not an official Yonsei University or REM2 lab product. Apply consistent scientific and engineering plot styling to MATLAB plotting code and the closest equivalents in Python plotting libraries. Includes common figure rules plus time-series, X-Y, 3-D, and frequency-response modules, a journal-submission figure-export skill (IEEE/Elsevier column-width presets, vector PDF, grayscale-survivable curves), and a concise code-comment style skill for MATLAB.",
     "developerName": "Hyogeon Lee",
     "category": "Productivity",
     "capabilities": [
@@ -32,6 +32,7 @@
     "defaultPrompt": [
       "Apply REM2 plot style to this MATLAB script.",
       "Generate a REM2-style Bode plot in MATLAB.",
+      "Export this MATLAB figure for IEEE single-column submission.",
       "Convert these plotting rules to matplotlib."
     ],
     "brandColor": "#2563EB"
