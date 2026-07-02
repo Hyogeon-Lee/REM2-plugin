@@ -1,0 +1,36 @@
+{
+  "skill_name": "figure-export",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "ieee-default-when-unspecified",
+      "prompt": "make this step-response figure ready for journal submission",
+      "expected_output": "IEEE preset chosen by default (figWidth 8.89 cm single column, 8 pt Times New Roman); full style block + TightInset fill loop + export block (vector PDF + 600 dpi preview PNG) + grayscale conversion + imfinfo size self-check all emitted"
+    },
+    {
+      "id": 1,
+      "eval_name": "elsevier-by-venue-name",
+      "prompt": "Mechatronics에 투고할 figure로 만들어줘",
+      "expected_output": "Elsevier preset loaded (figWidth 9.0 cm single column; 1.5-column 14 cm mentioned as the option when single is too narrow); raster minimums per Elsevier (1000/500/300 dpi) if raster needed; rest identical to Common"
+    },
+    {
+      "id": 2,
+      "eval_name": "korean-submission-trigger",
+      "prompt": "이 그림 TMECH 제출용으로 정리해줘",
+      "expected_output": "Skill triggers; IEEE preset; grayscale-survivable discrimination applied (line styles for curves 1-4, markers with MarkerIndices thinning from the 5th); no title; English figure text",
+      "files": []
+    },
+    {
+      "id": 3,
+      "eval_name": "anti-trigger-slides",
+      "prompt": "발표 슬라이드용 figure 하나 만들어줘",
+      "expected_output": "figure-export does NOT trigger (slides are explicitly out of scope); plot-style may handle general styling instead"
+    },
+    {
+      "id": 4,
+      "eval_name": "no-mcp-fallback-honesty",
+      "prompt": "(MATLAB unavailable in this session) export this figure for IEEE submission",
+      "expected_output": "Full export + grayscale + imfinfo blocks still emitted in the code; response explicitly states the image was NOT visually verified and lists what the user must check by eye, grayscale distinguishability first"
+    }
+  ]
+}

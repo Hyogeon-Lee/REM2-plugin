@@ -8,7 +8,7 @@ year: 2026
 dependencies: [Claude Code, Codex CLI, MATLAB MCP]
 status: draft
 tags: [plugin, skill, matlab, plotting]
-related: ["[[plot-style]]"]
+related: ["[[plot-style]]", "[[figure-export]]", "[[comment-style]]"]
 ---
 
 # REM2 Plugin
@@ -32,11 +32,16 @@ REM2-plugin/
         3d-plot.md
         frequency-response.md
       examples/                    ← case별 실행 가능 MATLAB 예제 (before/after)
-        time_series_example.m
-        xy_plot_example.m
-        three_d_plot_example.m
-        frequency_response_example.m
-        image_fig/                 ← 예제가 생성하는 PNG (before/after)
+      evals/                       ← 트리거·규칙 적용 검증 케이스 (+ inputs/)
+    figure-export/
+      SKILL.md                     ← 논문 투고용 공통 규칙 + 저널 프리셋 디스패치
+      references/                  ← 저널 프리셋 (ieee.md — 기본, elsevier.md)
+      examples/                    ← 단일 패널 + 다중 패널(tiledlayout) 예제
+      evals/
+    comment-style/
+      SKILL.md                     ← 간결 주석 규칙 (references/ 없는 단일 파일 스킬)
+      examples/                    ← before/after 예제
+      evals/                       ← eval 케이스 + inputs/ fixture
   README.md / README_EN.md
 ```
 
@@ -64,15 +69,17 @@ codex /plugins
 
 ### ChatGPT (workspace skill)
 
-`dist/chatgpt/plot-style.zip` 업로드 — 절차는 [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) 참고.
+`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `figure-export.zip`, `comment-style.zip`)을 업로드 — 절차는 [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) 참고.
 
 ## 현재 수록 스킬
 
 | 스킬 | 용도 | 상태 |
 |---|---|---|
 | `plot-style` | MATLAB 과학/공학 플롯 일관 스타일 — 공통 규칙 + time-series / X–Y / 3-D / frequency-response 모듈, before/after 예제 포함 | stable |
+| `figure-export` | 논문 투고용 figure 내보내기 — 저널 칼럼 폭 원본 크기 제작(cm), 인쇄 크기 폰트, 벡터 PDF(`exportgraphics`), 흑백 인쇄 생존성(선 스타일·마커 + 회색조 검증). IEEE Transactions(기본)·Elsevier 프리셋 | stable |
+| `comment-style` | 간결한 코드 주석 규칙 — 알고리즘 핵심부만, 단위·매직넘버·수식 출처·부호 규약 중심. 영어 기본(플롯 스킬 적용 코드는 한국어) | stable |
 
-플롯 코드를 새로 작성·수정할 때 자동 트리거됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다.
+플롯 코드를 새로 작성·수정할 때 자동 트리거됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. plot-style은 축 내부(라벨·범례·한계), figure-export는 물리적 크기·폰트·내보내기를 담당하며 두 스킬은 함께 동작합니다.
 
 ## 로드맵 (다음 드래프트 후보)
 

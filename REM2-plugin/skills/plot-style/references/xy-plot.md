@@ -22,7 +22,7 @@ axis(ax, 'equal');     % 또는 daspect(ax, [1 1 1]);
 ## Scatter vs line
 
 - Continuous curve → `plot` with explicit `LineStyle`/`Color`/`lineWidth`.
-- Discrete points → `scatter(ax, x, y, sz, 'MarkerEdgeColor', colorOrder(k,:), 'LineWidth', 3)`; pick marker size for visibility, no connecting line unless ordering is meaningful.
+- Discrete points → `scatter(ax, x, y, markerSize, 'MarkerEdgeColor', colorOrder(k,:), 'LineWidth', lineWidth)` with `markerSize = 60;` (marker area, pt²) as the starting default — enlarge only when points vanish at final size. No connecting line unless ordering is meaningful.
 - Trajectory with direction → add sparse markers or an arrow/quiver to show progression; mark start/end distinctly and label them in the legend.
 
 ## Notes

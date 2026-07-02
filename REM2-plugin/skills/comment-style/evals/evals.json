@@ -5,7 +5,7 @@
       "id": 0,
       "eval_name": "declutter-verbose-comments",
       "prompt": "this function has way too many comments. clean up the comments so only the important ones remain. don't touch the code itself. file: coilFluxCalc.m",
-      "expected_output": "Same code logic, comment count drastically reduced; remaining comments concise English phrases covering only units/conventions/key step; no narration comments; no header/H1 added",
+      "expected_output": "Same code logic, comment count drastically reduced; H1 help block (COILFLUXCALC ... See also) preserved untouched; remaining comments concise English phrases covering only units/conventions/key step; no narration comments",
       "files": ["inputs/coilFluxCalc.m"]
     },
     {
@@ -21,6 +21,27 @@
       "prompt": "abc2dq.m 함수에 주석 좀 달아줘. 주석은 한국어로 부탁해",
       "expected_output": "Concise Korean comments (identifiers/units stay English) at critical points: Clarke/Park transform identification, theta convention; code unchanged; no header added",
       "files": ["inputs/abc2dq.m"]
+    },
+    {
+      "id": 3,
+      "eval_name": "declutter-preserves-help-and-pragmas",
+      "prompt": "motorParamSweep.m comments are a mess — clean them up",
+      "expected_output": "H1 help block preserved verbatim; %#codegen and %#ok<NASGU> pragmas untouched and in place; commented-out dead code NOT silently deleted — flagged to the user; narration comments removed; zero logic diff",
+      "files": ["inputs/motorParamSweep.m"]
+    },
+    {
+      "id": 4,
+      "eval_name": "other-language-python",
+      "prompt": "add comments to lowpass_filter.py explaining the filtering approach",
+      "expected_output": "Few concise English # comments at critical points only (first-order low-pass transfer function, real-FFT round trip); code unchanged; same selection criteria as MATLAB rules",
+      "files": ["inputs/lowpass_filter.py"]
+    },
+    {
+      "id": 5,
+      "eval_name": "korean-prompt-english-comments",
+      "prompt": "computeRms.m 주석 정리해줘",
+      "expected_output": "Comments reduced to at most one meaningful line and written in ENGLISH (Korean prompt alone is not an explicit Korean-comment request); narration/restatement deleted; code unchanged",
+      "files": ["inputs/computeRms.m"]
     }
   ]
 }

@@ -48,6 +48,8 @@ clim(ax, [cmin, cmax]);                        % 여러 패널이면 색 범위 
 % z축이 값을 나타내므로 colorbar 불필요
 ```
 
+`clim` requires R2022a+ — use `caxis(ax, [cmin, cmax])` on older releases.
+
 For a single discrete series with a fixed color, use `'MarkerFaceColor'`/`'MarkerEdgeColor'` from `colorOrder` instead of value-coloring.
 
 ## Curves in 3-D

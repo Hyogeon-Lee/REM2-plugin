@@ -53,4 +53,10 @@ linkaxes([axMag, axPhase], 'x');
 ## Notes
 
 - Multiple systems (≤6) overlay with the style-block color order; legend per Common, `northoutside`.
-- `bode`/`nyquist` built-ins produce non-conforming figures — extract data (`[mag, phase, w] = bode(sys)`) and plot manually to apply these rules.
+- `bode`/`nyquist` built-ins produce non-conforming figures — extract the data and plot manually. `bode` returns 1×1×N arrays and `w` in rad/s, so squeeze and convert before plotting:
+
+```matlab
+[mag, phase, w] = bode(sys);
+mag = squeeze(mag); phase = squeeze(phase);   % 1x1xN -> Nx1
+f = w / (2*pi);                               % rad/s -> Hz (x축 라벨 단위와 일치시킬 것)
+```

@@ -1,0 +1,31 @@
+{
+  "skill_name": "plot-style",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "korean-styling-trigger",
+      "prompt": "messy_time_plot.m 플롯 스타일 좀 정리해줘",
+      "expected_output": "Skill triggers on the Korean request; style block added at top; shorthand 'r-'/'b--' replaced with explicit LineStyle/Color/LineWidth from the block; xlabel/ylabel with units in parentheses; explicit xlim/ylim with ~5% pad; box + dashed grid on; legend added; title removed; pbaspect set; save block emitted and render-review loop run (or explicit not-verified fallback); variable names t/y1/y2 preserved",
+      "files": ["inputs/messy_time_plot.m"]
+    },
+    {
+      "id": 1,
+      "eval_name": "frequency-response-module",
+      "prompt": "style this FRF magnitude plot properly",
+      "expected_output": "frequency-response module applied: loglog (physical-unit magnitude on log frequency), log-scale plot drawn BEFORE any hold on, Frequency (Hz) xlabel, magnitude ylabel with physical unit (never bare Magnitude), xlim to analyzed range, decade ticks kept",
+      "files": ["inputs/bode_data_plain.m"]
+    },
+    {
+      "id": 2,
+      "eval_name": "anti-trigger-image-generation",
+      "prompt": "draw me a diagram of a PMSM cross-section",
+      "expected_output": "plot-style does NOT trigger — non-code image generation is explicitly out of scope"
+    },
+    {
+      "id": 3,
+      "eval_name": "python-translation",
+      "prompt": "apply the plot style rules to this matplotlib script: fig, ax = plt.subplots(); ax.plot(t, y)",
+      "expected_output": "Rules translated to matplotlib equivalents: explicit color/linestyle/linewidth (style-block values), English labels with units in parentheses, dashed grid alpha 0.25, box on, explicit axis limits, legend, Times New Roman font, Korean code comments"
+    }
+  ]
+}

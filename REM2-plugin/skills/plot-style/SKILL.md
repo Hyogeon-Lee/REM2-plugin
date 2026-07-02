@@ -1,7 +1,7 @@
 ---
 name: plot-style
-version: 0.5.0
-description: apply consistent scientific/engineering style to plotting code (figures, axes, legends, labels, limits, aspect ratios, subplots). use only when writing or modifying code that generates plots — matlab by default, or the closest equivalent when the user names another language (python matplotlib, pandas, seaborn, plotly). covers common rules plus case modules (time-series, xy-plot, 3d-plot, frequency-response) loaded on demand. use when styling user-provided plotting code, generating new plotting scripts, or formatting frf/bode/nyquist/step/impulse/time-series/xy/scatter/surface plots for lab reports. not for non-code image generation or general visualization requests.
+version: 0.6.0
+description: apply consistent scientific/engineering style to plotting code (figures, axes, legends, labels, limits, aspect ratios, subplots). use only when writing or modifying code that generates plots — matlab by default, or the closest equivalent when the user names another language (python matplotlib, pandas, seaborn, plotly). covers common rules plus case modules (time-series, xy-plot, 3d-plot, frequency-response) loaded on demand. use when styling user-provided plotting code, generating new plotting scripts, or formatting frf/bode/nyquist/step/impulse/time-series/xy/scatter/surface plots for lab reports — including korean requests like 플롯/그래프 스타일 적용, 그림 정리, 플롯 코드 스타일 맞춰줘, figure 포맷 정리. not for non-code image generation or general visualization requests.
 ---
 
 # Plot Style
@@ -83,7 +83,8 @@ plot(ax, x, y, 'LineStyle', '-', 'Color', colorOrder(1, :), 'LineWidth', lineWid
 ```
 
 - **No title** unless the user explicitly asks for one.
-- **Language** — all figure-rendered text (labels, legend, ticks, annotations, colorbar) in **English**; code comments in **Korean**. Override only on explicit request.
+- **Language** — all figure-rendered text (labels, legend, ticks, annotations, colorbar) in **English**; code comments in **Korean** (this overrides comment-style's English default for plotting code; comment-style's selection and format rules still apply). Override only on explicit request.
+- **Text interpreter** — keep the default `tex`; write Greek as `\mu`/`\zeta`, subscripts as `x_{ab}`. TeX math glyphs render in MATLAB's math font, not `fontName` — fine for isolated symbols; prefer Unicode ζ/ω when the whole label must stay in one font. Use `'Interpreter', 'latex'` only on explicit request — it overrides `FontName` with Computer Modern.
 
 ### Colorbar (only when present)
 
@@ -137,14 +138,16 @@ exportgraphics(fig, fullfile('image_fig', [figName '.png']), 'Resolution', 300);
 savefig(fig, fullfile('image_fig', [figName '.fig']));
 ```
 
-3. **Review.** Read the saved PNG back (via the MATLAB MCP) and verify it against **every rule in "Required on every axes" and "Series and legend"**, plus rendered-image faults: clipped data, legend overlap, distorted aspect, or fewer than 3 grid lines on an axis.
+`exportgraphics` requires R2020a+ — on older MATLAB use `print(fig, fullfile('image_fig', [figName '.png']), '-dpng', '-r300')` instead.
+
+3. **Review.** Read the saved PNG file back with the **Read tool** (the file from step 2 — the MATLAB MCP only runs the code that saves it; it returns text, not images) and verify it against **every rule in "Required on every axes" and "Series and legend"**, plus rendered-image faults: clipped data, legend overlap, distorted aspect, or fewer than 3 grid lines on an axis.
 4. **Fix vs ask.**
    - **Fix unambiguous style violations directly** — missing units, shorthand color, wrong font/grid/linewidth, absent limits, distorted aspect, clipped data, legend overlap — and note what you changed.
    - **Font size is the first lever for crowded text.** When tick labels, axis labels, or legend text crowd, overlap, or clip, adjust the base `fontSize` within **12–32** (default 24) before reaching for legend relocation or column changes. If the text still does not fit at `fontSize` 12, treat it as a layout problem (panel split, fewer series) rather than shrinking further. Note the new `fontSize` whenever you change it.
    - **Ask only when the fix changes interpretation** — which tick values to force on a sparse axis (<3 grid lines), whether a non-zero time start is intended, choosing a colormap/representation, or anything where multiple valid readings of the data exist.
 5. **Revise (one pass).** Apply the fixes (and any user-approved interpretive changes), re-save, and re-review **once**. Stop after this single revise — do not loop. If violations still remain after the one pass, list them for the user with the suggested fix rather than re-rendering again.
 
-**Fallback when no MATLAB MCP (or non-MATLAB language).** If you cannot render/read the image back — MATLAB MCP unavailable, or the target is Python/another package run elsewhere — skip the image-reading step but keep the rest:
+**Fallback when the image cannot be read back (or non-MATLAB language).** If you cannot render the figure or read the saved PNG file back — no MATLAB MCP to run the save, the file is inaccessible, or the target is Python/another package run elsewhere — skip the image-reading step but keep the rest:
 
 - Still emit the save block (PNG + FIG, or the language's equivalent) so the user can render and review.
 - Self-check the **code** against every rule in "Required on every axes" and "Series and legend".

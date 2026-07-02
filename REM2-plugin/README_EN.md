@@ -8,7 +8,7 @@ year: 2026
 dependencies: [Claude Code, Codex CLI, MATLAB MCP]
 status: draft
 tags: [plugin, skill, matlab, plotting]
-related: ["[[plot-style]]"]
+related: ["[[plot-style]]", "[[figure-export]]", "[[comment-style]]"]
 ---
 
 # REM2 Plugin
@@ -32,11 +32,16 @@ REM2-plugin/
         3d-plot.md
         frequency-response.md
       examples/                    ← runnable MATLAB examples per case (before/after)
-        time_series_example.m
-        xy_plot_example.m
-        three_d_plot_example.m
-        frequency_response_example.m
-        image_fig/                 ← PNGs the examples generate (before/after)
+      evals/                       ← trigger / rule-application eval cases (+ inputs/)
+    figure-export/
+      SKILL.md                     ← journal-submission common rules + preset dispatch
+      references/                  ← journal presets (ieee.md — default, elsevier.md)
+      examples/                    ← single-panel + multi-panel (tiledlayout) examples
+      evals/
+    comment-style/
+      SKILL.md                     ← concise comment rules (single-file skill, no references/)
+      examples/                    ← before/after example
+      evals/                       ← eval cases + inputs/ fixtures
   README.md / README_EN.md
 ```
 
@@ -64,15 +69,17 @@ In the plugin directory (TUI) opened by `codex /plugins`, switch to the `rem2-la
 
 ### ChatGPT (workspace skill)
 
-Upload `dist/chatgpt/plot-style.zip` — see [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) for the procedure.
+Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `figure-export.zip`, `comment-style.zip`) — see [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) for the procedure.
 
 ## Included skills
 
 | Skill | Purpose | Status |
 |---|---|---|
 | `plot-style` | Consistent scientific/engineering plot styling for MATLAB — common rules plus time-series / X–Y / 3-D / frequency-response modules, with runnable before/after examples | stable |
+| `figure-export` | Journal-submission figure export — exact column-width sizing in cm, print-scale fonts, vector PDF via `exportgraphics`, grayscale-survivable curve discrimination (line styles + markers + grayscale check). IEEE Transactions (default) and Elsevier presets | stable |
+| `comment-style` | Concise code-comment rules — algorithm-critical parts only: units, magic numbers, equation sources, sign conventions. English by default (Korean for code governed by the plotting skills) | stable |
 
-The skill triggers automatically when writing or modifying plotting code. When you explicitly request Python (matplotlib, etc.), the rules are translated to their closest equivalents.
+The skills trigger automatically when writing or modifying plotting code. When you explicitly request Python (matplotlib, etc.), the rules are translated to their closest equivalents. plot-style governs what is inside the axes (labels, legends, limits); figure-export governs physical size, fonts, and the export itself — the two compose.
 
 ## Roadmap (next draft candidates)
 

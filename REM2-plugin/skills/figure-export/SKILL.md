@@ -1,6 +1,6 @@
 ---
 name: figure-export
-version: 0.1.0
+version: 0.2.0
 description: prepare and export MATLAB figures for journal submission — exact column-width sizing in centimeters, print-size fonts, vector pdf via exportgraphics, and grayscale-survivable curve discrimination (line styles + markers, never color alone). includes journal presets (ieee transactions — default, elsevier) loaded on demand. use when the user asks for paper/journal/submission/camera-ready figures, names a journal (tmech, tie, tec, tim, tte, mechatronics, precision engineering, sensors and actuators, jsv, ijmtm), mentions column width, or says 논문용/제출용/투고용 figure. complements plot-style: plot-style governs what is in the axes, this skill governs physical size, fonts at print scale, grayscale check, and the export itself. not for lab reports, slides, or on-screen review figures.
 ---
 
@@ -95,14 +95,17 @@ Color is free — use it for on-screen readability — but it must **never be th
 - **2nd discriminator: markers.** From the 5th curve (when line styles start repeating), add `markerSet` markers thinned with `MarkerIndices` — never a marker on every sample of a dense signal:
 
 ```matlab
+ci = mod(k-1, size(colorOrder, 1)) + 1;               % 색 순환 — colorOrder 행 수 초과 시 index 에러 방지
 if k <= 4
-    plot(ax, t, y, 'LineStyle', lineStyles{k}, 'Color', colorOrder(k, :), 'LineWidth', lineWidth);
+    plot(ax, t, y, 'LineStyle', lineStyles{k}, 'Color', colorOrder(ci, :), 'LineWidth', lineWidth);
 else
     idx = round(linspace(1, numel(t), numMarkers));   % 마커 솎기 — 촘촘한 신호에 전체 마커 금지
-    plot(ax, t, y, 'LineStyle', lineStyles{mod(k-1, 4) + 1}, 'Color', colorOrder(k, :), 'LineWidth', lineWidth, ...
+    plot(ax, t, y, 'LineStyle', lineStyles{mod(k-1, 4) + 1}, 'Color', colorOrder(ci, :), 'LineWidth', lineWidth, ...
          'Marker', markerSet{mod(k-5, numel(markerSet)) + 1}, 'MarkerIndices', idx, 'MarkerSize', 3);
 end
 ```
+
+- Practical cap: **6 curves per axes** (same as plot-style's series cap). The `mod` wrap above only prevents the index error — beyond 6 curves, split panels or drop series instead of inventing a 7th style combination.
 
 - The style block's `colorOrder` spreads **lightness** deliberately — a bonus discriminator after grayscale conversion. Keep it instead of plot-style's palette.
 - The grayscale pass in the review loop verifies this on the actual rendered image.
@@ -110,7 +113,8 @@ end
 ## Vector vs raster
 
 - Line plots, Bode/FRF, schematics → **vector PDF** (`ContentType','vector'`). Infinite zoom, small file.
-- Heatmaps, FEA contours, `surf`/`pcolor` with many faces, photographs → **raster** at the preset dpi. A 100k-polygon vector PDF chokes the publisher's renderer — rasterize those panels.
+- Heatmaps, FEA contours, `surf`/`pcolor` with many faces, photographs → **raster** at the preset dpi. A 100k-polygon vector PDF chokes the publisher's renderer.
+- **Mixed line-art + dense-surface figures:** MATLAB cannot rasterize a single panel — `exportgraphics` applies one `ContentType` to the whole figure. Pick one: (a) export the whole figure with `'ContentType', 'image'` at the preset combination-art dpi (IEEE 600 / Elsevier 500), (b) export the panels as separate files and assemble in LaTeX, or (c) `'ContentType', 'auto'` and verify in the PDF what it actually produced. Such figures usually carry a colorbar, so the TightInset fill loop is invalid there — use the `tiledlayout` path.
 
 ```matlab
 % 출력 폴더 + 의미 있는 파일명
@@ -131,10 +135,13 @@ fprintf('exported: %.2f x %.2f cm (target %.2f x %.2f cm)\n', ...
 
 `exportgraphics` embeds fonts — prefer it over `print -depsc`/`saveas`. Without `'Padding', 0` it adds a fixed ~3 pt margin (verified on R2025b: 9.00 cm from an 8.89 cm canvas); on MATLAB older than R2025a the argument does not exist — drop it and absorb the ~1% oversize with `width=\columnwidth` in LaTeX. Always keep the `imfinfo` self-check — it catches sizing mistakes the live window hides.
 
+R2025a also added `'Width'`/`'Height'`/`'Units'` name-values to `exportgraphics`, but they **scale the rendered content** to the requested size rather than resizing the canvas (verified on R2025b: `'Width', 8.89, 'Units', 'centimeters'` scales a 7.80 cm tight crop uniformly ×1.14, width and height alike — an 8 pt font prints at ~9.1 pt). That breaks the draw-at-final-size rule, so keep the TightInset fill loop and do **not** substitute `'Width'` for it.
+
 ## In-figure content
 
 - **No title** ever — the caption lives in the manuscript, not the figure.
 - Axis labels with units in parentheses (`Time (s)`, `Torque (N·m)`); all figure text in English.
+- **Text interpreter:** keep the default `tex`. TeX math glyphs (`\zeta`, `\omega_n`, `x_{ab}`) render in MATLAB's math font, not `fontName` — acceptable for isolated symbols; when a whole label must stay in one font, prefer Unicode characters (ζ, ω), which inherit `fontName`. Switch to `'Interpreter', 'latex'` only on explicit request — it replaces the mandated font with Computer Modern and ignores `FontSize`/`FontName` (sizes must then be set inside the LaTeX string).
 - Multi-panel figures: label panels `(a)`, `(b)`, … at the same `fontSize`, placed consistently (below each panel or top-left inside); the caption references them.
 - Same variable = same line style and color **across every figure in the paper**; compared quantities share axis limits across figures.
 

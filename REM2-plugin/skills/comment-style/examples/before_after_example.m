@@ -14,13 +14,14 @@
 % L = N^2 / R_total; % calculate inductance
 % end
 
-%% AFTER — concise, algorithm-critical only
+%% AFTER — concise, algorithm-critical only (comments changed, code untouched)
 function L = coilInductance(N, mu_r, A_core, l_core, g)
 mu0 = 4*pi*1e-7;                         % vacuum permeability (H/m)
 
 % magnetic circuit: core and gap reluctances in series
 R_core = l_core / (mu_r * mu0 * A_core);
-R_gap  = g / (mu0 * A_core);
+R_gap = g / (mu0 * A_core);
+R_total = R_core + R_gap;
 
-L = N^2 / (R_core + R_gap);              % L = N^2 / R_total
+L = N^2 / R_total;
 end

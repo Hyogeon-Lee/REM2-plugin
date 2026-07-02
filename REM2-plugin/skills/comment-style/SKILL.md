@@ -28,7 +28,7 @@ Everything else: no comment.
 
 ## Format
 
-- **English by default.** Korean only when the user explicitly requests it. Identifiers, units, and technical terms stay English either way.
+- **English by default.** Korean only when the user explicitly requests it — or when the `plot-style` / `figure-export` skill governs the code (their convention is Korean code comments; this skill's selection and format rules still apply). Identifiers, units, and technical terms stay English either way.
 - One short phrase per comment, not a full sentence. No trailing period.
 - Units in **parentheses**: `(T)`, `(mm)`, `(rad/s)` — never brackets.
 - Inline comment for a single line (`x = ...;   % ...`); own-line comment above the block for a multi-line step.
@@ -40,14 +40,17 @@ Everything else: no comment.
 - Change-history / author / date comments
 - Decorative banners (`% ======== ... ========`)
 - Explain commented-out dead code — flag it to the user instead
+- Delete or move pragma comments — `%#ok<...>`, `%#codegen`, `%#function`, `%#exclude` are directives to tooling, not comments
+- Remove existing `TODO`/`FIXME` markers unless the user asks
 - Exceed roughly one comment per 4–5 lines of code — above that density, cut back to the critical ones
 
 ## MATLAB specifics
 
 - **Never add or reformat a file header, H1 line, or help block.** Header format is handled by a separate formatter and may change. If the user explicitly asks for help text, ask which format before writing any.
-- A comment's position right after the `function` line does not protect it. When the user asks to clean up comments, judge those leading lines by the same rules as body comments: narration and restatement get deleted; a genuine help block (purpose, inputs/outputs, usage) gets preserved as-is.
+- Deciding what counts as the help block is mechanical: if the first comment line after the `function` line is an H1 (function name + one-line summary), the entire contiguous comment block from there **is** the help block — leave it untouched, `help` prints it verbatim. Only when no H1 exists do the body rules apply to those leading lines (narration and restatement get deleted).
 - Use `%%` section comments to structure scripts; short noun-phrase titles (`%% Parameter setup`), no sentence titles.
 - When an `arguments` block exists, do not duplicate its type/size/default info in comments.
+- In `classdef` files, comments attached to `classdef`, `properties` blocks, and individual property lines are surfaced by `help`/`doc` as class/property help — preserve them as-is. Apply the body rules only inside method bodies.
 
 ## Other languages
 
@@ -67,7 +70,7 @@ flux(k) = Bg * A * cos(p*theta); % flux computation
 After:
 
 ```matlab
-theta   = 2*pi*(k-1)/numSlots;       % slot angular position (rad)
+theta = 2*pi*(k-1)/numSlots;         % slot angular position (rad)
 flux(k) = Bg * A * cos(p*theta);
 ```
 
