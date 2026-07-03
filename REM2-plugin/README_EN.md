@@ -73,18 +73,15 @@ Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `figure-expor
 
 ## Included skills
 
-| Skill | Purpose | Status |
-|---|---|---|
-| `plot-style` | Consistent scientific/engineering plot styling for MATLAB — common rules plus time-series / X–Y / 3-D / frequency-response modules, with runnable before/after examples | stable |
+| Skill           | Purpose                                                                                                                                                                                                                                                       | Status |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| `plot-style`    | Consistent scientific/engineering plot styling for MATLAB — common rules plus time-series / X–Y / 3-D / frequency-response modules, with runnable before/after examples                                                                                       | stable |
 | `figure-export` | Journal-submission figure export — exact column-width sizing in cm, print-scale fonts, vector PDF via `exportgraphics`, grayscale-survivable curve discrimination (line styles + markers + grayscale check). IEEE Transactions (default) and Elsevier presets | stable |
-| `comment-style` | Concise code-comment rules — algorithm-critical parts only: units, magic numbers, equation sources, sign conventions. English by default (Korean for code governed by the plotting skills) | stable |
+| `comment-style` | Concise code-comment rules — algorithm-critical parts only: units, magic numbers, equation sources, sign conventions. English by default (Korean for code governed by the plotting skills)                                                                    | stable |
 
 The skills trigger automatically when writing or modifying plotting code. When you explicitly request Python (matplotlib, etc.), the rules are translated to their closest equivalents. plot-style governs what is inside the axes (labels, legends, limits); figure-export governs physical size, fonts, and the export itself — the two compose.
 
-## Roadmap (next draft candidates)
-
-- `em-design-maxwell` — ANSYS Maxwell/AEDT IronPython scripting
-- `manufacturing` — manufacturing workflow helpers
+# 
 
 ## Notes
 

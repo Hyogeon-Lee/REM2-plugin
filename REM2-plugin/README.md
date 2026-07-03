@@ -73,18 +73,15 @@ codex /plugins
 
 ## 현재 수록 스킬
 
-| 스킬 | 용도 | 상태 |
-|---|---|---|
-| `plot-style` | MATLAB 과학/공학 플롯 일관 스타일 — 공통 규칙 + time-series / X–Y / 3-D / frequency-response 모듈, before/after 예제 포함 | stable |
+| 스킬              | 용도                                                                                                                                              | 상태     |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| `plot-style`    | MATLAB 과학/공학 플롯 일관 스타일 — 공통 규칙 + time-series / X–Y / 3-D / frequency-response 모듈, before/after 예제 포함                                            | stable |
 | `figure-export` | 논문 투고용 figure 내보내기 — 저널 칼럼 폭 원본 크기 제작(cm), 인쇄 크기 폰트, 벡터 PDF(`exportgraphics`), 흑백 인쇄 생존성(선 스타일·마커 + 회색조 검증). IEEE Transactions(기본)·Elsevier 프리셋 | stable |
-| `comment-style` | 간결한 코드 주석 규칙 — 알고리즘 핵심부만, 단위·매직넘버·수식 출처·부호 규약 중심. 영어 기본(플롯 스킬 적용 코드는 한국어) | stable |
+| `comment-style` | 간결한 코드 주석 규칙 — 알고리즘 핵심부만, 단위·매직넘버·수식 출처·부호 규약 중심. 영어 기본(플롯 스킬 적용 코드는 한국어)                                                                       | stable |
 
 플롯 코드를 새로 작성·수정할 때 자동 트리거됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. plot-style은 축 내부(라벨·범례·한계), figure-export는 물리적 크기·폰트·내보내기를 담당하며 두 스킬은 함께 동작합니다.
 
-## 로드맵 (다음 드래프트 후보)
-
-- `em-design-maxwell` — ANSYS Maxwell/AEDT IronPython 스크립팅
-- `manufacturing` — 제조 워크플로우 헬퍼
+# 
 
 ## 비고
 
