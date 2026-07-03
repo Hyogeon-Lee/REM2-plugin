@@ -2,7 +2,7 @@ function plotInfo = plot_design_summary(frfData, plant, controller, designInfo, 
 arguments
     frfData (1, 1) struct
     plant
-    controller (1, 1) struct
+    controller (1, 1) struct %#ok<INUSA> 호출부 API 유지 (controller 곡선은 축 왜곡으로 미표시)
     designInfo (1, 1) struct
     analysisInfo (1, 1) struct
     outputDir (1, :) char = pwd
@@ -31,7 +31,6 @@ frequencyHz = frfData.FrequencyHz(:);
 w = frfData.WradPerSec(:);
 measuredResponse = frfData.Response(:);
 plantResponse = localFrequencyResponse(plant, w);
-controllerResponse = localFrequencyResponse(controller.Continuous, w);
 loopResponse = localFrequencyResponse(analysisInfo.Loop, w);
 closedLoopResponse = localFrequencyResponse(analysisInfo.ClosedLoop, w);
 sensitivityResponse = localFrequencyResponse(analysisInfo.Sensitivity, w);
@@ -54,23 +53,24 @@ xline(axPlantPhase, designInfo.TargetCrossoverHz, "LineStyle", ":", "Color", col
 ylabel(axPlantPhase, "Phase (deg)");
 legend(axPlantPhase, ["Measured plant", "Fitted plant", "Target crossover"], "Location", "northoutside", "NumColumns", 3, "FontSize", fontSize, "FontName", fontName);
 
+% controller 단독 곡선은 스케일이 크게 달라 축을 왜곡 → plant/open loop만 오버레이
 axLoopMag = subplot(3, 2, 3, "Parent", fig);
-semilogx(axLoopMag, frequencyHz, localMagDb(controllerResponse), "LineStyle", "--", "Color", colorOrder(3, :), "LineWidth", lineWidth);
+semilogx(axLoopMag, frequencyHz, localMagDb(plantResponse), "LineStyle", "--", "Color", colorOrder(2, :), "LineWidth", lineWidth);
 hold(axLoopMag, "on");
 semilogx(axLoopMag, frequencyHz, localMagDb(loopResponse), "LineStyle", "-", "Color", colorOrder(1, :), "LineWidth", lineWidth);
 yline(axLoopMag, 0, "LineStyle", "--", "Color", colorOrder(5, :), "LineWidth", axLineWidth);
 xline(axLoopMag, designInfo.TargetCrossoverHz, "LineStyle", ":", "Color", colorOrder(4, :), "LineWidth", lineWidth);
 ylabel(axLoopMag, "Magnitude (dB)");
-legend(axLoopMag, ["Controller", "Open loop", "0 dB", "Target crossover"], "Location", "northoutside", "NumColumns", 4, "FontSize", fontSize, "FontName", fontName);
+legend(axLoopMag, ["Fitted plant", "Open loop", "0 dB", "Target crossover"], "Location", "northoutside", "NumColumns", 4, "FontSize", fontSize, "FontName", fontName);
 
 axLoopPhase = subplot(3, 2, 4, "Parent", fig);
-semilogx(axLoopPhase, frequencyHz, localPhaseDeg(controllerResponse), "LineStyle", "--", "Color", colorOrder(3, :), "LineWidth", lineWidth);
+semilogx(axLoopPhase, frequencyHz, localPhaseDeg(plantResponse), "LineStyle", "--", "Color", colorOrder(2, :), "LineWidth", lineWidth);
 hold(axLoopPhase, "on");
 semilogx(axLoopPhase, frequencyHz, localPhaseDeg(loopResponse), "LineStyle", "-", "Color", colorOrder(1, :), "LineWidth", lineWidth);
 yline(axLoopPhase, -180, "LineStyle", "--", "Color", colorOrder(5, :), "LineWidth", axLineWidth);
 xline(axLoopPhase, designInfo.TargetCrossoverHz, "LineStyle", ":", "Color", colorOrder(4, :), "LineWidth", lineWidth);
 ylabel(axLoopPhase, "Phase (deg)");
-legend(axLoopPhase, ["Controller", "Open loop", "-180 deg", "Target crossover"], "Location", "northoutside", "NumColumns", 4, "FontSize", fontSize, "FontName", fontName);
+legend(axLoopPhase, ["Fitted plant", "Open loop", "-180 deg", "Target crossover"], "Location", "northoutside", "NumColumns", 4, "FontSize", fontSize, "FontName", fontName);
 
 axClosedLoop = subplot(3, 2, 5, "Parent", fig);
 semilogx(axClosedLoop, frequencyHz, localMagDb(closedLoopResponse), "LineStyle", "-", "Color", colorOrder(1, :), "LineWidth", lineWidth);
@@ -100,8 +100,8 @@ pbaspect(axStep, [2 1 1]);
 
 ylim(axPlantMag, localPadLimits([localMagDb(measuredResponse); localMagDb(plantResponse)]));
 ylim(axPlantPhase, localPadLimits([localPhaseDeg(measuredResponse); localPhaseDeg(plantResponse)]));
-ylim(axLoopMag, localPadLimits([localMagDb(controllerResponse); localMagDb(loopResponse); 0]));
-ylim(axLoopPhase, localPadLimits([localPhaseDeg(controllerResponse); localPhaseDeg(loopResponse); -180]));
+ylim(axLoopMag, localPadLimits([localMagDb(plantResponse); localMagDb(loopResponse); 0]));
+ylim(axLoopPhase, localPadLimits([localPhaseDeg(plantResponse); localPhaseDeg(loopResponse); -180]));
 ylim(axClosedLoop, localPadLimits([localMagDb(closedLoopResponse); localMagDb(sensitivityResponse)]));
 ylim(axStep, localPadLimits([analysisInfo.StepResponse(:); 0; 1]));
 linkaxes(frequencyAxes, "x");

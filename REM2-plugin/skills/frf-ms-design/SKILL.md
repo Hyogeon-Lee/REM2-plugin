@@ -69,8 +69,10 @@ Use the lab convention (lead stage omitted, `C_lead = 1`, for stiffness-dominant
 ```text
 C(s) = K * C_lead(s) * C_lag(s)
 C_lead(s) = (alpha*tau*s + 1)/(tau*s + 1)
-C_lag(s)  = (tau*s + 1)/(beta*tau*s + 1)
+C_lag(s)  = (tau*s + 1)/(tau*s)
 ```
+
+The lag stage is INTEGRAL lag (PI form): its pole sits at the origin, so the loop is Type 1 and the closed-loop step response settles at exactly 1 (zero steady-state error). Never use the finite-pole form `(tau*s+1)/(beta*tau*s+1)` — it leaves a `1/(1+K*P(0))` steady-state offset.
 
 Design sequence:
 

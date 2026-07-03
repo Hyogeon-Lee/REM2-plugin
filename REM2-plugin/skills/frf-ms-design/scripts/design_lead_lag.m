@@ -5,7 +5,6 @@ arguments
     options.PhaseMarginTargetDeg (1, 1) double = 40
     options.GainMarginTargetDb (1, 1) double = 6
     options.LeadAlpha (1, 1) double = NaN
-    options.LagBeta (1, 1) double {mustBePositive} = 10
     options.ControllerStructure (1, 1) string = "auto"
     options.Implementation (1, 1) string = "analog"
     options.SamplingFrequencyHz (1, 1) double {mustBePositive} = 1000
@@ -54,7 +53,7 @@ else
     leadController = tf(1);
 end
 
-beta = options.LagBeta;
+% 적분형 lag(= PI 형태, pole @ 원점) → Type-1 루프, 스텝 정상상태 오차 0
 % lag 단독: zero를 타깃 crossover에 배치 → 평탄 플랜트에서도 0 dB 교차 기울기(-10 dB/dec) 확보
 % lead-lag: zero @ crossover/10 → crossover 위상 침식 방지 (플랜트가 기울기 제공)
 if structureChoice == "lag"
@@ -62,7 +61,7 @@ if structureChoice == "lag"
 else
     tauLag = 1/(2*pi*(targetCrossoverHz/10));
 end
-lagController = (tauLag*s + 1)/(beta*tauLag*s + 1);
+lagController = (tauLag*s + 1)/(tauLag*s);
 
 shapeController = leadController * lagController;
 shapeAtTarget = squeeze(freqresp(shapeController*plant*analysisDelay, wc));
@@ -86,7 +85,6 @@ designInfo.PhaseMarginTargetDeg = options.PhaseMarginTargetDeg;
 designInfo.GainMarginTargetDb = options.GainMarginTargetDb;
 designInfo.RequiredLeadDeg = requiredLeadDeg;
 designInfo.Alpha = alpha;
-designInfo.Beta = beta;
 designInfo.TauLead = tauLead;
 designInfo.TauLag = tauLag;
 designInfo.GainK = gainK;
