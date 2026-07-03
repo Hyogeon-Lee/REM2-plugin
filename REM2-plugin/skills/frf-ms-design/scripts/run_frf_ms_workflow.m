@@ -38,6 +38,16 @@ if strcmpi(implementation, "auto")
     end
 end
 
+% metadata 샘플링 주파수와 SamplingFrequencyHz 옵션 불일치 경고 (상대 오차 1% 초과)
+if strcmpi(implementation, "digital") && frfData.Ts > 0
+    metadataFsHz = 1/frfData.Ts;
+    if abs(metadataFsHz - options.SamplingFrequencyHz) > 0.01*metadataFsHz
+        warningMessages(end + 1, 1) = sprintf( ...
+            "Metadata sampling frequency %.6g Hz differs from SamplingFrequencyHz=%.6g Hz; digital design uses %.6g Hz.", ...
+            metadataFsHz, options.SamplingFrequencyHz, options.SamplingFrequencyHz);
+    end
+end
+
 [plant, fitInfo] = fit_plant_model(frfData, ...
     MaxDenominatorOrder=options.MaxDenominatorOrder, ...
     TargetCrossoverHz=targetCrossoverHz);
@@ -72,6 +82,10 @@ fMax = max(frequencyHz);
 targetCrossoverHz = sqrt(fMin*fMax)/5;
 targetCrossoverHz = max(targetCrossoverHz, 2*fMin);
 targetCrossoverHz = min(targetCrossoverHz, fMax/10);
+% 협대역(span < 20x)에서는 위 클램프가 상충해 대역 밖으로 밀림 → 기하 중심으로 보정
+if targetCrossoverHz < fMin || targetCrossoverHz > fMax
+    targetCrossoverHz = sqrt(fMin*fMax);
+end
 end
 
 function analysisInfo = localAnalyzeClosedLoop(plant, controller, targetCrossoverHz, designInfo)

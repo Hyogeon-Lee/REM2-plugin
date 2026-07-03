@@ -42,6 +42,11 @@ REM2-plugin/
       SKILL.md                     ← concise comment rules (single-file skill, no references/)
       examples/                    ← before/after example
       evals/                       ← eval cases + inputs/ fixtures
+    frf-ms-design/
+      SKILL.md                     ← FRF loop-shaping conventions (plant model, structure rule, ZOH)
+      references/                  ← Excel format + workflow order
+      scripts/                     ← read → fit → design → analyze → plot pipeline
+      examples/                    ← example workbooks + blank template
   README.md / README_EN.md
 ```
 
@@ -78,10 +83,9 @@ Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `figure-expor
 | `plot-style`    | Consistent scientific/engineering plot styling for MATLAB — common rules plus time-series / X–Y / 3-D / frequency-response modules, with runnable before/after examples                                                                                       | stable |
 | `figure-export` | Journal-submission figure export — exact column-width sizing in cm, print-scale fonts, vector PDF via `exportgraphics`, grayscale-survivable curve discrimination (line styles + markers + grayscale check). IEEE Transactions (default) and Elsevier presets | stable |
 | `comment-style` | Concise code-comment rules — algorithm-critical parts only: units, magic numbers, equation sources, sign conventions. English by default (Korean for code governed by the plotting skills)                                                                    | stable |
+| `frf-ms-design` | Measured SISO FRF Excel → s-domain plant fit with explicit time delay (`tfest`) → automatic lag / lead-lag loop shaping → margin and step-response prediction. MATLAB only (no Simulink); format errors fail fast and are resolved interactively with the user | stable |
 
-The skills trigger automatically when writing or modifying plotting code. When you explicitly request Python (matplotlib, etc.), the rules are translated to their closest equivalents. plot-style governs what is inside the axes (labels, legends, limits); figure-export governs physical size, fonts, and the export itself — the two compose.
-
-# 
+The skills trigger automatically when writing or modifying plotting code. When you explicitly request Python (matplotlib, etc.), the rules are translated to their closest equivalents. plot-style governs what is inside the axes (labels, legends, limits); figure-export governs physical size, fonts, and the export itself — the two compose. frf-ms-design triggers on measured-FRF controller design requests.
 
 ## Notes
 

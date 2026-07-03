@@ -12,6 +12,8 @@ Use this skill for measured SISO FRF data stored in the lab Excel format:
 
 Assume `Plant = output/input`, magnitude is linear `abs`, phase is `deg`, frequency is `Hz`, and the plant is stable. A blank template workbook is provided at `examples/format_FRF.xlsx`.
 
+If the workbook does not match this format, `read_frf_excel` fails fast with a `read_frf_excel:*` error. Do NOT patch around it — report the error to the user, point to `examples/format_FRF.xlsx`, and ask for a corrected file.
+
 ## Plant Model Convention
 
 Always fit in the continuous s-domain with an explicit time-delay term:

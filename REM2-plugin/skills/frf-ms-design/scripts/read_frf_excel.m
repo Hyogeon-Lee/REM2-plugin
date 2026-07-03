@@ -82,6 +82,12 @@ frfData.ResponseUnit = metadata.OutputUnit + "/" + metadata.InputUnit;
 end
 
 function metadata = localReadMetadata(metadataRaw)
+% 라벨/값 2컬럼 계약: 값 컬럼이 없으면 인덱스 초과 전에 명시적 에러
+if size(metadataRaw, 2) < 2
+    error("read_frf_excel:MetadataMissingValueColumn", ...
+        "Metadata sheet must have label/value columns (2 columns); found %d.", ...
+        size(metadataRaw, 2));
+end
 metadata = struct();
 metadata.SamplingMode = localLookup(metadataRaw, ["샘플링 방식", "sampling mode"], "연속");
 metadata.SamplingTime = localToDouble(localLookup(metadataRaw, ["샘플링 시간", "sampling time", "sampling time (s)"], 0), 0);
@@ -139,11 +145,22 @@ end
 end
 
 function [frequencyHz, magnitudeAbs, phaseDeg, headerWarnings] = localReadFrfColumns(frfRaw)
+if isempty(frfRaw)
+    error("read_frf_excel:EmptyFrfSheet", "FRF sheet is empty.");
+end
 headers = string(frfRaw(1, :));
 headerWarnings = strings(0, 1);
 [frequencyCol, headerWarnings] = localFindHeader(headers, "Frequency (Hz)", 1, headerWarnings);
 [magnitudeCol, headerWarnings] = localFindHeader(headers, "Magnitude (abs)", 2, headerWarnings);
 [phaseCol, headerWarnings] = localFindHeader(headers, "Phase (deg)", 3, headerWarnings);
+
+% 헤더 fallback 컬럼이 시트 폭을 넘으면 인덱스 초과 전에 명시적 에러
+maxColumn = max([frequencyCol, magnitudeCol, phaseCol]);
+if maxColumn > size(frfRaw, 2)
+    error("read_frf_excel:MissingColumn", ...
+        "FRF sheet has %d column(s) but data was expected in column %d. Provide Frequency/Magnitude/Phase columns.", ...
+        size(frfRaw, 2), maxColumn);
+end
 
 frequencyHz = localNumericColumn(frfRaw(2:end, frequencyCol));
 magnitudeAbs = localNumericColumn(frfRaw(2:end, magnitudeCol));
