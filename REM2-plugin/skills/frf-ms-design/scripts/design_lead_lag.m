@@ -13,7 +13,7 @@ end
 s = tf("s");
 wc = 2*pi*targetCrossoverHz;
 
-% digital 구현: ZOH 위상 지연을 Ts/2 시간지연으로 근사하여 해석 루프에 포함
+% digital: ZOH phase lag approximated as Ts/2 dead time in the analysis loop
 if strcmpi(options.Implementation, "digital")
     analysisDelaySeconds = 0.5/options.SamplingFrequencyHz;
     analysisDelay = exp(-analysisDelaySeconds*s);
@@ -22,17 +22,16 @@ else
     analysisDelay = tf(1);
 end
 
-% lab 규칙: stiffness-dominant(평탄 크기) → lag 단독,
-%           mass-dominant(지속 감소 크기) → lead-lag
+% lab rule: flat magnitude (stiffness-dominant) -> lag only; rolling off (mass-dominant) -> lead-lag
 [structureChoice, magSlopeDbPerDec] = localSelectStructure(plant, wc, options.ControllerStructure);
 
-% 언랩 위상 사용: 지연 포함 플랜트는 위상이 -360 deg 아래로 내려갈 수 있어 wrap 값 사용 금지
+% use unwrapped phase: a delayed plant can sit below -360 deg, single-point wrapped phase is wrong
 plantPhaseDeg = localUnwrappedPhaseAt(plant*analysisDelay, wc);
 currentPhaseMarginDeg = 180 + plantPhaseDeg;
 
 if structureChoice == "leadlag"
     requiredLeadDeg = options.PhaseMarginTargetDeg + 10 - currentPhaseMarginDeg;
-    requiredLeadDeg = min(max(requiredLeadDeg, 0), 60);   % 단일 lead 한계 60 deg
+    requiredLeadDeg = min(max(requiredLeadDeg, 0), 60);   % single-stage lead limit (deg)
     if requiredLeadDeg >= 60
         warning("design_lead_lag:LeadSaturated", ...
             "Required lead reached the 60 deg single-stage limit; phase margin target may not be met.");
@@ -53,9 +52,9 @@ else
     leadController = tf(1);
 end
 
-% 적분형 lag(= PI 형태, pole @ 원점) → Type-1 루프, 스텝 정상상태 오차 0
-% lag 단독: zero를 타깃 crossover에 배치 → 평탄 플랜트에서도 0 dB 교차 기울기(-10 dB/dec) 확보
-% lead-lag: zero @ crossover/10 → crossover 위상 침식 방지 (플랜트가 기울기 제공)
+% integral lag (PI form, pole at origin): Type-1 loop, zero steady-state step error
+% lag-only: zero AT the target crossover -> a flat plant still crosses 0 dB at -10 dB/dec
+% lead-lag: zero at crossover/10 -> lag phase does not erode PM (plant provides the slope)
 if structureChoice == "lag"
     tauLag = 1/wc;
 else
@@ -103,7 +102,7 @@ designInfo.AnalysisDelaySeconds = analysisDelaySeconds;
 end
 
 function [structureChoice, magSlopeDbPerDec] = localSelectStructure(plant, wc, requested)
-% 크기 기울기(dB/dec, 대역 [wc/10, wc])로 플랜트 분류
+% classify by magnitude slope (dB/dec) over [wc/10, wc]
 wGrid = logspace(log10(wc/10), log10(wc), 50);
 magDb = 20*log10(abs(squeeze(freqresp(plant, wGrid))));
 coeffs = polyfit(log10(wGrid(:)), magDb(:), 1);
@@ -114,7 +113,7 @@ if strcmpi(requested, "lag")
 elseif strcmpi(requested, "leadlag")
     structureChoice = "leadlag";
 else
-    % 임계 -10 dB/dec: 평탄(stiffness-dominant)이면 lag 단독
+    % -10 dB/dec threshold: flatter -> stiffness-dominant -> lag only
     if magSlopeDbPerDec > -10
         structureChoice = "lag";
     else
@@ -124,7 +123,7 @@ end
 end
 
 function phaseAtDeg = localUnwrappedPhaseAt(sys, wc)
-% 저주파(wc/1000)부터 언랩하여 wc 위상 계산, 시작점은 0/±180 deg 기준으로 정렬
+% unwrap from 3 decades below wc; align the start to the nearest 0/+-180 deg
 wGrid = logspace(log10(wc) - 3, log10(wc), 400);
 respGrid = squeeze(freqresp(sys, wGrid));
 phaseGridDeg = rad2deg(unwrap(angle(respGrid(:))));
@@ -164,7 +163,7 @@ closedLoopStable = localClosedLoopStable(loopContinuous);
 
 warningState = warning("off", "all");
 cleanup = onCleanup(@() warning(warningState));
-% margin 출력 순서: [Gm, Pm, Wcg(위상교차), Wcp(이득교차)]
+% margin output order: [Gm, Pm, Wcg (phase xover), Wcp (gain xover)]
 [gainMargin, phaseMargin, phaseCrossRad, gainCrossRad] = margin(loopContinuous);
 
 marginInfo = struct();
@@ -177,8 +176,7 @@ marginInfo.ClosedLoopStable = closedLoopStable;
 end
 
 function stableFlag = localClosedLoopStable(loopContinuous)
-% 지연 포함 폐루프는 isstable 불가(내부 지연) → 루프 마진(allmargin) 판정,
-% 판정 불가 시 Pade(8차) 근사 폴백
+% isstable fails on delayed closed loops (internal delay) -> allmargin verdict, Pade(8) fallback
 try
     loopMargins = allmargin(loopContinuous);
     if isscalar(loopMargins) && isfinite(loopMargins.Stable)

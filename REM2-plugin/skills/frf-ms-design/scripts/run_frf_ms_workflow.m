@@ -38,7 +38,7 @@ if strcmpi(implementation, "auto")
     end
 end
 
-% metadata 샘플링 주파수와 SamplingFrequencyHz 옵션 불일치 경고 (상대 오차 1% 초과)
+% digital design uses the option value; warn on >1% relative mismatch with metadata
 if strcmpi(implementation, "digital") && frfData.Ts > 0
     metadataFsHz = 1/frfData.Ts;
     if abs(metadataFsHz - options.SamplingFrequencyHz) > 0.01*metadataFsHz
@@ -82,7 +82,7 @@ fMax = max(frequencyHz);
 targetCrossoverHz = sqrt(fMin*fMax)/5;
 targetCrossoverHz = max(targetCrossoverHz, 2*fMin);
 targetCrossoverHz = min(targetCrossoverHz, fMax/10);
-% 협대역(span < 20x)에서는 위 클램프가 상충해 대역 밖으로 밀림 → 기하 중심으로 보정
+% narrow band (span < 20x): the clamps conflict and push the target out of band -> geometric center
 if targetCrossoverHz < fMin || targetCrossoverHz > fMax
     targetCrossoverHz = sqrt(fMin*fMax);
 end
@@ -90,7 +90,7 @@ end
 
 function analysisInfo = localAnalyzeClosedLoop(plant, controller, targetCrossoverHz, designInfo)
 s = tf("s");
-% 설계 단계와 동일한 해석 지연(digital ZOH 근사) 포함 → margin/step 일관성 유지
+% include the same ZOH delay approximation as the design loop for consistent margins/step
 if designInfo.AnalysisDelaySeconds > 0
     analysisDelay = exp(-designInfo.AnalysisDelaySeconds*s);
 else
@@ -102,7 +102,7 @@ closedLoop = feedback(loopContinuous, 1);
 sensitivity = feedback(tf(1), loopContinuous);
 
 referenceFrequencyHz = targetCrossoverHz/10;
-stepTime = linspace(0, 5/referenceFrequencyHz, 1000).';   % 기준 정현파 5주기
+stepTime = linspace(0, 5/referenceFrequencyHz, 1000).';   % 5 periods at the reference frequency (s)
 stepFinalValue = real(dcgain(closedLoop));
 stepWarning = "";
 
@@ -134,8 +134,7 @@ analysisInfo.ClosedLoopStable = localClosedLoopStable(loopContinuous);
 end
 
 function stableFlag = localClosedLoopStable(loopContinuous)
-% 지연 포함 폐루프는 isstable 불가(내부 지연) → 루프 마진(allmargin) 판정,
-% 판정 불가 시 Pade(8차) 근사 폴백
+% isstable fails on delayed closed loops (internal delay) -> allmargin verdict, Pade(8) fallback
 try
     loopMargins = allmargin(loopContinuous);
     if isscalar(loopMargins) && isfinite(loopMargins.Stable)

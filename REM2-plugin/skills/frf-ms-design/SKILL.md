@@ -1,6 +1,6 @@
 ---
 name: frf-ms-design
-description: MATLAB workflow for measured SISO FRF Excel files. Use when fitting a stable s-domain plant model with a time-delay term from FRF data, designing a lag or lead-lag controller, plotting plant/controller/open-loop/closed-loop frequency responses with margin analysis, or estimating closed-loop step-response behavior.
+description: MATLAB workflow for measured SISO FRF Excel files. Use when fitting a stable s-domain plant model with a time-delay term from FRF data, designing a lag or lead-lag controller with integral lag, plotting plant/open-loop/closed-loop frequency responses with margin analysis, or estimating closed-loop step-response behavior.
 ---
 
 # FRF M&S Design
@@ -51,7 +51,7 @@ Ask for these values when not provided:
 - digital sampling frequency, default `1000 Hz`
 - maximum plant denominator order, default `6`
 - controller structure: `auto` (default), `lag`, or `leadlag`
-- lead/lag manual tuning preference
+- manual lead ratio override (`LeadAlpha`), when the user wants to fix the lead stage
 
 ## Controller Structure Rule (lab convention)
 
@@ -96,7 +96,7 @@ For a stiffness-dominant (flat) plant, the lag-only loop flattens about `-3 dB` 
 Generate a project output folder containing:
 
 - fitted plant model (rational part, delay `td`) and controller data
-- plant, controller, open-loop, and expected closed-loop frequency responses
+- plant, open-loop, closed-loop `T`, and sensitivity `S` frequency responses (controller curve is intentionally not plotted — its scale distorts the axes)
 - margin summary
 - expected unit-step response and step-response characteristics
 - one `image_fig/design_summary.png` and editable `design_summary.fig`

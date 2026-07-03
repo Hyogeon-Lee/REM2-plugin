@@ -2,7 +2,7 @@ function plotInfo = plot_design_summary(frfData, plant, controller, designInfo, 
 arguments
     frfData (1, 1) struct
     plant
-    controller (1, 1) struct %#ok<INUSA> 호출부 API 유지 (controller 곡선은 축 왜곡으로 미표시)
+    controller (1, 1) struct %#ok<INUSA> caller API kept; controller curve intentionally not plotted
     designInfo (1, 1) struct
     analysisInfo (1, 1) struct
     outputDir (1, :) char = pwd
@@ -53,7 +53,7 @@ xline(axPlantPhase, designInfo.TargetCrossoverHz, "LineStyle", ":", "Color", col
 ylabel(axPlantPhase, "Phase (deg)");
 legend(axPlantPhase, ["Measured plant", "Fitted plant", "Target crossover"], "Location", "northoutside", "NumColumns", 3, "FontSize", fontSize, "FontName", fontName);
 
-% controller 단독 곡선은 스케일이 크게 달라 축을 왜곡 → plant/open loop만 오버레이
+% controller curve omitted: its scale distorts both axes -> overlay fitted plant + open loop only
 axLoopMag = subplot(3, 2, 3, "Parent", fig);
 semilogx(axLoopMag, frequencyHz, localMagDb(plantResponse), "LineStyle", "--", "Color", colorOrder(2, :), "LineWidth", lineWidth);
 hold(axLoopMag, "on");

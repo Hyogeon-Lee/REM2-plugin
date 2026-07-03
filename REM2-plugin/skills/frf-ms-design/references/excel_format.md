@@ -22,6 +22,7 @@ Rules:
 - Treat plant as `output/input`.
 - Sort non-monotonic frequency internally and report a warning.
 - Reject non-positive frequency and negative magnitude.
+- Malformed workbooks (missing sheets, missing data/value columns) fail fast with `read_frf_excel:*` errors — ask the user for a corrected file instead of patching around the format.
 
 Useful metadata fields:
 

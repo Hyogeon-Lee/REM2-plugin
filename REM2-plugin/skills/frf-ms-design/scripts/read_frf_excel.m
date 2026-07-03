@@ -43,7 +43,7 @@ end
 
 phaseUnwrappedDeg = rad2deg(unwrap(deg2rad(phaseDeg(:))));
 
-% 언랩 시작 위상 정렬: 360 deg 배수 offset 제거 (복소 응답 불변)
+% remove 360 deg wrap offset so unwrapped phase starts near 0 (complex response unchanged)
 wrapShiftDeg = 360*round(phaseUnwrappedDeg(1)/360);
 if wrapShiftDeg ~= 0
     warningMessages(end + 1, 1) = sprintf( ...
@@ -52,7 +52,7 @@ if wrapShiftDeg ~= 0
     phaseUnwrappedDeg = phaseUnwrappedDeg - wrapShiftDeg;
 end
 
-% 시작 위상이 0 또는 ±180 deg 부근(±45 deg)이 아니면 wrap/부호 관례 확인 경고
+% physical start phase should sit near 0 or +/-180 deg (+/-45 deg tolerance)
 startPhaseDeg = phaseUnwrappedDeg(1);
 if abs(startPhaseDeg) > 45 && abs(abs(startPhaseDeg) - 180) > 45
     warningMessages(end + 1, 1) = sprintf( ...
@@ -82,7 +82,7 @@ frfData.ResponseUnit = metadata.OutputUnit + "/" + metadata.InputUnit;
 end
 
 function metadata = localReadMetadata(metadataRaw)
-% 라벨/값 2컬럼 계약: 값 컬럼이 없으면 인덱스 초과 전에 명시적 에러
+% metadata contract is label/value pairs; fail fast before column-2 access
 if size(metadataRaw, 2) < 2
     error("read_frf_excel:MetadataMissingValueColumn", ...
         "Metadata sheet must have label/value columns (2 columns); found %d.", ...
@@ -154,7 +154,7 @@ headerWarnings = strings(0, 1);
 [magnitudeCol, headerWarnings] = localFindHeader(headers, "Magnitude (abs)", 2, headerWarnings);
 [phaseCol, headerWarnings] = localFindHeader(headers, "Phase (deg)", 3, headerWarnings);
 
-% 헤더 fallback 컬럼이 시트 폭을 넘으면 인덱스 초과 전에 명시적 에러
+% fail fast before out-of-range indexing when a fallback column exceeds sheet width
 maxColumn = max([frequencyCol, magnitudeCol, phaseCol]);
 if maxColumn > size(frfRaw, 2)
     error("read_frf_excel:MissingColumn", ...

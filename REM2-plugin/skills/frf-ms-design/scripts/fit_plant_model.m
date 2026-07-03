@@ -7,7 +7,7 @@ arguments
     options.EstimateTimeDelay (1, 1) logical = true
 end
 
-% s-domain 적합 강제(Ts=0): 샘플링/전송 지연은 exp(-td*s) 항으로 흡수
+% force continuous s-domain fit (Ts = 0); sampling/transport delays absorb into exp(-td*s)
 responseData = reshape(frfData.Response, 1, 1, []);
 idData = idfrd(responseData, frfData.WradPerSec, 0, "FrequencyUnit", "rad/s");
 
@@ -17,7 +17,7 @@ try
 catch
 end
 
-% iodelay = NaN → tfest가 시간지연을 데이터에서 추정
+% iodelay = NaN lets tfest estimate the dead time from data
 if options.EstimateTimeDelay
     ioDelaySpec = NaN;
 else
@@ -42,7 +42,7 @@ for denominatorOrder = denominatorOrders
             candidateModel = tfest(idData, denominatorOrder, numeratorOrder, ioDelaySpec, fitOptions);
             candidateTf = minreal(tf(candidateModel), [], false);
             stableCandidate = isstable(candidateTf);
-            score = localFitScore(candidateTf, frfData, options.TargetCrossoverHz) + 2*denominatorOrder;
+            score = localFitScore(candidateTf, frfData, options.TargetCrossoverHz) + 2*denominatorOrder;   % order penalty favors low-order fits
         catch
             stableCandidate = false;
             score = inf;
@@ -65,7 +65,7 @@ if isempty(plant)
     error("fit_plant_model:FitFailed", "No stable transfer function model was found.");
 end
 
-% lab 표기 관례로 재구성: P(s) = (num/den) * exp(-td*s)
+% rebuild in lab convention: P(s) = (num/den) * exp(-td*s)
 timeDelay = totaldelay(plant);
 [num, den] = tfdata(plant, "v");
 s = tf("s");
@@ -92,6 +92,7 @@ end
 function score = localFitScore(candidateTf, frfData, targetCrossoverHz)
 [magErrorDb, phaseErrorDeg] = localFitError(candidateTf, frfData);
 
+% weight the fit inside one octave around the target crossover
 if isfinite(targetCrossoverHz) && targetCrossoverHz > 0
     frequencyHz = frfData.FrequencyHz;
     useIndex = frequencyHz >= targetCrossoverHz/2 & frequencyHz <= targetCrossoverHz*2;
@@ -102,7 +103,7 @@ else
     useIndex = true(size(frfData.FrequencyHz));
 end
 
-score = localRms(magErrorDb(useIndex)) + 0.02*localRms(phaseErrorDeg(useIndex));
+score = localRms(magErrorDb(useIndex)) + 0.02*localRms(phaseErrorDeg(useIndex));   % phase downweighted: 1 dB ~ 50 deg
 end
 
 function [magErrorDb, phaseErrorDeg] = localFitError(candidateTf, frfData)
