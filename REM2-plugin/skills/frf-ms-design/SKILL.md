@@ -76,11 +76,13 @@ Design sequence:
 
 1. Classify the plant (stiffness- vs mass-dominant) to pick lag-only or lead-lag.
 2. For lead-lag, place lead action near the target crossover using the UNWRAPPED plant phase (never single-point wrapped phase; a delayed plant can be below -360 deg).
-3. Place the lag zero at `target crossover / 10`.
+3. Place the lag zero:
+   - **lag-only** (flat plant): zero AT the target crossover (`tau = 1/w_target`). Do NOT use the `/10` rule here — a flat plant provides no magnitude slope, so a lag whose zero sits a decade below crossover leaves the loop grazing 0 dB with no visible gain crossover. The zero at `w_target` gives the loop a `-10 dB/dec` slope through 0 dB; the crossover is then set by `K * C_lag`.
+   - **lead-lag** (rolling-off plant): zero at `target crossover / 10` so the lag phase does not erode the phase margin at crossover; the plant itself provides the crossing slope.
 4. Tune `K` so `|C(jw)P(jw)| = 1` at the target crossover.
 5. Check `PM >= 40 deg` and `GM >= 6 dB` from loop margins.
 
-For a stiffness-dominant (flat) plant, a lag-only loop can sit near 0 dB over a wide band above crossover, so `GM` may fail while `PM` looks large. If `PassGainMargin` is false, move the target crossover toward the plant roll-off region or lower it, then redesign; do not add lead to fix this.
+For a stiffness-dominant (flat) plant, the lag-only loop flattens about `-3 dB` below 0 dB above the crossover (zero-at-crossover placement), so `GM` is bounded by where the plant roll-off finally pulls the loop down. If `PassGainMargin` is false, move the target crossover toward the plant roll-off region or lower it, then redesign; do not add lead to fix this.
 
 ## Digital Implementation
 

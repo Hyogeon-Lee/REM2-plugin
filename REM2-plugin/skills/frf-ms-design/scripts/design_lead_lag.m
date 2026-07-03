@@ -55,7 +55,13 @@ else
 end
 
 beta = options.LagBeta;
-tauLag = 1/(2*pi*(targetCrossoverHz/10));   % lag zero @ crossover/10
+% lag 단독: zero를 타깃 crossover에 배치 → 평탄 플랜트에서도 0 dB 교차 기울기(-10 dB/dec) 확보
+% lead-lag: zero @ crossover/10 → crossover 위상 침식 방지 (플랜트가 기울기 제공)
+if structureChoice == "lag"
+    tauLag = 1/wc;
+else
+    tauLag = 1/(2*pi*(targetCrossoverHz/10));
+end
 lagController = (tauLag*s + 1)/(beta*tauLag*s + 1);
 
 shapeController = leadController * lagController;

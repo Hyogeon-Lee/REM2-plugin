@@ -14,6 +14,7 @@ Recommended defaults:
 - target phase margin: `40 deg`
 - target gain margin: `6 dB`
 - controller structure: `auto` (magnitude-slope classification, threshold `-10 dB/dec`)
+- lag zero placement: lag-only → AT target crossover (`tau = 1/w_target`); lead-lag → `crossover/10`
 - digital sampling frequency: `1000 Hz`, controller discretization: ZOH
 - reference frequency: `target crossover / 10`
 
