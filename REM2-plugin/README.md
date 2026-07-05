@@ -8,7 +8,7 @@ year: 2026
 dependencies: [Claude Code, Codex CLI, MATLAB MCP]
 status: draft
 tags: [plugin, skill, matlab, plotting]
-related: ["[[plot-style]]", "[[figure-export]]", "[[comment-style]]"]
+related: ["[[plot-style]]", "[[figure-export]]", "[[comment-style]]", "[[frf-ms-design]]"]
 ---
 
 # REM2 Plugin
