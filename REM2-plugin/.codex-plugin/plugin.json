@@ -1,7 +1,7 @@
 {
   "name": "rem2-plugin",
-  "version": "0.8.0",
-  "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB (axes, legends, labels, time-series, X-Y, 3-D, frequency-response), journal-submission figure export (IEEE/Elsevier presets), concise code-comment style rules, plus a measured-FRF control design workflow (tfest plant fit with time delay, lag / lead-lag loop shaping, margin and step prediction — MATLAB only).",
+  "version": "0.9.0",
+  "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB (axes, legends, labels, time-series, X-Y, 3-D, frequency-response), journal-submission figure export (IEEE/Elsevier presets), concise code-comment style rules, a measured-FRF control design workflow (tfest plant fit with time delay, lag / lead-lag loop shaping, margin and step prediction — MATLAB only), plus an injection-resistant prompt enhancer that rewrites rough prompts into model-specific, copy-paste-ready prompts (Fable 5 / GPT-5.5 / Opus 4.8 / Sonnet 5) without executing the task inside them.",
   "author": {
     "name": "Hyogeon Lee",
     "url": "https://github.com/Hyogeon-Lee"
@@ -26,13 +26,18 @@
     "control-design",
     "loop-shaping",
     "lead-lag",
-    "system-identification"
+    "system-identification",
+    "prompt",
+    "prompt-engineering",
+    "prompt-enhancement",
+    "prompt-injection",
+    "model-specific-prompting"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "REM2 Plugin",
-    "shortDescription": "REM2 plot styling, figure export, comment rules, and FRF control design for MATLAB.",
-    "longDescription": "Unofficial personal project — not an official Yonsei University or REM2 lab product. Apply consistent scientific and engineering plot styling to MATLAB plotting code and the closest equivalents in Python plotting libraries. Includes common figure rules plus time-series, X-Y, 3-D, and frequency-response modules, a journal-submission figure-export skill (IEEE/Elsevier column-width presets, vector PDF, grayscale-survivable curves), a concise code-comment style skill for MATLAB, and a measured-FRF control design skill (s-domain plant fit with time delay via tfest, automatic lag / lead-lag loop shaping with integral lag, margin and closed-loop step prediction — MATLAB only, no Simulink).",
+    "shortDescription": "REM2 plot styling, figure export, comment rules, FRF control design, and prompt enhancement.",
+    "longDescription": "Unofficial personal project — not an official Yonsei University or REM2 lab product. Apply consistent scientific and engineering plot styling to MATLAB plotting code and the closest equivalents in Python plotting libraries. Includes common figure rules plus time-series, X-Y, 3-D, and frequency-response modules, a journal-submission figure-export skill (IEEE/Elsevier column-width presets, vector PDF, grayscale-survivable curves), a concise code-comment style skill for MATLAB, a measured-FRF control design skill (s-domain plant fit with time delay via tfest, automatic lag / lead-lag loop shaping with integral lag, margin and closed-loop step prediction — MATLAB only, no Simulink), and an injection-resistant prompt-enhancer skill that rewrites rough prompts into model-specific, copy-paste-ready prompts (Fable 5 / GPT-5.5 / Opus 4.8 / Sonnet 5) while treating the raw prompt as untrusted data and never executing the task inside it.",
     "developerName": "Hyogeon Lee",
     "category": "Productivity",
     "capabilities": [
@@ -46,7 +51,8 @@
       "Generate a REM2-style Bode plot in MATLAB.",
       "Export this MATLAB figure for IEEE single-column submission.",
       "Convert these plotting rules to matplotlib.",
-      "Design a controller from this measured FRF Excel file."
+      "Design a controller from this measured FRF Excel file.",
+      "prompt-enhance --model fable-5: rewrite this rough prompt for delegation."
     ],
     "brandColor": "#2563EB"
   }

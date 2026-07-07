@@ -2,7 +2,7 @@
 
 This directory contains the ChatGPT workspace skill distribution artifacts —
 one zip per skill (`plot-style.zip`, `figure-export.zip`, `comment-style.zip`,
-`frf-ms-design.zip`).
+`frf-ms-design.zip`, `prompt-enhancer.zip`).
 
 ## Artifact
 

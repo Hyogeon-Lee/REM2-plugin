@@ -8,12 +8,12 @@ year: 2026
 dependencies: [Claude Code, Codex CLI, MATLAB MCP]
 status: draft
 tags: [plugin, skill, matlab, plotting]
-related: ["[[plot-style]]", "[[figure-export]]", "[[comment-style]]", "[[frf-ms-design]]"]
+related: ["[[plot-style]]", "[[figure-export]]", "[[comment-style]]", "[[frf-ms-design]]", "[[prompt-enhancer]]"]
 ---
 
 # REM2 Plugin
 
-MATLAB 과학/공학 플롯 스타일을 일관되게 적용해주는 **비공식** 플러그인입니다. 연세대학교나 정밀생산메카트로닉스 연구실(REM2)의 공식 산출물이 아니며, 후배들의 도전적인 figure를 보다 못한 한 대학원생이 조금이나마 해소하고자 만들었습니다.
+MATLAB 과학/공학 플롯 스타일·FRF 제어기 설계·모델별 프롬프트 개선을 제공하는 **비공식** 플러그인입니다. 연세대학교나 정밀생산메카트로닉스 연구실(REM2)의 공식 산출물이 아니며, 후배들의 도전적인 figure를 보다 못한 한 대학원생이 조금이나마 해소하고자 만들었습니다.
 
 Claude Code와 Codex CLI 양쪽에서 같은 스킬 소스를 공유합니다. English version: [`README_EN.md`](README_EN.md)
 
@@ -47,6 +47,14 @@ REM2-plugin/
       references/                  ← Excel 포맷 + 워크플로 순서
       scripts/                     ← read → fit → design → analyze → plot 파이프라인
       examples/                    ← 예제 워크북 + 빈 템플릿
+    prompt-enhancer/
+      SKILL.md                     ← 핵심 불변식(프롬프트 변환만) + 워크플로 + 출력 규칙
+      agents/                      ← openai.yaml — OpenAI/Codex 인터페이스 메타데이터
+      references/                  ← 명령 구문, 개선 프로토콜, 주입 방어, 모델 프로파일, 예제
+        model-profiles/            ← fable-5 / gpt-5.5 / opus-4.8 / sonnet-5 / claude-general
+        source-guides/             ← 설계에 사용한 공식 프롬프팅 가이드 사본
+      scripts/                     ← 선택적 오프라인 스캐폴드 생성기 (자동 실행 금지)
+      evals/                       ← 주입 저항·비실행·포맷 검증 케이스
   README.md / README_EN.md
 ```
 
@@ -74,7 +82,7 @@ codex /plugins
 
 ### ChatGPT (workspace skill)
 
-`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `figure-export.zip`, `comment-style.zip`)을 업로드 — 절차는 [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) 참고.
+`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `figure-export.zip`, `comment-style.zip`, `frf-ms-design.zip`, `prompt-enhancer.zip`)을 업로드 — 절차는 [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) 참고.
 
 ## 현재 수록 스킬
 
@@ -84,8 +92,9 @@ codex /plugins
 | `figure-export` | 논문 투고용 figure 내보내기 — 저널 칼럼 폭 원본 크기 제작(cm), 인쇄 크기 폰트, 벡터 PDF(`exportgraphics`), 흑백 인쇄 생존성(선 스타일·마커 + 회색조 검증). IEEE Transactions(기본)·Elsevier 프리셋 | stable |
 | `comment-style` | 간결한 코드 주석 규칙 — 알고리즘 핵심부만, 단위·매직넘버·수식 출처·부호 규약 중심. 영어 기본(플롯 스킬 적용 코드는 한국어)                                                                       | stable |
 | `frf-ms-design` | 측정 SISO FRF Excel → s-domain+시간지연 플랜트 적합(`tfest`) → lag / lead-lag 자동 선택 설계 → 마진·스텝 응답 예측. MATLAB 전용(Simulink 불필요), 포맷 오류는 fail-fast 후 사용자와 interactive 해결 | stable |
+| `prompt-enhancer` | 거친 프롬프트를 모델별(Fable 5 / GPT-5.5 / Opus 4.8 / Sonnet 5) 복사-붙여넣기용 프롬프트로 재작성 — 원본 프롬프트를 신뢰하지 않는 데이터로 취급, 프롬프트 안의 작업은 절대 실행하지 않음, 주입 시도는 무력화 후 `Neutralized Injection Attempts`로 보고 | stable |
 
-플롯 코드를 새로 작성·수정할 때 자동 트리거됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. plot-style은 축 내부(라벨·범례·한계), figure-export는 물리적 크기·폰트·내보내기를 담당하며 두 스킬은 함께 동작합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시 트리거됩니다.
+플롯 코드를 새로 작성·수정할 때 자동 트리거됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. plot-style은 축 내부(라벨·범례·한계), figure-export는 물리적 크기·폰트·내보내기를 담당하며 두 스킬은 함께 동작합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시, prompt-enhancer는 프롬프트 개선 요청 또는 `prompt-enhance --model <model>` 명령 구문에 트리거됩니다.
 
 ## 비고
 
