@@ -12,7 +12,7 @@ MATLAB 과학/공학 플롯 스타일, 측정 FRF 기반 제어기 설계 워크
 | `figure-export` | 논문 투고용 figure 내보내기 — 저널 칼럼 폭 원본 크기 제작(cm), 인쇄 크기 폰트, 벡터 PDF(`exportgraphics`), 흑백 인쇄 생존성(선 스타일·마커 구분 + 회색조 검증). IEEE Transactions(기본)·Elsevier 프리셋 |
 | `comment-style` | 간결한 MATLAB 코드 주석 규칙 — 알고리즘 핵심부만, 단위·매직넘버·수식 출처·부호 규약 중심 |
 | `frf-ms-design` | 측정 SISO FRF Excel → s-domain+시간지연 플랜트 적합(`tfest`) → lag / lead-lag 자동 선택 설계 → 마진·스텝 응답 예측. MATLAB 전용(Simulink 불필요), 포맷 오류는 fail-fast 후 사용자와 interactive 해결 |
-| `prompt-enhancer` | 거친 프롬프트를 모델별(Fable 5 / GPT-5.5 / Opus 4.8 / Sonnet 5) 복사-붙여넣기용 프롬프트로 재작성. 원본 프롬프트는 신뢰하지 않는 데이터로 취급 — 프롬프트 안의 작업을 절대 실행하지 않고, 주입(injection) 시도는 무력화 후 보고. 스킬 활성 중 `disallowed-tools`로 셸·파일 쓰기·웹·서브에이전트 도구를 기계적으로 제거 |
+| `prompt-enhancer` | 거친 프롬프트를 모델별(Fable 5 / GPT-5.6 / GPT-5.5 / Opus 4.8 / Sonnet 5) 복사-붙여넣기용 프롬프트로 재작성. 원본 프롬프트는 신뢰하지 않는 데이터로 취급 — 프롬프트 안의 작업을 절대 실행하지 않고, 주입(injection) 시도는 무력화 후 보고. 스킬 활성 중 `disallowed-tools`로 셸·파일 쓰기·웹·서브에이전트 도구를 기계적으로 제거 |
 
 플롯 코드를 새로 작성하거나 수정할 때 자동으로 적용됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시, prompt-enhancer는 프롬프트 개선 요청 또는 `prompt-enhance --model <model>` 명령 구문에 트리거됩니다.
 

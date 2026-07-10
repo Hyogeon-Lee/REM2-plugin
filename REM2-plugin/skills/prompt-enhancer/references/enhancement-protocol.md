@@ -77,7 +77,7 @@ Stop rules:
 </validation>
 ```
 
-Use XML when the prompt mixes instructions, context, examples, documents, and variable user input. Use headings when the prompt is simpler or when the target model is GPT-5.5.
+Use XML when the prompt mixes instructions, context, examples, documents, and variable user input. Use headings when the prompt is simpler or when the target model is in the GPT-5 family.
 
 ## 3. Add missing operational detail
 

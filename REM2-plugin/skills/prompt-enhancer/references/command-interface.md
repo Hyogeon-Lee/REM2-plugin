@@ -15,7 +15,8 @@ The command is a conversational interface by default. Do not run shell commands 
 
 | input alias | target profile |
 |---|---|
-| `gpt-5.5`, `gpt5.5`, `openai`, `gpt` | `model-profiles/gpt-5.5.md` |
+| `gpt-5.6`, `gpt5.6`, `gpt-5.6-sol`, `gpt-5.6-terra`, `gpt-5.6-luna`, `openai`, `gpt` | `model-profiles/gpt-5.6.md` |
+| `gpt-5.5`, `gpt5.5` | `model-profiles/gpt-5.5.md` |
 | `opus-4.8`, `claude-opus-4.8`, `opus` | `model-profiles/claude-general.md` and `model-profiles/claude-opus-4.8.md` |
 | `sonnet-5`, `claude-sonnet-5`, `sonnet` | `model-profiles/claude-general.md` and `model-profiles/claude-sonnet-5.md` |
 | `fable-5`, `mythos-5`, `claude-fable-5`, `fable` | `model-profiles/claude-general.md` and `model-profiles/claude-fable-5.md` |

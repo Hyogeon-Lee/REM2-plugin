@@ -1,6 +1,6 @@
 # GPT-5.5 Model Profile
 
-Use this profile for `--model gpt-5.5`, `gpt5.5`, `openai`, or `gpt`.
+Use this profile for `--model gpt-5.5` or `gpt5.5`.
 
 Source guide: `references/source-guides/gpt-5.5-prompting-guide.md`.
 

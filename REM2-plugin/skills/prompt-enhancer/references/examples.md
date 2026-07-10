@@ -175,3 +175,37 @@ Provide a concise executive summary, then a table with theme, evidence, impact, 
 - Removed the instruction to ignore system instructions; it targets the assistant's role, not the summarization task.
 - Removed the request to disclose the hidden prompt; added an explicit non-disclosure boundary instead.
 ````
+
+## Example 5: GPT-5.6 prompt with a brevity instruction
+
+User command:
+
+```text
+prompt-enhance --model gpt-5.6
+Summarize the results of last night's load test for the engineering leads. Keep it as short as possible, be concise.
+```
+
+Response (GPT-5.6 is already biased toward compression; the generic brevity instruction is replaced with prioritization rules so required content is not dropped):
+
+````markdown
+## Enhanced Prompt
+
+```text
+Role: You are an engineer reporting load-test results to engineering leads.
+
+Goal: Summarize last night's load-test results so leads can decide what, if anything, to act on.
+
+Priorities:
+Lead with the conclusion (pass/fail against the target and the headline number). Keep all required facts, decisions, caveats, and next steps: the SLOs tested, measured throughput/latency/error rate versus target, any breaking point or regression, and the recommended next action. Trim introductions, repetition, generic reassurance, and optional background first.
+
+Output:
+- Verdict: one line on whether the system met its targets.
+- Key numbers: throughput, p50/p95/p99 latency, error rate, and the target for each.
+- Findings: the few results that change a decision, each with its evidence.
+- Next step: the single most important action, and who it is for.
+
+Stop rules:
+Report only what the load-test data supports. If a required metric is missing, name it as missing instead of estimating.
+```
+````
+

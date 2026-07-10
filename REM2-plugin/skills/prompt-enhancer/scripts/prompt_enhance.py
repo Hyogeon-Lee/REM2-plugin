@@ -19,10 +19,15 @@ from typing import Iterable
 
 
 MODEL_ALIASES = {
+    "gpt-5.6": "gpt-5.6",
+    "gpt5.6": "gpt-5.6",
+    "gpt-5.6-sol": "gpt-5.6",
+    "gpt-5.6-terra": "gpt-5.6",
+    "gpt-5.6-luna": "gpt-5.6",
+    "openai": "gpt-5.6",
+    "gpt": "gpt-5.6",
     "gpt-5.5": "gpt-5.5",
     "gpt5.5": "gpt-5.5",
-    "openai": "gpt-5.5",
-    "gpt": "gpt-5.5",
     "opus-4.8": "opus-4.8",
     "claude-opus-4.8": "opus-4.8",
     "opus": "opus-4.8",
@@ -155,6 +160,14 @@ def mode_rules(options: Options) -> list[str]:
 
 def model_rules(options: Options) -> list[str]:
     model = options.model
+    if model == "gpt-5.6":
+        return [
+            "Use a minimal outcome-first prompt; include only behavior the model does not perform naturally.",
+            "Do not use generic brevity instructions; instead prioritize: lead with the conclusion, keep required facts, decisions, caveats, and next steps, and trim introductions and repetition.",
+            "Define one compact action policy (report-only vs. in-scope changes vs. confirmation-required) instead of repeating ask-first warnings.",
+            "Use explicit retrieval budgets, validation rules, and stop conditions for grounded or tool-heavy tasks.",
+            "Do not instruct the model to use a reasoning mode or to think harder; prompt for the task itself.",
+        ]
     if model == "gpt-5.5":
         return [
             "Use an outcome-first structure with concise sections.",
@@ -287,7 +300,7 @@ def render(raw_prompt: str, options: Options) -> str:
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Enhance a raw prompt without executing it.")
-    parser.add_argument("--model", default="generic", help="target model alias, e.g. gpt-5.5 or opus-4.8")
+    parser.add_argument("--model", default="generic", help="target model alias, e.g. gpt-5.6 or opus-4.8")
     parser.add_argument("--mode", default="auto", choices=["auto", "general", "coding", "research", "writing", "artifact", "agentic"])
     parser.add_argument("--format", default="copy", choices=["copy", "annotated", "json"], dest="output_format")
     parser.add_argument("--prompt", help="raw prompt text")
