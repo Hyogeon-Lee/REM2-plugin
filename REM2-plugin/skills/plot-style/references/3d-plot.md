@@ -2,7 +2,7 @@
 
 Surface, mesh, `plot3` curves, `scatter3`, fields/volumetric. Inherits all Common rules; overrides/adds below.
 
-> Runnable before/after example: [`../examples/three_d_plot_example.m`](../examples/three_d_plot_example.m)
+> Runnable before/after example: [`../examples/3d_plot_example.m`](../examples/3d_plot_example.m)
 
 ## Series count (override)
 
