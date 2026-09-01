@@ -61,8 +61,10 @@ ylim(ax, [0, 1.6]);                        % 최대 오버슈트(약 1.53) 포�
 set(ax, 'FontSize', fontSize, 'FontName', fontName, 'Box', 'on', ...
         'LineWidth', axLineWidth, 'XGrid', 'on', 'YGrid', 'on', ...
         'GridLineStyle', gridStyle, 'GridAlpha', gridAlpha, ...
-        'GridLineWidth', axLineWidth, ...                          % R2023a+
         'LabelFontSizeMultiplier', 1, 'TitleFontSizeMultiplier', 1);
+if ~isMATLABReleaseOlderThan("R2023a")
+    set(ax, 'GridLineWidth', axLineWidth);     % R2023a+ 전용 속성 — 구버전은 기본값 유지
+end
 
 legend(ax, hPlot, {'\zeta = 0.2', '\zeta = 0.5', '\zeta = 0.8'}, ...
        'Location', 'southeast', 'NumColumns', 1, ...
@@ -79,15 +81,24 @@ end
 drawnow;
 
 %% 내보내기 — 제출용 벡터 PDF + 검토용 600 dpi PNG + 회색조 변환본
-% 'Padding', 0: exportgraphics 기본 여백 제거 (R2025a+). 구버전은 해당 인수 삭제
-% — 약 0.1 cm(1%) 커지므로 LaTeX에서 width=\columnwidth로 흡수
+% 'Padding', 0: exportgraphics 기본 여백 제거 (R2025a+). 구버전은 버전 게이트로 자동 생략
+% — 생략 시 약 0.1 cm(1%) 커지므로 LaTeX에서 width=\columnwidth로 흡수
 ax.Toolbar.Visible = 'off';        % 마우스 호버 시 axes toolbar가 내보내기에 섞이는 것 방지
 figName = 'figure_export_after';
-exportgraphics(figAfter, fullfile(outDir, [figName '.pdf']), 'ContentType', 'vector', 'Padding', 0);
-exportgraphics(figAfter, fullfile(outDir, [figName '_preview.png']), 'Resolution', 600, 'Padding', 0);
+padArgs = {};                      % 버전 게이트 — R2025a 미만에는 'Padding' 인수가 없음
+if ~isMATLABReleaseOlderThan("R2025a")
+    padArgs = {'Padding', 0};
+end
+exportgraphics(figAfter, fullfile(outDir, [figName '.pdf']), 'ContentType', 'vector', padArgs{:});
+exportgraphics(figAfter, fullfile(outDir, [figName '_preview.png']), 'Resolution', 600, padArgs{:});
 
 rgb = imread(fullfile(outDir, [figName '_preview.png']));
-imwrite(rgb2gray(rgb), fullfile(outDir, [figName '_gray.png']));   % 흑백 인쇄 생존성 확인용
+if exist('im2gray', 'file')        % Image Processing Toolbox 불필요 — im2gray 있으면 사용
+    grayImg = im2gray(rgb);
+else                               % 없으면 수동 luma 변환 (ITU-R BT.601)
+    grayImg = uint8(0.2989*double(rgb(:,:,1)) + 0.5870*double(rgb(:,:,2)) + 0.1140*double(rgb(:,:,3)));
+end
+imwrite(grayImg, fullfile(outDir, [figName '_gray.png']));   % 흑백 인쇄 생존성 확인용
 
 % 치수 자가 검증 — 600 dpi PNG 픽셀 수로 실제 내보낸 크기 확인
 info = imfinfo(fullfile(outDir, [figName '_preview.png']));

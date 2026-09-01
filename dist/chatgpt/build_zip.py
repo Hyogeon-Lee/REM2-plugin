@@ -6,8 +6,9 @@ level with FORWARD-SLASH paths. Windows zip tools emit backslash separators,
 which some extractors keep literally and then fail to find SKILL.md — so we
 write arcnames explicitly here.
 
-Rendered example PNGs/PDFs (examples/image_fig/) are excluded: they bloat the
-package and ChatGPT cannot run MATLAB to use them anyway.
+Rendered example PNGs/PDFs (examples/image_fig/) and generated validation
+artifacts (validation_outputs/) are excluded: they bloat the package and
+ChatGPT cannot run MATLAB to use them anyway.
 
 Usage:  python dist/chatgpt/build_zip.py
 """
@@ -17,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 SKILLS_DIR = ROOT / "REM2-plugin" / "skills"
 OUT_DIR = ROOT / "dist" / "chatgpt"
-EXCLUDE_DIRS = {"image_fig"}
+EXCLUDE_DIRS = {"image_fig", "validation_outputs"}
 
 def build(skill: str) -> None:
     src = SKILLS_DIR / skill

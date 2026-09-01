@@ -17,7 +17,7 @@ figWidth = 8.89;     % single column: 3.5 in = 8.89 cm — 기본값
 ## Fonts
 
 - `Times New Roman` — matches the IEEE body font. Helvetica/Arial acceptable for figures but do not mix within a paper.
-- Target **8 pt** at final size; IEEE's readable floor is ~6 pt — treat anything that needs <7 pt as a layout problem.
+- Target **8 pt** at final size; **hard fail below 7 pt** after export (the Common rule — no lower floor exists). Anything that needs less than 7 pt is a layout problem: split panels or drop series.
 
 ## Files
 

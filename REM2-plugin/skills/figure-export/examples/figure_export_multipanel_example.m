@@ -3,7 +3,9 @@
 %          + 외부 범례 + (a)/(b) 패널 라벨 (IEEE double column)
 % 작성자 : REM2 / 2026
 % 사용법 : MATLAB에서 직접 실행 (외부 데이터 불필요). image_fig/에 PDF·PNG 저장
-% 의존성 : 없음 (기본 MATLAB, R2019b+ tiledlayout)
+% 의존성 : 없음 (기본 MATLAB R2020b+ — tiledlayout은 R2019b+지만 버전 게이트에 쓰는
+%          isMATLABReleaseOlderThan이 R2020b+. exportgraphics 'Padding'은 R2025a+
+%          전용, 구버전에서는 버전 게이트로 자동 생략)
 
 %% 합성 데이터 — 2차 시스템 계단응답 (감쇠비 6종) + 정착시간 비교
 clear; clc;
@@ -62,7 +64,8 @@ for k = 1:numel(zetas)
         hPlot(k) = plot(axA, t, y(k,:), 'LineStyle', lineStyles{k}, ...
                         'Color', colorOrder(ci,:), 'LineWidth', lineWidth);
     else
-        idx = round(linspace(1, numel(t), numMarkers));   % 마커 솎기
+        idx = unique(round(linspace(1, numel(t), min(numMarkers, numel(t)))));     % 마커 솎기 — 짧은 신호에서도 유효
+        idx = unique(min(idx + round((k-5)*numel(t)/(2*numMarkers)), numel(t)));   % 곡선별 오프셋 — 인접 곡선 마커 겹침 방지
         hPlot(k) = plot(axA, t, y(k,:), 'LineStyle', lineStyles{mod(k-1, 4) + 1}, ...
                         'Color', colorOrder(ci,:), 'LineWidth', lineWidth, ...
                         'Marker', markerSet{mod(k-5, numel(markerSet)) + 1}, ...
@@ -89,29 +92,41 @@ for ax = [axA, axB]
     set(ax, 'FontSize', fontSize, 'FontName', fontName, 'Box', 'on', ...
             'LineWidth', axLineWidth, 'XGrid', 'on', 'YGrid', 'on', ...
             'GridLineStyle', gridStyle, 'GridAlpha', gridAlpha, ...
-            'GridLineWidth', axLineWidth, ...                      % R2023a+
             'LabelFontSizeMultiplier', 1, 'TitleFontSizeMultiplier', 1);
+    if ~isMATLABReleaseOlderThan("R2023a")
+        set(ax, 'GridLineWidth', axLineWidth);     % R2023a+ 전용 속성 — 구버전은 기본값 유지
+    end
 end
 
 lgd = legend(axA, hPlot, labels, 'NumColumns', 3, ...
              'FontSize', fontSize, 'FontName', fontName);
 lgd.Layout.Tile = 'north';                 % tiledlayout 외부 범례 — 패널 위 전체 폭
 
-% 패널 라벨 (a)/(b) — 본문 fontSize와 동일, 각 패널 좌상단 안쪽
-text(axA, 0.03, 0.95, '(a)', 'Units', 'normalized', ...
+% 패널 라벨 (a)/(b) — 본문 fontSize와 동일, 각 패널 좌하단 안쪽 (데이터 없는 곳)
+% 좌상단(0.95)은 zeta=0.1 오버슈트 곡선과 겹치므로 금지
+text(axA, 0.03, 0.08, '(a)', 'Units', 'normalized', ...
      'FontSize', fontSize, 'FontName', fontName);
-text(axB, 0.03, 0.95, '(b)', 'Units', 'normalized', ...
+text(axB, 0.03, 0.08, '(b)', 'Units', 'normalized', ...
      'FontSize', fontSize, 'FontName', fontName);
 
 %% 내보내기 — 제출용 벡터 PDF + 검토용 600 dpi PNG + 회색조 변환본
 axA.Toolbar.Visible = 'off';
 axB.Toolbar.Visible = 'off';
 figName = 'figure_export_multipanel';
-exportgraphics(fig, fullfile(outDir, [figName '.pdf']), 'ContentType', 'vector', 'Padding', 0);
-exportgraphics(fig, fullfile(outDir, [figName '_preview.png']), 'Resolution', 600, 'Padding', 0);
+padArgs = {};                      % 버전 게이트 — R2025a 미만에는 'Padding' 인수가 없음
+if ~isMATLABReleaseOlderThan("R2025a")
+    padArgs = {'Padding', 0};
+end
+exportgraphics(fig, fullfile(outDir, [figName '.pdf']), 'ContentType', 'vector', padArgs{:});
+exportgraphics(fig, fullfile(outDir, [figName '_preview.png']), 'Resolution', 600, padArgs{:});
 
 rgb = imread(fullfile(outDir, [figName '_preview.png']));
-imwrite(rgb2gray(rgb), fullfile(outDir, [figName '_gray.png']));   % 흑백 인쇄 생존성 확인용
+if exist('im2gray', 'file')        % Image Processing Toolbox 불필요 — im2gray 있으면 사용
+    grayImg = im2gray(rgb);
+else                               % 없으면 수동 luma 변환 (ITU-R BT.601)
+    grayImg = uint8(0.2989*double(rgb(:,:,1)) + 0.5870*double(rgb(:,:,2)) + 0.1140*double(rgb(:,:,3)));
+end
+imwrite(grayImg, fullfile(outDir, [figName '_gray.png']));   % 흑백 인쇄 생존성 확인용
 
 % 치수 자가 검증 — 600 dpi PNG 픽셀 수로 실제 내보낸 크기 확인
 info = imfinfo(fullfile(outDir, [figName '_preview.png']));

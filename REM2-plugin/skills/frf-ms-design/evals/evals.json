@@ -1,0 +1,47 @@
+{
+  "skill_name": "frf-ms-design",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "missing-header-fail-fast",
+      "prompt": "이 FRF 엑셀로 제어기 설계해줘. 파일 헤더는 Freq / Mag / Phase 로 되어 있어.",
+      "expected_output": "Agent reports the read_frf_excel:MissingHeader error verbatim (listing found vs expected headers), points the user to examples/format_FRF.xlsx, and asks for a corrected workbook; it does NOT patch the reader, rename columns in code, or fall back to positional columns 1/2/3",
+      "files": ["examples/format_FRF.xlsx"]
+    },
+    {
+      "id": 1,
+      "eval_name": "frf2-no-silent-1000hz-design",
+      "prompt": "examples/example_FRF2.xlsx 로 엔드투엔드 설계 돌려줘. 디지털 구현으로.",
+      "expected_output": "Agent asks for (or confirms) the target crossover, resolves the controller rate to 10000 Hz from metadata Ts=1e-4 instead of silently designing at a 1000 Hz default; if the user insists on a different rate, the agent surfaces frf_ms_design:SampleRateMismatch and only overrides with ConfirmSamplingFrequency=true after explicit user confirmation; WarningMessages and fit RMS errors reported after the run",
+      "files": ["examples/example_FRF2.xlsx"]
+    },
+    {
+      "id": 2,
+      "eval_name": "delayed-double-integrator-regression",
+      "prompt": "플랜트가 exp(-0.02s)/s^2 야. 10 Hz 크로스오버로 리드래그 설계하고 위상 여유 확인해줘.",
+      "expected_output": "Design uses the unwrapped phase -252 deg at 10 Hz (never +108 deg), so RequiredLeadDeg > 0 with the leadlag structure; if no stable candidate exists the agent reports DesignFailed/frf_ms_design:UnstableDesign and recommends lowering the crossover — it NEVER reports PM/GM as passing while the loop is unstable",
+      "files": []
+    },
+    {
+      "id": 3,
+      "eval_name": "lead-alpha-override-honored",
+      "prompt": "example_FRF1.xlsx 설계에서 리드 알파는 8로 고정해줘. 목표 크로스오버는 내가 준 값 그대로.",
+      "expected_output": "Agent forwards LeadAlpha=8 through run_frf_ms_workflow into design_lead_lag (designInfo.Alpha == 8, lab convention alpha >= 1) instead of the auto-computed alpha; an Ogata-style value below 1 (e.g. 0.125) would be rejected with the alpha_lab = 1/alpha_ogata conversion hint rather than silently accepted",
+      "files": ["examples/example_FRF1.xlsx"]
+    },
+    {
+      "id": 4,
+      "eval_name": "stiffness-slope-lag-only",
+      "prompt": "이 FRF는 크로스오버 아래 대역에서 크기가 거의 평평해 (기울기 약 -3 dB/dec). 어떤 제어기 구조로 설계해야 해?",
+      "expected_output": "Agent applies the lab rule: slope > -10 dB/dec is stiffness-dominant, so a lag-only integral-lag controller with its zero AT the target crossover (tau = 1/w_target, not the /10 rule); no lead stage is added, and a failing gain margin is fixed by moving/lowering the crossover, never by adding lead",
+      "files": []
+    },
+    {
+      "id": 5,
+      "eval_name": "unreliable-fit-reported",
+      "prompt": "FRF 파일로 설계 다 됐으면 마진 결과만 깔끔하게 요약해줘.",
+      "expected_output": "Summary always includes result.WarningMessages and the fit RMS errors (FitRmsMagnitudeErrorDb, FitRmsPhaseErrorDeg, CrossoverBandRmsMagnitudeErrorDb); when the crossover-band RMS magnitude error exceeds 3 dB the design is explicitly presented as unreliable (margins not trustworthy), not as a clean pass",
+      "files": []
+    }
+  ]
+}

@@ -31,11 +31,10 @@ candidateInfo = struct("DenominatorOrder", {}, "NumeratorOrder", {}, "Stable", {
 denominatorOrders = 1:options.MaxDenominatorOrder;
 
 for denominatorOrder = denominatorOrders
-    if options.SearchAllOrders
-        numeratorOrders = 0:(denominatorOrder - 1);
-    else
-        numeratorOrders = max(0, denominatorOrder - 1);
-    end
+    % 영점 개수 0:(n-1) 전수 탐색: n-1 만 시도하면 영점 없는 질량 플랜트(예: 1/(m*s^2+c*s+k))를 놓침
+    % 기존 차수 페널티(2*denominatorOrder)가 동률에서 단순 모델을 우선시킴
+    % (SearchAllOrders 옵션은 하위 호환용으로 유지; 기본 탐색이 이미 전체 영점 개수를 포함)
+    numeratorOrders = 0:(denominatorOrder - 1);
 
     for numeratorOrder = numeratorOrders
         try

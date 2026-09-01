@@ -5,7 +5,7 @@
       "id": 0,
       "eval_name": "ieee-default-when-unspecified",
       "prompt": "make this step-response figure ready for journal submission",
-      "expected_output": "IEEE preset chosen by default (figWidth 8.89 cm single column, 8 pt Times New Roman); full style block + TightInset fill loop + export block (vector PDF + 600 dpi preview PNG) + grayscale conversion + imfinfo size self-check all emitted"
+      "expected_output": "IEEE preset chosen by default (figWidth 8.89 cm single column, 8 pt Times New Roman); full style block + canvas-fill step (EITHER the TightInset fill loop OR tiledlayout('Padding','tight'), per the validity rule) + export block (vector PDF + 600 dpi preview PNG) + grayscale conversion + imfinfo size self-check all emitted"
     },
     {
       "id": 1,

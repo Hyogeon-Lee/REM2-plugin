@@ -12,7 +12,7 @@
       "id": 1,
       "eval_name": "comment-bare-algorithm",
       "prompt": "add comments to computeThd.m so a junior student can follow the signal processing steps",
-      "expected_output": "Few concise English comments at algorithm-critical points only (windowing, single-sided spectrum scaling, harmonic peak search, THD definition); units in parentheses; code unchanged; no H1/help block added",
+      "expected_output": "Concise one-line English comments at each signal-processing stage (windowing, single-sided spectrum scaling, harmonic peak search, THD definition) — the explicit pedagogical request permits stage comments, one line each, no tutorials; units in parentheses; code unchanged; no H1/help block added",
       "files": ["inputs/computeThd.m"]
     },
     {
@@ -26,21 +26,21 @@
       "id": 3,
       "eval_name": "declutter-preserves-help-and-pragmas",
       "prompt": "motorParamSweep.m comments are a mess — clean them up",
-      "expected_output": "H1 help block preserved verbatim; %#codegen and %#ok<NASGU> pragmas untouched and in place; commented-out dead code NOT silently deleted — flagged to the user; narration comments removed; zero logic diff",
+      "expected_output": "H1 help block preserved verbatim; %#codegen and %#ok<NASGU> pragmas untouched and in place; commented-out dead code kept in place and flagged to the user; narration comments removed; zero logic diff",
       "files": ["inputs/motorParamSweep.m"]
     },
     {
       "id": 4,
       "eval_name": "other-language-python",
       "prompt": "add comments to lowpass_filter.py explaining the filtering approach",
-      "expected_output": "Few concise English # comments at critical points only (first-order low-pass transfer function, real-FFT round trip); code unchanged; same selection criteria as MATLAB rules",
+      "expected_output": "Few concise English # comments at critical points only (first-order low-pass transfer function, real-FFT round trip); language inferred from the .py extension without asking; no module/function docstring added; code unchanged; same selection criteria as MATLAB rules",
       "files": ["inputs/lowpass_filter.py"]
     },
     {
       "id": 5,
       "eval_name": "korean-prompt-english-comments",
       "prompt": "computeRms.m 주석 정리해줘",
-      "expected_output": "Comments reduced to at most one meaningful line and written in ENGLISH (Korean prompt alone is not an explicit Korean-comment request); narration/restatement deleted; code unchanged",
+      "expected_output": "Contiguous comment block immediately after the function line treated as help text and preserved even though it is not a well-formed H1; every other narration/restatement comment deleted; any comment the skill writes is in ENGLISH (Korean prompt alone is not an explicit Korean-comment request; no persistent user rule applies here); code unchanged",
       "files": ["inputs/computeRms.m"]
     }
   ]

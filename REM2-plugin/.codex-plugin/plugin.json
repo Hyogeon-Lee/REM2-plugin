@@ -1,6 +1,6 @@
 {
   "name": "rem2-plugin",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB (axes, legends, labels, time-series, X-Y, 3-D, frequency-response), journal-submission figure export (IEEE/Elsevier presets), concise code-comment style rules, and a measured-FRF control design workflow (tfest plant fit with time delay, lag / lead-lag loop shaping, margin and step prediction — MATLAB only).",
   "author": {
     "name": "Hyogeon Lee",
