@@ -1,3 +1,0 @@
-interface:
-  display_name: "Prompt Enhancer"
-  short_description: "Turns raw prompts into model-specific, injection-resistant prompts."

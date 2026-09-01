@@ -1,6 +1,6 @@
 ---
 name: plot-style
-version: 0.6.0
+version: 0.7.0
 description: apply consistent scientific/engineering style to plotting code (figures, axes, legends, labels, limits, aspect ratios, subplots). use only when writing or modifying code that generates plots — matlab by default, or the closest equivalent when the user names another language (python matplotlib, pandas, seaborn, plotly). covers common rules plus case modules (time-series, xy-plot, 3d-plot, frequency-response) loaded on demand. use when styling user-provided plotting code, generating new plotting scripts, or formatting frf/bode/nyquist/step/impulse/time-series/xy/scatter/surface plots for lab reports — including korean requests like 플롯/그래프 스타일 적용, 그림 정리, 플롯 코드 스타일 맞춰줘, figure 포맷 정리. not for non-code image generation or general visualization requests.
 ---
 
@@ -40,6 +40,7 @@ Single source of truth for every style value. Reference these variables througho
 
 ```matlab
 % 플롯 스타일 기본 설정 (Common)
+optionSave = true;                 % true일 때만 figure 저장 (PNG + FIG) — 저장 원치 않으면 false
 fontSize   = 24;                   % 기본 폰트 크기 (revise에서 12~32 범위로 조절 가능)
 fontName   = 'Times New Roman';
 lineWidth  = 3.0;
@@ -58,6 +59,21 @@ colorOrder = [
     0,    1,    1;
     0,    1,    0
 ];
+```
+
+## Figure window
+
+- **Size** — set an explicit pixel `Position`, and the figure must **never exceed the monitor size**: clamp width/height against `get(0, 'ScreenSize')`. Pick the target size from the case/aspect (e.g. 960×540 for `pbaspect([2 1 1])`); the clamp below is what is mandatory.
+- **Toolbar always on** — never set `ToolBar` or `MenuBar` to `'none'`, in any code path including save/export code (`exportgraphics` never captures the toolbar anyway, so disabling it before a PNG save gains nothing). If existing user code disables them, restore `'figure'`.
+
+```matlab
+% Figure 생성: 모니터 크기 초과 금지 + 툴바 항상 유지
+screenSize = get(0, 'ScreenSize');                 % [left bottom width height] (px)
+figWidth   = min(960, screenSize(3) - 100);        % 목표 폭, 화면 폭 초과 금지
+figHeight  = min(540, screenSize(4) - 150);        % 목표 높이, 작업표시줄·창 테두리 여유 확보
+fig = figure('Color', 'w', 'Units', 'pixels', ...
+             'Position', [100 100 figWidth figHeight], ...
+             'ToolBar', 'figure', 'MenuBar', 'figure');
 ```
 
 ## Required on every axes
@@ -128,19 +144,23 @@ legend(ax, hPlot(1:numLegendEntries), legendLabelsDisplayed(1:numLegendEntries),
 Never report a plot done from code alone — verify the rendered image.
 
 1. **Draft.** Build the figure with all Common rules + the case module.
-2. **Save** to an `image_fig/` subfolder (create if missing): a review PNG + an editable FIG.
+2. **Save** to an `image_fig/` subfolder (create if missing): a review PNG + an editable FIG. Saving is **gated by `optionSave`** — the flag lives at the top of the style block (default `true`; set `false` only when the user asks not to save files). The save code must never touch `ToolBar`/`MenuBar`.
 
 ```matlab
-% 결과 figure 저장 (검토용 PNG + 편집용 FIG)
-if ~exist('image_fig', 'dir'); mkdir('image_fig'); end
-figName = 'plot_name';                         % 의미 있는 이름으로
-exportgraphics(fig, fullfile('image_fig', [figName '.png']), 'Resolution', 300);
-savefig(fig, fullfile('image_fig', [figName '.fig']));
+% 결과 figure 저장 (optionSave가 true일 때만: 검토용 PNG + 편집용 FIG)
+if optionSave
+    if ~exist('image_fig', 'dir'); mkdir('image_fig'); end
+    figName = 'plot_name';                         % 의미 있는 이름으로
+    exportgraphics(fig, fullfile('image_fig', [figName '.png']), 'Resolution', 300);
+    savefig(fig, fullfile('image_fig', [figName '.fig']));
+end
 ```
 
 `exportgraphics` requires R2020a+ — on older MATLAB use `print(fig, fullfile('image_fig', [figName '.png']), '-dpng', '-r300')` instead.
 
-3. **Review.** Read the saved PNG file back with the **Read tool** (the file from step 2 — the MATLAB MCP only runs the code that saves it; it returns text, not images) and verify it against **every rule in "Required on every axes" and "Series and legend"**, plus rendered-image faults: clipped data, legend overlap, distorted aspect, or fewer than 3 grid lines on an axis.
+The review loop still needs a rendered PNG when the delivered script has `optionSave = false`: during your own review run, export a temporary PNG (e.g. to the session temp folder) to read back, and leave no file in the user's working folder — the delivered script keeps the user's flag value.
+
+3. **Review.** Read the saved PNG file back with the **Read tool** (the file from step 2 — the MATLAB MCP only runs the code that saves it; it returns text, not images) and verify it against **every rule in "Figure window", "Required on every axes", and "Series and legend"**, plus rendered-image faults: clipped data, legend overlap, distorted aspect, or fewer than 3 grid lines on an axis.
 4. **Fix vs ask.**
    - **Fix unambiguous style violations directly** — missing units, shorthand color, wrong font/grid/linewidth, absent limits, distorted aspect, clipped data, legend overlap — and note what you changed.
    - **Font size is the first lever for crowded text.** When tick labels, axis labels, or legend text crowd, overlap, or clip, adjust the base `fontSize` within **12–32** (default 24) before reaching for legend relocation or column changes. If the text still does not fit at `fontSize` 12, treat it as a layout problem (panel split, fewer series) rather than shrinking further. Note the new `fontSize` whenever you change it.
@@ -150,7 +170,7 @@ savefig(fig, fullfile('image_fig', [figName '.fig']));
 **Fallback when the image cannot be read back (or non-MATLAB language).** If you cannot render the figure or read the saved PNG file back — no MATLAB MCP to run the save, the file is inaccessible, or the target is Python/another package run elsewhere — skip the image-reading step but keep the rest:
 
 - Still emit the save block (PNG + FIG, or the language's equivalent) so the user can render and review.
-- Self-check the **code** against every rule in "Required on every axes" and "Series and legend".
+- Self-check the **code** against every rule in "Figure window", "Required on every axes", and "Series and legend".
 - State explicitly that the image was **not** visually verified, and list the rendered-image faults the user should check by eye (clipped data, legend overlap, distorted aspect, <3 grid lines).
 - Never claim a plot is verified from code alone.
 
