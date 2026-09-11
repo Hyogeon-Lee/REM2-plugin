@@ -80,7 +80,7 @@ codex /plugins
 
 | 스킬              | 용도                                                                                                                                              | 상태     |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| `plot-style`    | MATLAB 과학/공학 플롯 일관 스타일 — 공통 규칙 + time-series / X–Y / 3-D / frequency-response 모듈, before/after 예제 포함                                            | stable |
+| `plot-style`    | MATLAB 과학/공학 플롯 일관 스타일 — 공통 규칙(figure 1개 + 플롯별 탭) + time-series / X–Y / 3-D / frequency-response 모듈, before/after 예제 포함                                            | stable |
 | `figure-export` | 논문 투고용 figure 내보내기 — 저널 칼럼 폭 원본 크기 제작(cm), 인쇄 크기 폰트, 벡터 PDF(`exportgraphics`), 흑백 인쇄 생존성(선 스타일·마커 + 회색조 검증). IEEE Transactions(기본)·Elsevier 프리셋 | stable |
 | `comment-style` | 간결한 코드 주석 규칙 — 알고리즘 핵심부만, 단위·매직넘버·수식 출처·부호 규약 중심. 영어 기본(플롯 스킬 적용 코드는 한국어)                                                                       | stable |
 | `frf-ms-design` | 측정 SISO FRF Excel → s-domain+시간지연 플랜트 적합(`tfest`) → lag / lead-lag 자동 선택 설계 → 마진·스텝 응답 예측. MATLAB 전용(Simulink 불필요), 포맷 오류는 fail-fast 후 사용자와 interactive 해결 | stable |

@@ -22,23 +22,24 @@ loglog(ax, f, mag2, 'LineStyle', '-', 'Color', colorOrder(2, :), 'LineWidth', li
 Magnitude (top) + phase (bottom), x axis linked:
 
 ```matlab
-fig = figure;
-axMag   = subplot(2, 1, 1, 'Parent', fig);
-axPhase = subplot(2, 1, 2, 'Parent', fig);
+tab     = uitab(tabGroup, 'Title', 'Bode');        % mag+phase 결합 패널 → 한 탭 (Common: Figure organization)
+axMag   = subplot(2, 1, 1, 'Parent', tab);
+axPhase = subplot(2, 1, 2, 'Parent', tab);
 
 loglog(axMag, f, mag, 'LineStyle', '-', 'Color', colorOrder(1, :), 'LineWidth', lineWidth);     % 물리 단위 magnitude
 semilogx(axPhase, f, phase, 'LineStyle', '-', 'Color', colorOrder(1, :), 'LineWidth', lineWidth);
 
 ylabel(axMag,   'Magnitude (mm/A)');   % 실제 물리 단위 명시 (출력/입력)
 ylabel(axPhase, 'Phase (deg)');
-xlabel(axPhase, 'Frequency (Hz)');     % 아래 패널만 x라벨
+xlabel(axMag,   'Frequency (Hz)');     % 패널별 PNG 분리 저장 → 두 패널 모두 x라벨
+xlabel(axPhase, 'Frequency (Hz)');
 linkaxes([axMag, axPhase], 'x');
 ```
 
 - **Magnitude ylabel = the actual physical unit of output/input**, e.g. `Magnitude (mm/A)`, `Magnitude (m/N)`, `Magnitude (V/V)` — make the unit explicit, never a bare `Magnitude`.
 - Use **dB** (`20*log10(abs(H))`) only when the user asks or when comparing across very different scales; then label `Magnitude (dB)` and state the reference quantity in a comment. Default to the physical unit on a `loglog`/linear-magnitude axis.
 - Phase in **degrees** (`unwrap` before converting to avoid ±360 jumps).
-- Apply the Common per-axes styling, xlim/ylim to **both** axes.
+- Apply the Common per-axes styling, xlim/ylim, and the `Frequency` xlabel to **both** axes — each panel is exported as its own PNG.
 
 ## Nyquist
 

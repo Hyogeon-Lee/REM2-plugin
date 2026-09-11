@@ -1,7 +1,7 @@
 ---
 name: plot-style
-version: 0.7.0
-description: apply consistent scientific/engineering style to plotting code (figures, axes, legends, labels, limits, aspect ratios, subplots). use only when writing or modifying code that generates plots — matlab by default, or the closest equivalent when the user names another language (python matplotlib, pandas, seaborn, plotly). covers common rules plus case modules (time-series, xy-plot, 3d-plot, frequency-response) loaded on demand. use when styling user-provided plotting code, generating new plotting scripts, or formatting frf/bode/nyquist/step/impulse/time-series/xy/scatter/surface plots for lab reports — including korean requests like 플롯/그래프 스타일 적용, 그림 정리, 플롯 코드 스타일 맞춰줘, figure 포맷 정리. not for non-code image generation or general visualization requests.
+version: 0.8.0
+description: apply consistent scientific/engineering style to plotting code (figures, axes, legends, labels, limits, aspect ratios, subplots, single-figure tab layout). use only when writing or modifying code that generates plots — matlab by default, or the closest equivalent when the user names another language (python matplotlib, pandas, seaborn, plotly). covers common rules plus case modules (time-series, xy-plot, 3d-plot, frequency-response) loaded on demand. use when styling user-provided plotting code, generating new plotting scripts, or formatting frf/bode/nyquist/step/impulse/time-series/xy/scatter/surface plots for lab reports — including korean requests like 플롯/그래프 스타일 적용, 그림 정리, 플롯 코드 스타일 맞춰줘, figure 포맷 정리. not for non-code image generation or general visualization requests.
 ---
 
 # Plot Style
@@ -63,17 +63,19 @@ colorOrder = [
 
 ## Figure window
 
-- **Size** — set an explicit pixel `Position`, and the figure must **never exceed the monitor size**: clamp width/height against `get(0, 'ScreenSize')`. Pick the target size from the case/aspect (e.g. 960×540 for `pbaspect([2 1 1])`); the clamp below is what is mandatory.
+- **One figure per script** — every plot lives in a `uitab` of the figure's `uitabgroup` (see "Figure organization"). Never open a second `figure` unless the user asks for separate windows.
+- **Size** — set an explicit pixel `Position`, and the figure must **never exceed the monitor size**: clamp width/height against `get(0, 'ScreenSize')`. Pick the target size from the case/aspect (e.g. 960×540 for `pbaspect([2 1 1])`); when tabs hold different aspects, size for the largest panel set — `pbaspect` keeps each tab's axes shape. The clamp below is what is mandatory.
 - **Toolbar always on** — never set `ToolBar` or `MenuBar` to `'none'`, in any code path including save/export code (`exportgraphics` never captures the toolbar anyway, so disabling it before a PNG save gains nothing). If existing user code disables them, restore `'figure'`.
 
 ```matlab
-% Figure 생성: 모니터 크기 초과 금지 + 툴바 항상 유지
+% Figure 생성: 스크립트당 1개 + 탭 그룹(플롯마다 탭 1개), 모니터 크기 초과 금지, 툴바 항상 유지
 screenSize = get(0, 'ScreenSize');                 % [left bottom width height] (px)
 figWidth   = min(960, screenSize(3) - 100);        % 목표 폭, 화면 폭 초과 금지
 figHeight  = min(540, screenSize(4) - 150);        % 목표 높이, 작업표시줄·창 테두리 여유 확보
 fig = figure('Color', 'w', 'Units', 'pixels', ...
              'Position', [100 100 figWidth figHeight], ...
              'ToolBar', 'figure', 'MenuBar', 'figure');
+tabGroup = uitabgroup(fig);                        % 모든 플롯은 이 탭 그룹 아래 (Figure organization 참조)
 ```
 
 ## Required on every axes
@@ -88,7 +90,7 @@ set(ax, 'FontSize', fontSize, 'FontName', fontName, 'Box', 'on', 'LineWidth', ax
 
 `GridLineWidth` requires R2023a+. On older MATLAB drop that pair — grid lines then follow the axes `LineWidth` automatically.
 
-- **Labels** — `xlabel` and `ylabel` always present (`zlabel` too for 3-D). Units in **parentheses**, never brackets: `Time (s)`, not `Time [s]`.
+- **Labels** — `xlabel` and `ylabel` always present on **every** axes, including each panel of a stacked or multi-panel layout (panels are exported as separate PNGs, so no panel may rely on a neighbor's label); `zlabel` too for 3-D. Units in **parentheses**, never brackets: `Time (s)`, not `Time [s]`.
 - **Limits** — set `xlim`/`ylim` (`zlim` for 3-D) explicitly; never leave them to auto when data could clip. With no user limits, pad ~5% beyond the data range.
 - **Ticks** — target **3–5 grid lines per axis**. Keep MATLAB's automatic ticks; **never** force a count with `xticks(ax, linspace(...))` — it drops `0`, peaks, and crossings onto arbitrary positions. Adjust only with round spacing that includes the characteristic values, e.g. `xticks(ax, 0:0.25:1)`. On a log axis, keep the decade ticks.
 - **Aspect ratio** — always set it; default `pbaspect([2 1 1])` unless a case module or the data dictates otherwise.
@@ -136,31 +138,51 @@ legend(ax, hPlot(1:numLegendEntries), legendLabelsDisplayed(1:numLegendEntries),
 
 ## Figure organization
 
-- Consolidate related plots into one multi-panel figure rather than many figures, unless the user wants separates.
-- Use `figure` + `subplot`. Use `tiledlayout` only when the user asks, when existing code already uses it, or when `subplot` cannot express the layout.
+- **One figure, one tab per plot.** A script creates exactly one `figure` (the "Figure window" snippet). Each plot gets its own `uitab` in `tabGroup` — also when the script has a single plot (the tab strip is harmless and keeps one code path). Never open a second `figure` unless the user explicitly asks for separate windows.
+- **Tab title** — a short English name of the content (`'Step Response'`, `'Bode'`, `'Trajectory'`); it is figure-rendered text, so the Language rule applies.
+- **Parent every axes explicitly** — `axes('Parent', tab)`, `subplot(m, n, p, 'Parent', tab)`, `tiledlayout(tab, m, n)`. A bare `axes`/`subplot` lands on the figure behind the tab group and is hidden. Case-module snippets assume `tabGroup` from the "Figure window" snippet.
+- **Subplot only for coupled panels** that must be read together — Bode magnitude + phase, stacked time series sharing x, views of the same field. Independent plots go in separate tabs, never in separate subplots or figures. Use `tiledlayout` only when the user asks, when existing code already uses it, or when `subplot` cannot express the layout.
+- **figure-export exception** — when figure-export governs (journal submission), each exported figure is its own untabbed figure at column width; that skill's sizing and export block win (`exportgraphics(fig, ...)` errors on a tabbed figure).
+
+```matlab
+% 탭 구성: 플롯 1개 = 탭 1개, 결합 패널만 탭 안에서 subplot
+tabStep = uitab(tabGroup, 'Title', 'Step Response');
+axStep  = axes('Parent', tabStep);
+tabBode = uitab(tabGroup, 'Title', 'Bode');
+axMag   = subplot(2, 1, 1, 'Parent', tabBode);     % 결합 패널(mag+phase) → 같은 탭에 subplot
+axPhase = subplot(2, 1, 2, 'Parent', tabBode);
+```
 
 ## Render → review → revise (run for every figure)
 
 Never report a plot done from code alone — verify the rendered image.
 
 1. **Draft.** Build the figure with all Common rules + the case module.
-2. **Save** to an `image_fig/` subfolder (create if missing): a review PNG + an editable FIG. Saving is **gated by `optionSave`** — the flag lives at the top of the style block (default `true`; set `false` only when the user asks not to save files). The save code must never touch `ToolBar`/`MenuBar`.
+2. **Save** to an `image_fig/` subfolder (create if missing): one review PNG **per axes** (each subplot panel is its own file, named `<figName>_<tab#>_<TabTitle>_<panel#>.png`) + one editable FIG for the whole figure. Saving is **gated by `optionSave`** — the flag lives at the top of the style block (default `true`; set `false` only when the user asks not to save files). The save code must never touch `ToolBar`/`MenuBar`.
 
 ```matlab
-% 결과 figure 저장 (optionSave가 true일 때만: 검토용 PNG + 편집용 FIG)
+% 결과 저장 (optionSave가 true일 때만): 축(subplot 패널)마다 검토용 PNG + figure 전체 편집용 FIG
 if optionSave
     if ~exist('image_fig', 'dir'); mkdir('image_fig'); end
     figName = 'plot_name';                         % 의미 있는 이름으로
-    exportgraphics(fig, fullfile('image_fig', [figName '.png']), 'Resolution', 300);
-    savefig(fig, fullfile('image_fig', [figName '.fig']));
+    tabs = findobj(fig, 'Type', 'uitab');          % 생성 순서 유지
+    for k = 1:numel(tabs)
+        tabName = matlab.lang.makeValidName(tabs(k).Title);   % 탭 제목 → 파일명 안전 문자열
+        axList  = flipud(findobj(tabs(k), 'Type', 'axes'));   % Children는 최신 우선 → 생성 순서로 (legend/colorbar는 axes 아님)
+        for j = 1:numel(axList)
+            pngName = sprintf('%s_%d_%s_%d.png', figName, k, tabName, j);   % 탭 번호·축 번호 항상 포함 → 제목 중복에도 파일명 고유
+            exportgraphics(axList(j), fullfile('image_fig', pngName), 'Resolution', 300);
+        end
+    end
+    savefig(fig, fullfile('image_fig', [figName '.fig']));   % FIG 하나에 모든 탭·축 보존
 end
 ```
 
-`exportgraphics` requires R2020a+ — on older MATLAB use `print(fig, fullfile('image_fig', [figName '.png']), '-dpng', '-r300')` instead.
+Export **per axes, never per figure**: `exportgraphics(ax, ...)` crops to that panel and carries its labels, legend, and colorbar along, so every subplot becomes its own file. On a tabbed figure `exportgraphics(fig, ...)` errors with "Figure has more than one container" and `print(fig, ...)` errors because UI components are not supported. Export a whole tab (`exportgraphics(tabs(k), ...)`) only when the user asks for the multi-panel image as one file. `exportgraphics` needs R2020a+ and exports axes on hidden tabs without selecting them. On older MATLAB, capture the selected tab as a screenshot instead (`tabGroup.SelectedTab = tabs(k); drawnow; frame = getframe(fig); imwrite(frame.cdata, pngPath);`) — `getframe(ax)` drops the tick labels, so it is not a per-axes substitute.
 
 The review loop still needs a rendered PNG when the delivered script has `optionSave = false`: during your own review run, export a temporary PNG (e.g. to the session temp folder) to read back, and leave no file in the user's working folder — the delivered script keeps the user's flag value.
 
-3. **Review.** Read the saved PNG file back with the **Read tool** (the file from step 2 — the MATLAB MCP only runs the code that saves it; it returns text, not images) and verify it against **every rule in "Figure window", "Required on every axes", and "Series and legend"**, plus rendered-image faults: clipped data, legend overlap, distorted aspect, or fewer than 3 grid lines on an axis.
+3. **Review.** Read every saved axes PNG back with the **Read tool** (the files from step 2 — the MATLAB MCP only runs the code that saves them; it returns text, not images) and verify each against **every rule in "Figure window", "Required on every axes", and "Series and legend"**, plus rendered-image faults: clipped data, legend overlap, distorted aspect, or fewer than 3 grid lines on an axis.
 4. **Fix vs ask.**
    - **Fix unambiguous style violations directly** — missing units, shorthand color, wrong font/grid/linewidth, absent limits, distorted aspect, clipped data, legend overlap — and note what you changed.
    - **Font size is the first lever for crowded text.** When tick labels, axis labels, or legend text crowd, overlap, or clip, adjust the base `fontSize` within **12–32** (default 24) before reaching for legend relocation or column changes. If the text still does not fit at `fontSize` 12, treat it as a layout problem (panel split, fewer series) rather than shrinking further. Note the new `fontSize` whenever you change it.
@@ -169,7 +191,7 @@ The review loop still needs a rendered PNG when the delivered script has `option
 
 **Fallback when the image cannot be read back (or non-MATLAB language).** If you cannot render the figure or read the saved PNG file back — no MATLAB MCP to run the save, the file is inaccessible, or the target is Python/another package run elsewhere — skip the image-reading step but keep the rest:
 
-- Still emit the save block (PNG + FIG, or the language's equivalent) so the user can render and review.
+- Still emit the save block (per-axes PNG + FIG, or the language's equivalent) so the user can render and review.
 - Self-check the **code** against every rule in "Figure window", "Required on every axes", and "Series and legend".
 - State explicitly that the image was **not** visually verified, and list the rendered-image faults the user should check by eye (clipped data, legend overlap, distorted aspect, <3 grid lines).
 - Never claim a plot is verified from code alone.
