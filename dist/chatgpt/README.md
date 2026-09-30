@@ -1,7 +1,7 @@
 # REM2 ChatGPT Workspace Skill Package
 
 This directory contains the ChatGPT workspace skill distribution artifacts —
-one zip per skill (`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`).
+one zip per skill (`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`, `readme.zip`).
 
 ## Artifact
 

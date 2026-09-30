@@ -8,7 +8,7 @@
     {
       "name": "rem2",
       "source": "./REM2-plugin",
-      "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB (axes, legends, labels, time-series, X–Y, 3-D, frequency-response), and a measured-FRF control design workflow (tfest plant fit with time delay, lag / lead-lag loop shaping, margin and step prediction) — all with runnable examples — plus Git commit / comment / release conventions ported from github/awesome-copilot (MIT)."
+      "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB (axes, legends, labels, time-series, X–Y, 3-D, frequency-response), and a measured-FRF control design workflow (tfest plant fit with time delay, lag / lead-lag loop shaping, margin and step prediction) — all with runnable examples — plus Git commit / comment / release conventions ported from github/awesome-copilot (MIT), and a thorough README generator ported from sickn33/agentic-awesome-skills (MIT, original by Shpigford)."
     }
   ]
 }

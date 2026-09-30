@@ -15,8 +15,9 @@ MATLAB 과학/공학 플롯 스타일과 측정 FRF 기반 제어기 설계 워�
 | `commit-message-storyteller` | diff에서 "왜" 바꿨는지 서술하는 Conventional Commits 메시지 생성 — 메시지만 작성, git 명령은 실행하지 않음 (awesome-copilot 이식) |
 | `lean-comments` | 소스 코드 주석 최소화 규칙 — 코드에서 복원할 수 없는 비자명 정보만 남기고 나머지는 삭제, 언어 무관 (awesome-copilot 이식) |
 | `github-release` | `gh`+`git`으로 릴리스 end-to-end — 마지막 태그 이후 diff 분석 → SemVer 결정 → Keep a Changelog 작성 → 릴리스 브랜치·PR (awesome-copilot 이식) |
+| `readme` | 코드베이스 탐색 후 상세 README.md 작성·갱신 — 로컬 설정, 아키텍처, 환경 변수, 스크립트, 테스트, 배포, 트러블슈팅 (sickn33/agentic-awesome-skills 이식, 원저작 Shpigford) |
 
-플롯 코드를 새로 작성하거나 수정할 때 자동으로 적용됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시 트리거됩니다. Git 규약 스킬 5종(`git-commit`, `conventional-commit`, `commit-message-storyteller`, `lean-comments`, `github-release`)은 [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)의 스킬을 이식한 것입니다(MIT, 스킬 폴더별 LICENSE 포함). frontmatter를 Claude Code·Codex 호환으로 맞추고, Copilot 전용 문구(확인 없는 자동 커밋, "Copilot에 붙여넣기" 등)만 에이전트 중립으로 고쳤으며 규칙 본문은 그대로입니다.
+플롯 코드를 새로 작성하거나 수정할 때 자동으로 적용됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시 트리거됩니다. Git 규약 스킬 5종(`git-commit`, `conventional-commit`, `commit-message-storyteller`, `lean-comments`, `github-release`)은 [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)의 스킬을 이식한 것입니다(MIT, 스킬 폴더별 LICENSE 포함). frontmatter를 Claude Code·Codex 호환으로 맞추고, Copilot 전용 문구(확인 없는 자동 커밋, "Copilot에 붙여넣기" 등)만 에이전트 중립으로 고쳤으며 규칙 본문은 그대로입니다. `readme`는 [sickn33/agentic-awesome-skills](https://github.com/sickn33/agentic-awesome-skills/tree/main/skills/readme)에서 이식했습니다(MIT, 원저작 Shpigford/skills). frontmatter를 다시 쓰고, 기존 README.md를 덮어쓰기 전 확인 단계를 추가했습니다.
 
 ## 설치
 
@@ -52,7 +53,7 @@ codex /plugins
 
 ### ChatGPT (workspace skill)
 
-`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`)을 ChatGPT workspace skill 관리 화면에서 업로드합니다. 절차는 [`dist/chatgpt/README.md`](dist/chatgpt/README.md) 참고.
+`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`, `readme.zip`)을 ChatGPT workspace skill 관리 화면에서 업로드합니다. 절차는 [`dist/chatgpt/README.md`](dist/chatgpt/README.md) 참고.
 
 ## 사용법
 
@@ -82,6 +83,7 @@ REM2-plugin/                         ← 플러그인 본체
   skills/commit-message-storyteller/ ← 서술형 커밋 메시지 스킬 (awesome-copilot 이식)
   skills/lean-comments/              ← 최소 주석 규칙 스킬 (awesome-copilot 이식)
   skills/github-release/             ← SemVer·Changelog 릴리스 스킬 (awesome-copilot 이식)
+  skills/readme/                     ← 상세 README 생성 스킬 (agentic-awesome-skills 이식)
 dist/chatgpt/                        ← ChatGPT 업로드용 zip (스킬별)
 ```
 

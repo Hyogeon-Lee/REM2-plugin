@@ -8,7 +8,7 @@ year: 2026
 dependencies: [Claude Code, Codex CLI, MATLAB MCP]
 status: draft
 tags: [plugin, skill, matlab, plotting]
-related: ["[[plot-style]]", "[[frf-ms-design]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]"]
+related: ["[[plot-style]]", "[[frf-ms-design]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]", "[[readme]]"]
 ---
 
 # REM2 Plugin
@@ -45,6 +45,8 @@ REM2-plugin/
     lean-comments/                 ← minimal source-comment rules, language-agnostic (ported from awesome-copilot)
     github-release/                ← SemVer + Keep a Changelog release workflow (ported from awesome-copilot)
       references/                  ← semver-rules.md, commit-classification.md
+    readme/                        ← thorough README generation workflow (ported from agentic-awesome-skills)
+      references/                  ← detailed-guide.md — exploration steps, section structure, writing principles
   README.md / README_EN.md
 ```
 
@@ -72,7 +74,7 @@ In the plugin directory (TUI) opened by `codex /plugins`, switch to the `rem2-la
 
 ### ChatGPT (workspace skill)
 
-Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`) — see [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) for the procedure.
+Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`, `readme.zip`) — see [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) for the procedure.
 
 ## Included skills
 
@@ -85,8 +87,9 @@ Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `frf-ms-desig
 | `commit-message-storyteller` | Narrative Conventional Commits messages that explain *why* — writes the message only, never runs git. Ported from awesome-copilot | stable |
 | `lean-comments` | Minimal source-code comments — keep only non-obvious information the code cannot recover, language-agnostic. Ported from awesome-copilot | stable |
 | `github-release` | End-to-end release with `gh` + `git` — diff since last tag → SemVer bump → Keep a Changelog → release branch and PR. Ported from awesome-copilot | stable |
+| `readme` | Explores the codebase, then writes or updates a thorough README.md — local setup, architecture, environment variables, scripts, testing, deployment, troubleshooting. Ported from sickn33/agentic-awesome-skills (MIT, original by Shpigford) | stable |
 
-The skills trigger automatically when writing or modifying plotting code. When you explicitly request Python (matplotlib, etc.), the rules are translated to their closest equivalents. frf-ms-design triggers on measured-FRF controller design requests. The five Git-convention skills are ported from [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) (MIT, LICENSE in each skill folder). The frontmatter is adjusted for Claude Code and Codex, and only Copilot-specific wording (unconfirmed auto-commit, "paste into Copilot") was made agent-neutral; the rules themselves are unchanged. The upstream commit is recorded in each SKILL.md under `metadata.source-commit`.
+The skills trigger automatically when writing or modifying plotting code. When you explicitly request Python (matplotlib, etc.), the rules are translated to their closest equivalents. frf-ms-design triggers on measured-FRF controller design requests. The five Git-convention skills are ported from [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) (MIT, LICENSE in each skill folder). The frontmatter is adjusted for Claude Code and Codex, and only Copilot-specific wording (unconfirmed auto-commit, "paste into Copilot") was made agent-neutral; the rules themselves are unchanged. The upstream commit is recorded in each SKILL.md under `metadata.source-commit`. The `readme` skill is ported from [sickn33/agentic-awesome-skills](https://github.com/sickn33/agentic-awesome-skills/tree/main/skills/readme) (MIT, original: Shpigford/skills). The frontmatter was rewritten and a confirmation step before overwriting an existing README.md was added.
 
 ## Notes
 

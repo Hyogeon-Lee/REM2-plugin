@@ -8,7 +8,7 @@ year: 2026
 dependencies: [Claude Code, Codex CLI, MATLAB MCP]
 status: draft
 tags: [plugin, skill, matlab, plotting]
-related: ["[[plot-style]]", "[[frf-ms-design]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]"]
+related: ["[[plot-style]]", "[[frf-ms-design]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]", "[[readme]]"]
 ---
 
 # REM2 Plugin
@@ -45,6 +45,8 @@ REM2-plugin/
     lean-comments/                 ← 최소 주석 규칙, 언어 무관 (awesome-copilot 이식)
     github-release/                ← SemVer + Keep a Changelog 릴리스 워크플로 (awesome-copilot 이식)
       references/                  ← semver-rules.md, commit-classification.md
+    readme/                        ← 상세 README 생성 워크플로 (agentic-awesome-skills 이식)
+      references/                  ← detailed-guide.md — 탐색 절차·섹션 구조·작성 원칙
   README.md / README_EN.md
 ```
 
@@ -72,7 +74,7 @@ codex /plugins
 
 ### ChatGPT (workspace skill)
 
-`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`)을 업로드 — 절차는 [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) 참고.
+`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`, `readme.zip`)을 업로드 — 절차는 [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) 참고.
 
 ## 현재 수록 스킬
 
@@ -85,8 +87,9 @@ codex /plugins
 | `commit-message-storyteller` | "왜" 바꿨는지 서술하는 Conventional Commits 메시지 생성 — 메시지만 작성, git 명령은 실행하지 않음. awesome-copilot 이식 | stable |
 | `lean-comments` | 소스 코드 주석 최소화 — 코드에서 복원할 수 없는 비자명 정보만 남김, 언어 무관. awesome-copilot 이식 | stable |
 | `github-release` | `gh`+`git` 릴리스 end-to-end — 마지막 태그 이후 diff 분석 → SemVer 결정 → Keep a Changelog → 릴리스 브랜치·PR. awesome-copilot 이식 | stable |
+| `readme` | 코드베이스 탐색 후 상세 README.md 작성·갱신 — 로컬 설정·아키텍처·환경 변수·스크립트·테스트·배포·트러블슈팅. sickn33/agentic-awesome-skills 이식(MIT, 원저작 Shpigford) | stable |
 
-플롯 코드를 새로 작성·수정할 때 자동 트리거됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시 트리거됩니다. Git 규약 스킬 5종은 [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)에서 이식했습니다(MIT, 스킬 폴더별 LICENSE). frontmatter를 Claude Code·Codex 호환으로 맞추고, Copilot 전용 문구(확인 없는 자동 커밋, "Copilot에 붙여넣기" 등)만 에이전트 중립으로 고쳤으며 규칙 본문은 그대로입니다. 출처 커밋은 각 SKILL.md의 `metadata.source-commit`에 기록되어 있습니다.
+플롯 코드를 새로 작성·수정할 때 자동 트리거됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시 트리거됩니다. Git 규약 스킬 5종은 [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)에서 이식했습니다(MIT, 스킬 폴더별 LICENSE). frontmatter를 Claude Code·Codex 호환으로 맞추고, Copilot 전용 문구(확인 없는 자동 커밋, "Copilot에 붙여넣기" 등)만 에이전트 중립으로 고쳤으며 규칙 본문은 그대로입니다. 출처 커밋은 각 SKILL.md의 `metadata.source-commit`에 기록되어 있습니다. `readme`는 [sickn33/agentic-awesome-skills](https://github.com/sickn33/agentic-awesome-skills/tree/main/skills/readme)에서 이식했습니다(MIT, 원저작 Shpigford/skills). frontmatter를 다시 쓰고, 기존 README.md를 덮어쓰기 전 확인 단계를 추가했습니다.
 
 ## 비고
 
