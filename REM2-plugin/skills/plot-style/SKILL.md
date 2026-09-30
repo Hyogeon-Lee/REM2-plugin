@@ -1,6 +1,6 @@
 ---
 name: plot-style
-version: 0.8.0
+version: 0.8.1
 description: apply consistent scientific/engineering style to plotting code (figures, axes, legends, labels, limits, aspect ratios, subplots, single-figure tab layout). use only when writing or modifying code that generates plots — matlab by default, or the closest equivalent when the user names another language (python matplotlib, pandas, seaborn, plotly). covers common rules plus case modules (time-series, xy-plot, 3d-plot, frequency-response) loaded on demand. use when styling user-provided plotting code, generating new plotting scripts, or formatting frf/bode/nyquist/step/impulse/time-series/xy/scatter/surface plots for lab reports — including korean requests like 플롯/그래프 스타일 적용, 그림 정리, 플롯 코드 스타일 맞춰줘, figure 포맷 정리. not for non-code image generation or general visualization requests.
 ---
 
@@ -142,7 +142,7 @@ legend(ax, hPlot(1:numLegendEntries), legendLabelsDisplayed(1:numLegendEntries),
 - **Tab title** — a short English name of the content (`'Step Response'`, `'Bode'`, `'Trajectory'`); it is figure-rendered text, so the Language rule applies.
 - **Parent every axes explicitly** — `axes('Parent', tab)`, `subplot(m, n, p, 'Parent', tab)`, `tiledlayout(tab, m, n)`. A bare `axes`/`subplot` lands on the figure behind the tab group and is hidden. Case-module snippets assume `tabGroup` from the "Figure window" snippet.
 - **Subplot only for coupled panels** that must be read together — Bode magnitude + phase, stacked time series sharing x, views of the same field. Independent plots go in separate tabs, never in separate subplots or figures. Use `tiledlayout` only when the user asks, when existing code already uses it, or when `subplot` cannot express the layout.
-- **figure-export exception** — when figure-export governs (journal submission), each exported figure is its own untabbed figure at column width; that skill's sizing and export block win (`exportgraphics(fig, ...)` errors on a tabbed figure).
+- **Journal-submission exception** — when the user asks for a submission-ready figure, make each exported figure its own untabbed figure at column width and export it with `exportgraphics(fig, ...)`, which errors on a tabbed figure.
 
 ```matlab
 % 탭 구성: 플롯 1개 = 탭 1개, 결합 패널만 탭 안에서 subplot

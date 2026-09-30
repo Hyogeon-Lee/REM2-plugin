@@ -1,8 +1,7 @@
 # REM2 ChatGPT Workspace Skill Package
 
 This directory contains the ChatGPT workspace skill distribution artifacts —
-one zip per skill (`plot-style.zip`, `figure-export.zip`,
-`frf-ms-design.zip`).
+one zip per skill (`plot-style.zip`, `frf-ms-design.zip`).
 
 ## Artifact
 

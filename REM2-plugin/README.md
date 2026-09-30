@@ -8,7 +8,7 @@ year: 2026
 dependencies: [Claude Code, Codex CLI, MATLAB MCP]
 status: draft
 tags: [plugin, skill, matlab, plotting]
-related: ["[[plot-style]]", "[[figure-export]]", "[[frf-ms-design]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]"]
+related: ["[[plot-style]]", "[[frf-ms-design]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]"]
 ---
 
 # REM2 Plugin
@@ -33,11 +33,6 @@ REM2-plugin/
         frequency-response.md
       examples/                    ← case별 실행 가능 MATLAB 예제 (before/after)
       evals/                       ← 트리거·규칙 적용 검증 케이스 (+ inputs/)
-    figure-export/
-      SKILL.md                     ← 논문 투고용 공통 규칙 + 저널 프리셋 디스패치
-      references/                  ← 저널 프리셋 (ieee.md — 기본, elsevier.md)
-      examples/                    ← 단일 패널 + 다중 패널(tiledlayout) 예제
-      evals/
     frf-ms-design/
       SKILL.md                     ← FRF 루프쉐이핑 규약 (플랜트 모델·구조 선택·ZOH)
       references/                  ← Excel 포맷 + 워크플로 순서
@@ -77,14 +72,13 @@ codex /plugins
 
 ### ChatGPT (workspace skill)
 
-`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `figure-export.zip`, `frf-ms-design.zip`)을 업로드 — 절차는 [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) 참고.
+`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `frf-ms-design.zip`)을 업로드 — 절차는 [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) 참고.
 
 ## 현재 수록 스킬
 
 | 스킬              | 용도                                                                                                                                              | 상태     |
 | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
 | `plot-style`    | MATLAB 과학/공학 플롯 일관 스타일 — 공통 규칙(figure 1개 + 플롯별 탭) + time-series / X–Y / 3-D / frequency-response 모듈, before/after 예제 포함                                            | stable |
-| `figure-export` | 논문 투고용 figure 내보내기 — 저널 칼럼 폭 원본 크기 제작(cm), 인쇄 크기 폰트, 벡터 PDF(`exportgraphics`), 흑백 인쇄 생존성(선 스타일·마커 + 회색조 검증). IEEE Transactions(기본)·Elsevier 프리셋 | stable |
 | `frf-ms-design` | 측정 SISO FRF Excel → s-domain+시간지연 플랜트 적합(`tfest`) → lag / lead-lag 자동 선택 설계 → 마진·스텝 응답 예측. MATLAB 전용(Simulink 불필요), 포맷 오류는 fail-fast 후 사용자와 interactive 해결 | stable |
 | `git-commit` | Conventional Commits 커밋 — diff 분석으로 type/scope 판별, 메시지 생성, 스테이징·커밋 실행. github/awesome-copilot 이식(MIT) | stable |
 | `conventional-commit` | Conventional Commits 메시지 구조(type/scope/description/body/footer)·예제·검증 규칙을 XML 템플릿으로 안내. awesome-copilot 이식 | stable |
@@ -92,7 +86,7 @@ codex /plugins
 | `lean-comments` | 소스 코드 주석 최소화 — 코드에서 복원할 수 없는 비자명 정보만 남김, 언어 무관. awesome-copilot 이식 | stable |
 | `github-release` | `gh`+`git` 릴리스 end-to-end — 마지막 태그 이후 diff 분석 → SemVer 결정 → Keep a Changelog → 릴리스 브랜치·PR. awesome-copilot 이식 | stable |
 
-플롯 코드를 새로 작성·수정할 때 자동 트리거됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. plot-style은 축 내부(라벨·범례·한계), figure-export는 물리적 크기·폰트·내보내기를 담당하며 두 스킬은 함께 동작합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시 트리거됩니다. Git 규약 스킬 5종은 [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)에서 이식했습니다(MIT, 스킬 폴더별 LICENSE). frontmatter를 Claude Code·Codex 호환으로 맞추고, Copilot 전용 문구(확인 없는 자동 커밋, "Copilot에 붙여넣기" 등)만 에이전트 중립으로 고쳤으며 규칙 본문은 그대로입니다. 출처 커밋은 각 SKILL.md의 `metadata.source-commit`에 기록되어 있습니다.
+플롯 코드를 새로 작성·수정할 때 자동 트리거됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시 트리거됩니다. Git 규약 스킬 5종은 [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)에서 이식했습니다(MIT, 스킬 폴더별 LICENSE). frontmatter를 Claude Code·Codex 호환으로 맞추고, Copilot 전용 문구(확인 없는 자동 커밋, "Copilot에 붙여넣기" 등)만 에이전트 중립으로 고쳤으며 규칙 본문은 그대로입니다. 출처 커밋은 각 SKILL.md의 `metadata.source-commit`에 기록되어 있습니다.
 
 ## 비고
 

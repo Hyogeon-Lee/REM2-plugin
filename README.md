@@ -9,7 +9,6 @@ MATLAB 과학/공학 플롯 스타일과 측정 FRF 기반 제어기 설계 워�
 | 스킬 | 내용 |
 |---|---|
 | `plot-style` | MATLAB 플롯 공통 규칙(figure 1개 + 플롯별 탭, 폰트·격자·범례·라벨·축 한계·종횡비) + 케이스별 모듈(time-series / X–Y / 3-D / frequency-response) + 실행 가능한 before/after 예제 |
-| `figure-export` | 논문 투고용 figure 내보내기 — 저널 칼럼 폭 원본 크기 제작(cm), 인쇄 크기 폰트, 벡터 PDF(`exportgraphics`), 흑백 인쇄 생존성(선 스타일·마커 구분 + 회색조 검증). IEEE Transactions(기본)·Elsevier 프리셋 |
 | `frf-ms-design` | 측정 SISO FRF Excel → s-domain+시간지연 플랜트 적합(`tfest`) → lag / lead-lag 자동 선택 설계 → 마진·스텝 응답 예측. MATLAB 전용(Simulink 불필요), 포맷 오류는 fail-fast 후 사용자와 interactive 해결 |
 | `git-commit` | Conventional Commits 규칙으로 diff 분석 → type/scope 판별 → 메시지 생성·스테이징·커밋 실행 (github/awesome-copilot 이식) |
 | `conventional-commit` | Conventional Commits 메시지 구조(type/scope/description/body/footer)·예제·검증 규칙을 XML 템플릿으로 안내 (awesome-copilot 이식) |
@@ -53,7 +52,7 @@ codex /plugins
 
 ### ChatGPT (workspace skill)
 
-`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `figure-export.zip`, `frf-ms-design.zip`)을 ChatGPT workspace skill 관리 화면에서 업로드합니다. 절차는 [`dist/chatgpt/README.md`](dist/chatgpt/README.md) 참고.
+`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `frf-ms-design.zip`)을 ChatGPT workspace skill 관리 화면에서 업로드합니다. 절차는 [`dist/chatgpt/README.md`](dist/chatgpt/README.md) 참고.
 
 ## 사용법
 
@@ -66,7 +65,7 @@ REM2 스타일로 Bode plot 그려줘
 이 FRF 엑셀 파일로 제어기 설계해줘
 ```
 
-규칙 전문은 각 스킬의 `SKILL.md`, 케이스·프리셋별 세부 규칙은 각 스킬의 `references/`, 실행 예제는 `examples/` 참고 — 예: [`plot-style/SKILL.md`](REM2-plugin/skills/plot-style/SKILL.md), [`figure-export/SKILL.md`](REM2-plugin/skills/figure-export/SKILL.md).
+규칙 전문은 각 스킬의 `SKILL.md`, 케이스·프리셋별 세부 규칙은 각 스킬의 `references/`, 실행 예제는 `examples/` 참고 — 예: [`plot-style/SKILL.md`](REM2-plugin/skills/plot-style/SKILL.md).
 
 ## 저장소 구조
 
@@ -77,7 +76,6 @@ REM2-plugin/                         ← 플러그인 본체
   .claude-plugin/plugin.json         ← Claude Code 매니페스트
   .codex-plugin/plugin.json          ← Codex 매니페스트
   skills/plot-style/                 ← 스킬 (SKILL.md + references/ + examples/)
-  skills/figure-export/              ← 논문 투고용 figure 내보내기 스킬
   skills/frf-ms-design/              ← 측정 FRF 제어기 설계 스킬
   skills/git-commit/                 ← Conventional Commits 커밋 스킬 (awesome-copilot 이식)
   skills/conventional-commit/        ← Conventional Commits 메시지 템플릿 스킬 (awesome-copilot 이식)

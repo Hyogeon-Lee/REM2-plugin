@@ -8,7 +8,7 @@ year: 2026
 dependencies: [Claude Code, Codex CLI, MATLAB MCP]
 status: draft
 tags: [plugin, skill, matlab, plotting]
-related: ["[[plot-style]]", "[[figure-export]]", "[[frf-ms-design]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]"]
+related: ["[[plot-style]]", "[[frf-ms-design]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]"]
 ---
 
 # REM2 Plugin
@@ -33,11 +33,6 @@ REM2-plugin/
         frequency-response.md
       examples/                    ← runnable MATLAB examples per case (before/after)
       evals/                       ← trigger / rule-application eval cases (+ inputs/)
-    figure-export/
-      SKILL.md                     ← journal-submission common rules + preset dispatch
-      references/                  ← journal presets (ieee.md — default, elsevier.md)
-      examples/                    ← single-panel + multi-panel (tiledlayout) examples
-      evals/
     frf-ms-design/
       SKILL.md                     ← FRF loop-shaping conventions (plant model, structure rule, ZOH)
       references/                  ← Excel format + workflow order
@@ -77,14 +72,13 @@ In the plugin directory (TUI) opened by `codex /plugins`, switch to the `rem2-la
 
 ### ChatGPT (workspace skill)
 
-Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `figure-export.zip`, `frf-ms-design.zip`) — see [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) for the procedure.
+Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `frf-ms-design.zip`) — see [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) for the procedure.
 
 ## Included skills
 
 | Skill           | Purpose                                                                                                                                                                                                                                                       | Status |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
 | `plot-style`    | Consistent scientific/engineering plot styling for MATLAB — common rules (one figure, one tab per plot) plus time-series / X–Y / 3-D / frequency-response modules, with runnable before/after examples                                                                                       | stable |
-| `figure-export` | Journal-submission figure export — exact column-width sizing in cm, print-scale fonts, vector PDF via `exportgraphics`, grayscale-survivable curve discrimination (line styles + markers + grayscale check). IEEE Transactions (default) and Elsevier presets | stable |
 | `frf-ms-design` | Measured SISO FRF Excel → s-domain plant fit with explicit time delay (`tfest`) → automatic lag / lead-lag loop shaping → margin and step-response prediction. MATLAB only (no Simulink); format errors fail fast and are resolved interactively with the user | stable |
 | `git-commit` | Conventional Commits commits — analyzes the diff for type/scope, generates the message, stages and commits. Ported from github/awesome-copilot (MIT) | stable |
 | `conventional-commit` | Conventional Commits message structure (type/scope/description/body/footer), examples, and validation rules as an XML template. Ported from awesome-copilot | stable |
@@ -92,7 +86,7 @@ Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `figure-expor
 | `lean-comments` | Minimal source-code comments — keep only non-obvious information the code cannot recover, language-agnostic. Ported from awesome-copilot | stable |
 | `github-release` | End-to-end release with `gh` + `git` — diff since last tag → SemVer bump → Keep a Changelog → release branch and PR. Ported from awesome-copilot | stable |
 
-The skills trigger automatically when writing or modifying plotting code. When you explicitly request Python (matplotlib, etc.), the rules are translated to their closest equivalents. plot-style governs what is inside the axes (labels, legends, limits); figure-export governs physical size, fonts, and the export itself — the two compose. frf-ms-design triggers on measured-FRF controller design requests. The five Git-convention skills are ported from [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) (MIT, LICENSE in each skill folder). The frontmatter is adjusted for Claude Code and Codex, and only Copilot-specific wording (unconfirmed auto-commit, "paste into Copilot") was made agent-neutral; the rules themselves are unchanged. The upstream commit is recorded in each SKILL.md under `metadata.source-commit`.
+The skills trigger automatically when writing or modifying plotting code. When you explicitly request Python (matplotlib, etc.), the rules are translated to their closest equivalents. frf-ms-design triggers on measured-FRF controller design requests. The five Git-convention skills are ported from [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) (MIT, LICENSE in each skill folder). The frontmatter is adjusted for Claude Code and Codex, and only Copilot-specific wording (unconfirmed auto-commit, "paste into Copilot") was made agent-neutral; the rules themselves are unchanged. The upstream commit is recorded in each SKILL.md under `metadata.source-commit`.
 
 ## Notes
 
