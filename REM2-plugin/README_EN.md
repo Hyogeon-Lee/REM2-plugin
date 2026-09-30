@@ -72,7 +72,7 @@ In the plugin directory (TUI) opened by `codex /plugins`, switch to the `rem2-la
 
 ### ChatGPT (workspace skill)
 
-Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `frf-ms-design.zip`) — see [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) for the procedure.
+Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`) — see [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) for the procedure.
 
 ## Included skills
 
