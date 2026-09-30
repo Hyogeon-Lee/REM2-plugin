@@ -1,8 +1,10 @@
 ---
 name: github-release
 description: >
-  Guides IA through releasing a new version of a GitHub library end-to-end.
+  Guides the agent through releasing a new version of a GitHub library end-to-end.
   Handles SemVer versioning and Keep a Changelog formatting automatically.
+  Use when the user wants to cut a release, publish or bump a version, generate a
+  changelog, create a release branch, or open a release PR.
 compatibility: "requires: gh CLI and git"
 license: MIT
 metadata:
@@ -160,15 +162,15 @@ git diff "$($prevSha)..HEAD" -- $publicPath `
 Read the full diff output. For each changed file, identify:
 
 1. **Removed symbols** - functions, classes, methods, constants, exported names that
-   existed before and are now gone. ? Strong signal for MAJOR.
+   existed before and are now gone. → Strong signal for MAJOR.
 2. **Changed signatures** - functions that exist in both versions but with different
-   parameters, return types, or thrown errors. ? Strong signal for MAJOR.
+   parameters, return types, or thrown errors. → Strong signal for MAJOR.
 3. **New exported symbols** - public functions, classes, constants that didn't exist
-   before. ? Signal for MINOR.
+   before. → Signal for MINOR.
 4. **Internal-only changes** - modifications that don't touch any public interface
-   (private helpers, unexported functions, algorithm internals). ? PATCH.
+   (private helpers, unexported functions, algorithm internals). → PATCH.
 5. **Bug fixes** - corrections to logic that was provably wrong (e.g. off-by-one,
-   null check, wrong condition), without changing the public API. ? PATCH.
+   null check, wrong condition), without changing the public API. → PATCH.
 
 If the diff is very large (thousands of lines), first run the stat summary to
 prioritise which files to read in full:
@@ -199,12 +201,12 @@ See `references/commit-classification.md` for mapping message patterns to change
 
 #### 3c - Reconcile the two signals
 
-When signals agree ? use that classification with confidence.
+When signals agree → use that classification with confidence.
 
-When signals conflict ? **prefer the code diff**. Examples:
-- Commit says `fix: typo` but the diff shows a removed public method ? treat as MAJOR.
-- Commit says `feat: new API` but the diff only touches private internals ? treat as PATCH.
-- Commit says `chore: refactor` but the diff adds new exported symbols ? treat as MINOR.
+When signals conflict → **prefer the code diff**. Examples:
+- Commit says `fix: typo` but the diff shows a removed public method → treat as MAJOR.
+- Commit says `feat: new API` but the diff only touches private internals → treat as PATCH.
+- Commit says `chore: refactor` but the diff adds new exported symbols → treat as MINOR.
 
 Document any conflicts you notice - flag them to the user during the changelog review
 in Step 6.
@@ -289,12 +291,12 @@ Rules:
   Good: *"Added `WithTimeout` option to HTTP client constructor."*
   Bad: *"feat: add timeout cfg param"*
 - Map findings to sections:
-  - New exported symbol ? Added
-  - Breaking removal ? Removed
-  - Breaking change to existing API ? Changed (flag it as breaking)
-  - Bug/logic fix, perf ? Fixed
-  - Security fix ? Security
-  - Internal refactor, docs, chore, test ? omit unless user-visible
+  - New exported symbol → Added
+  - Breaking removal → Removed
+  - Breaking change to existing API → Changed (flag it as breaking)
+  - Bug/logic fix, perf → Fixed
+  - Security fix → Security
+  - Internal refactor, docs, chore, test → omit unless user-visible
 - If a commit message revealed intent that the code diff alone wouldn't convey
   (e.g. a security fix disguised as a one-line change), include that context in
   the changelog entry.
@@ -324,7 +326,7 @@ Confirm the push succeeded before moving on.
 
 ### Step 8 - Open a Pull Request
 
-**?? IMPORTANT:** Always use `--body-file` to pass PR body text, never `--body` with inline text.
+**IMPORTANT:** Always use `--body-file` to pass PR body text, never `--body` with inline text.
 Inline escape sequences like `\n` are not interpreted as newlines by PowerShell and will appear
 as literal text in the PR. Using a file ensures proper markdown formatting.
 
@@ -391,7 +393,7 @@ Paste the changelog section into the PR body's "What's included" block (or leave
 
 Tell the user:
 
-> **Release PR is open! ??**
+> **Release PR is open!**
 >
 > New version: **vX.Y.Z**
 >

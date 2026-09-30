@@ -136,7 +136,7 @@ If the diff contains **logically separate changes**, split them into multiple co
 ## Quick Reference
 
 ```bash
-# Get your staged diff to paste into Copilot
+# Get your staged diff
 git diff --staged
 
 # Or get the last uncommitted working tree changes

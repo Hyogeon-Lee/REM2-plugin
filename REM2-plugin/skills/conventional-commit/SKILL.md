@@ -1,6 +1,6 @@
 ---
 name: conventional-commit
-description: 'Prompt and workflow for generating conventional commit messages using a structured XML format. Guides users to create standardized, descriptive commit messages in line with the Conventional Commits specification, including instructions, examples, and validation.'
+description: 'Prompt and workflow for generating conventional commit messages using a structured XML format. Guides users to create standardized, descriptive commit messages in line with the Conventional Commits specification, including instructions, examples, and validation. Use when the user asks for a Conventional Commits message, wants a commit message checked against the spec, or asks how to structure the type, scope, body, or footer.'
 license: MIT
 metadata:
   source: "https://github.com/github/awesome-copilot/tree/caab1f623bb68a330f294a11279597d7ae7be737/skills/conventional-commit"
@@ -21,13 +21,13 @@ metadata:
 2. Run `git diff` or `git diff --cached` to inspect changes.
 3. Stage your changes with `git add <file>`.
 4. Construct your commit message using the following XML structure.
-5. After generating your commit message, Copilot will automatically run the following command in your integrated terminal (no confirmation needed):
+5. Show the constructed commit message to the user and wait for confirmation, then run the commit in the terminal:
 
 ```bash
 git commit -m "type(scope): description"
 ```
 
-6. Just execute this prompt and Copilot will handle the commit for you in the terminal.
+6. If the user has already asked you to commit directly, skip the confirmation step and run the command as soon as the message is ready.
 
 ### Commit Message Structure
 

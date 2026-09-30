@@ -17,7 +17,7 @@ MATLAB 과학/공학 플롯 스타일과 측정 FRF 기반 제어기 설계 워�
 | `lean-comments` | 소스 코드 주석 최소화 규칙 — 코드에서 복원할 수 없는 비자명 정보만 남기고 나머지는 삭제, 언어 무관 (awesome-copilot 이식) |
 | `github-release` | `gh`+`git`으로 릴리스 end-to-end — 마지막 태그 이후 diff 분석 → SemVer 결정 → Keep a Changelog 작성 → 릴리스 브랜치·PR (awesome-copilot 이식) |
 
-플롯 코드를 새로 작성하거나 수정할 때 자동으로 적용됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시 트리거됩니다. Git 규약 스킬 5종(`git-commit`, `conventional-commit`, `commit-message-storyteller`, `lean-comments`, `github-release`)은 [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)의 스킬을 본문 수정 없이 이식한 것으로(MIT, 스킬 폴더별 LICENSE 포함), frontmatter만 Claude Code·Codex 호환으로 조정했습니다.
+플롯 코드를 새로 작성하거나 수정할 때 자동으로 적용됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시 트리거됩니다. Git 규약 스킬 5종(`git-commit`, `conventional-commit`, `commit-message-storyteller`, `lean-comments`, `github-release`)은 [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)의 스킬을 이식한 것입니다(MIT, 스킬 폴더별 LICENSE 포함). frontmatter를 Claude Code·Codex 호환으로 맞추고, Copilot 전용 문구(확인 없는 자동 커밋, "Copilot에 붙여넣기" 등)만 에이전트 중립으로 고쳤으며 규칙 본문은 그대로입니다.
 
 ## 설치
 
