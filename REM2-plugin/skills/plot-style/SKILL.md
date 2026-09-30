@@ -101,7 +101,7 @@ plot(ax, x, y, 'LineStyle', '-', 'Color', colorOrder(1, :), 'LineWidth', lineWid
 ```
 
 - **No title** unless the user explicitly asks for one.
-- **Language** — all figure-rendered text (labels, legend, ticks, annotations, colorbar) in **English**; code comments in **Korean** (this overrides comment-style's English default for plotting code; comment-style's selection and format rules still apply). Override only on explicit request.
+- **Language** — all figure-rendered text (labels, legend, ticks, annotations, colorbar) in **English**; code comments in **Korean** (this overrides any comment skill's English default for plotting code; that skill's selection and format rules still apply). Override only on explicit request.
 - **Text interpreter** — keep the default `tex`; write Greek as `\mu`/`\zeta`, subscripts as `x_{ab}`. TeX math glyphs render in MATLAB's math font, not `fontName` — fine for isolated symbols; prefer Unicode ζ/ω when the whole label must stay in one font. Use `'Interpreter', 'latex'` only on explicit request — it overrides `FontName` with Computer Modern.
 
 ### Colorbar (only when present)
