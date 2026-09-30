@@ -1,6 +1,6 @@
 # README Generator - Detailed Guide
 
-> Detailed procedure and reference material for the `readme` skill. `SKILL.md` defines activation and limitations.
+> Detailed procedure and reference material for the `readme_style` skill. `SKILL.md` defines activation and limitations.
 
 ## The Three Purposes of a README
 

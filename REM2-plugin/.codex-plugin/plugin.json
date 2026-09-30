@@ -1,6 +1,6 @@
 {
   "name": "rem2-plugin",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB (axes, legends, labels, time-series, X-Y, 3-D, frequency-response), and a measured-FRF control design workflow (tfest plant fit with time delay, lag / lead-lag loop shaping, margin and step prediction — MATLAB only). Also ships Git conventions ported from github/awesome-copilot (MIT): Conventional Commits commit workflow and message template, narrative commit messages, lean source-code comments, and SemVer + Keep a Changelog GitHub releases. Plus a thorough README generator ported from sickn33/agentic-awesome-skills (MIT, original by Shpigford).",
   "author": {
     "name": "Hyogeon Lee",
@@ -34,7 +34,7 @@
   "interface": {
     "displayName": "REM2 Plugin",
     "shortDescription": "REM2 plot styling, FRF control design, Git commit / comment / release conventions, and README generation.",
-    "longDescription": "Unofficial personal project — not an official Yonsei University or REM2 lab product. Apply consistent scientific and engineering plot styling to MATLAB plotting code and the closest equivalents in Python plotting libraries. Includes common figure rules plus time-series, X-Y, 3-D, and frequency-response modules, and a measured-FRF control design skill (s-domain plant fit with time delay via tfest, automatic lag / lead-lag loop shaping with integral lag, margin and closed-loop step prediction — MATLAB only, no Simulink). Also includes five Git-convention skills ported from github/awesome-copilot (MIT): git-commit, conventional-commit, commit-message-storyteller, lean-comments, and github-release. Plus a readme skill ported from sickn33/agentic-awesome-skills (MIT, original by Shpigford) that explores a codebase and writes a thorough README.md.",
+    "longDescription": "Unofficial personal project — not an official Yonsei University or REM2 lab product. Apply consistent scientific and engineering plot styling to MATLAB plotting code and the closest equivalents in Python plotting libraries. Includes common figure rules plus time-series, X-Y, 3-D, and frequency-response modules, and a measured-FRF control design skill (s-domain plant fit with time delay via tfest, automatic lag / lead-lag loop shaping with integral lag, margin and closed-loop step prediction — MATLAB only, no Simulink). Also includes five Git-convention skills ported from github/awesome-copilot (MIT): git-commit, conventional-commit, commit-message-storyteller, lean-comments, and github-release. Plus a readme_style skill ported from sickn33/agentic-awesome-skills (MIT, original by Shpigford) that explores a codebase and writes a thorough README.md.",
     "developerName": "Hyogeon Lee",
     "category": "Productivity",
     "capabilities": [

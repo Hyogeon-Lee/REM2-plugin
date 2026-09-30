@@ -1,5 +1,5 @@
 ---
-name: readme
+name: readme_style
 description: 'Writes or updates a thorough project README.md (local setup, architecture, environment variables, scripts, testing, deployment, troubleshooting) after exploring the codebase. Use when the user asks to write, create, or update a README, document a project, or produce project documentation, including korean requests like README 작성, 리드미 만들어줘, 프로젝트 문서화.'
 license: "MIT, adapted from sickn33/agentic-awesome-skills (original: Shpigford/skills)"
 metadata:
