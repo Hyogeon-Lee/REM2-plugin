@@ -5,7 +5,7 @@
 % 의존성 : 없음 (기본 MATLAB R2020a+ — exportgraphics 탭 export)
 
 %% 합성 데이터 — 2차 부족감쇠 스텝 응답 (변위 mm)
-clear; clc;
+close all; clear all; clc; warning off;
 zeta = 0.2;  wn = 20;                       % 감쇠비, 고유진동수 (rad/s)
 wd   = wn*sqrt(1 - zeta^2);
 t    = 0:1e-3:1.5;                          % 시간 (s) — 0부터 시작

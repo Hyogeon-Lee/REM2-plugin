@@ -1,6 +1,6 @@
 ---
 name: plot-style
-version: 0.8.1
+version: 0.9.0
 description: apply consistent scientific/engineering style to plotting code (figures, axes, legends, labels, limits, aspect ratios, subplots, single-figure tab layout). use only when writing or modifying code that generates plots — matlab by default, or the closest equivalent when the user names another language (python matplotlib, pandas, seaborn, plotly). covers common rules plus case modules (time-series, xy-plot, 3d-plot, frequency-response) loaded on demand. use when styling user-provided plotting code, generating new plotting scripts, or formatting frf/bode/nyquist/step/impulse/time-series/xy/scatter/surface plots for lab reports — including korean requests like 플롯/그래프 스타일 적용, 그림 정리, 플롯 코드 스타일 맞춰줘, figure 포맷 정리. not for non-code image generation or general visualization requests.
 ---
 
@@ -33,6 +33,20 @@ Rules are written for MATLAB. When the user explicitly requests Python (matplotl
 ---
 
 # Common rules
+
+## Script preamble (top of script)
+
+Start every plotting **script** with the cleanup line below, before the style block. The review loop re-runs the script after every revise; without it each run adds another figure window and keeps stale variables.
+
+```matlab
+% 작업 공간 정리: 이전 figure 창·변수·명령창 초기화 (재실행 시 창 누적 방지)
+close all; clear all; clc; warning off;
+```
+
+- The user says not to clear or close → omit the line.
+- The script reads a variable it does not define itself (data the user loaded in the base workspace) → drop `clear all`, keep `close all; clc; warning off;`.
+- Function files → no preamble; the line is for scripts only.
+- Python → `plt.close('all')` at the top; `clear`/`clc`/`warning off` have no counterpart there, omit them.
 
 ## Style block (top of script)
 

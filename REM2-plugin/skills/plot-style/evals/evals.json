@@ -5,7 +5,7 @@
       "id": 0,
       "eval_name": "korean-styling-trigger",
       "prompt": "messy_time_plot.m 플롯 스타일 좀 정리해줘",
-      "expected_output": "Skill triggers on the Korean request; style block added at top; shorthand 'r-'/'b--' replaced with explicit LineStyle/Color/LineWidth from the block; xlabel/ylabel with units in parentheses; explicit xlim/ylim with ~5% pad; box + dashed grid on; legend added; title removed; pbaspect set; single figure with the plot in a uitab (axes created with explicit 'Parent'); per-axes exportgraphics save block emitted and render-review loop run (or explicit not-verified fallback); variable names t/y1/y2 preserved",
+      "expected_output": "Skill triggers on the Korean request; cleanup preamble (close all; clear all; clc; warning off) as the first line; style block added at top; shorthand 'r-'/'b--' replaced with explicit LineStyle/Color/LineWidth from the block; xlabel/ylabel with units in parentheses; explicit xlim/ylim with ~5% pad; box + dashed grid on; legend added; title removed; pbaspect set; single figure with the plot in a uitab (axes created with explicit 'Parent'); per-axes exportgraphics save block emitted and render-review loop run (or explicit not-verified fallback); variable names t/y1/y2 preserved",
       "files": ["inputs/messy_time_plot.m"]
     },
     {

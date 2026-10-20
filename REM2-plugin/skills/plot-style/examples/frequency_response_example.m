@@ -5,7 +5,7 @@
 % 의존성 : 없음 (기본 MATLAB R2020a+, Control System Toolbox 불필요)
 
 %% 합성 데이터 — 2차 시스템 주파수응답 (변위/전류, mm/A)
-clear; clc;
+close all; clear all; clc; warning off;
 fn   = 80;                                  % 고유진동수 (Hz)
 wn   = 2*pi*fn;                             % (rad/s)
 zeta = 0.05;                                % 저감쇠 → 공진 피크

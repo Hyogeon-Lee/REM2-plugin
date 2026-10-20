@@ -7,7 +7,7 @@
 % 의존성 : 없음 (기본 MATLAB R2020a+ — exportgraphics 탭 export)
 
 %% 합성 데이터 — 2D 가우시안 합 표면 (예: 자기장 세기 분포)
-clear; clc;
+close all; clear all; clc; warning off;
 gx = linspace(-3, 3, 80);
 gy = linspace(-3, 3, 80);
 [X, Y] = meshgrid(gx, gy);                  % 공간 좌표 (mm)

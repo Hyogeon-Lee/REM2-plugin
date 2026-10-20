@@ -5,7 +5,7 @@
 % 의존성 : 없음 (기본 MATLAB R2020a+ — exportgraphics 탭 export)
 
 %% 합성 데이터 — Lissajous 궤적 (x, y 모두 변위 mm, 동일 스케일)
-clear; clc;
+close all; clear all; clc; warning off;
 tt = linspace(0, 2*pi, 800);
 A  = 10;  B = 10;                           % 진폭 (mm)
 xPos = A*sin(3*tt + pi/4);                  % X 변위 (mm)
