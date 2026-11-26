@@ -53,7 +53,8 @@ linkaxes([axMag, axPhase], 'x');
 
 ## Notes
 
-- Multiple systems (≤6) overlay with the style-block color order; legend per Common, `northoutside`.
+- Multiple systems (≤6) overlay with the style-block color order; legend per Common — inside the axes, with `finalizeYLimits` called on **each** panel (it works in log10 on the log magnitude axis, so decade limits such as `[1e-2, 1e2]` gain a fraction of a decade at both ends and the decade ticks move off the box edges). Stacked Bode panels are short, so a 3+ entry legend usually exceeds `legendMaxHeightFrac` and the helper moves it to `northoutside`.
+- Nyquist uses `axis equal` → no `finalizeYLimits` call; use `northoutside` when the inside legend would cover the locus.
 - `bode`/`nyquist` built-ins produce non-conforming figures — extract the data and plot manually. `bode` returns 1×1×N arrays and `w` in rad/s, so squeeze and convert before plotting:
 
 ```matlab

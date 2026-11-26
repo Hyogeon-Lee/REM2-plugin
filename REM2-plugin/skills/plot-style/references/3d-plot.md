@@ -67,3 +67,4 @@ To compare viewpoints or representations (e.g. surface vs point cloud), use `sub
 - **No colorbar by default** — when the z axis already encodes the value, a colorbar is redundant; put the unit on `zlabel` instead.
 - Add a colorbar **only** when color maps an independent quantity (a 4th variable not on the z axis); then label it with that quantity's unit.
 - Use a legend only when discrete `plot3` series coexist; the ≤6 legend cap is relaxed here — name only entries that aid reading.
+- `finalizeYLimits` is 2-D only — do not call it here. Place the legend at the Common count-based location and switch to `northoutside` if it covers data in the reviewed image.

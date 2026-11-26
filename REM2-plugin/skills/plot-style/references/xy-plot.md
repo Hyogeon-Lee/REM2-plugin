@@ -18,6 +18,7 @@ axis(ax, 'equal');     % 또는 daspect(ax, [1 1 1]);
 
 - Label both axes with quantity and unit in parentheses.
 - Set `xlim`/`ylim` with ~5% padding. For closed curves (loops, orbits) pad symmetrically so the curve is centered.
+- Legend: `axis equal` and symmetric padding fix the limits, so do not call `finalizeYLimits` there — use `northoutside` when the inside legend would cover the curve, and pick limits that keep the outermost ticks off the box edges (e.g. `±1.1*A`, not `±A`). Different-quantity plots (`pbaspect([1 1 1])`, open curves) call `finalizeYLimits` as usual.
 
 ## Scatter vs line
 

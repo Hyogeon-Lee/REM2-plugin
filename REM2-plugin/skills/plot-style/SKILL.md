@@ -1,6 +1,6 @@
 ---
 name: plot-style
-version: 0.9.0
+version: 0.10.0
 description: apply consistent scientific/engineering style to plotting code (figures, axes, legends, labels, limits, aspect ratios, subplots, single-figure tab layout). use only when writing or modifying code that generates plots — matlab by default, or the closest equivalent when the user names another language (python matplotlib, pandas, seaborn, plotly). covers common rules plus case modules (time-series, xy-plot, 3d-plot, frequency-response) loaded on demand. use when styling user-provided plotting code, generating new plotting scripts, or formatting frf/bode/nyquist/step/impulse/time-series/xy/scatter/surface plots for lab reports — including korean requests like 플롯/그래프 스타일 적용, 그림 정리, 플롯 코드 스타일 맞춰줘, figure 포맷 정리. not for non-code image generation or general visualization requests.
 ---
 
@@ -62,7 +62,10 @@ axLineWidth = 1.0;                 % 축 박스·그리드 선 두께
 gridStyle  = '--';                 % 점선 그리드
 gridAlpha  = 0.25;                 % 그리드 투명도
 maxDefaultSeries = 6;              % 기본 시리즈 최대 개수 (= 범례 항목 최대)
-legendLocationCandidates = {'northeast', 'northwest', 'southeast', 'southwest', 'northoutside'};
+legendLocationFew   = 'northeast'; % 범례 항목 1~3개: 축 안 우상단
+legendLocationMany  = 'north';     % 범례 항목 4~6개: 축 안 상단 중앙
+legendMaxHeightFrac = 0.4;         % 범례 띠가 플롯 박스 높이의 이 비율을 넘으면 축 밖(northoutside)으로
+yTickInsetFrac = 0.05;             % 맨 위·아래 y 눈금과 박스 끝 사이 최소 간격 (플롯 박스 높이 대비)
 colorOrder = [
     0,    0,    0;
     1,    0,    0;
@@ -105,7 +108,7 @@ set(ax, 'FontSize', fontSize, 'FontName', fontName, 'Box', 'on', 'LineWidth', ax
 `GridLineWidth` requires R2023a+. On older MATLAB drop that pair — grid lines then follow the axes `LineWidth` automatically.
 
 - **Labels** — `xlabel` and `ylabel` always present on **every** axes, including each panel of a stacked or multi-panel layout (panels are exported as separate PNGs, so no panel may rely on a neighbor's label); `zlabel` too for 3-D. Units in **parentheses**, never brackets: `Time (s)`, not `Time [s]`.
-- **Limits** — set `xlim`/`ylim` (`zlim` for 3-D) explicitly; never leave them to auto when data could clip. With no user limits, pad ~5% beyond the data range.
+- **Limits** — set `xlim`/`ylim` (`zlim` for 3-D) explicitly; never leave them to auto when data could clip. With no user limits, pad ~5% beyond the data range. **No y tick on the top or bottom edge of the box**: the outermost y ticks sit about `yTickInsetFrac` (5% of the box height) inside, so `ylim` never ends exactly on a tick value (`[0, 8]` with ticks at 0 and 8 is wrong). `finalizeYLimits` (see "Series and legend") enforces this together with the legend headroom; the `ylim` you set is its starting point.
 - **Ticks** — target **3–5 grid lines per axis**. Keep MATLAB's automatic ticks; **never** force a count with `xticks(ax, linspace(...))` — it drops `0`, peaks, and crossings onto arbitrary positions. Adjust only with round spacing that includes the characteristic values, e.g. `xticks(ax, 0:0.25:1)`. On a log axis, keep the decade ticks.
 - **Aspect ratio** — always set it; default `pbaspect([2 1 1])` unless a case module or the data dictates otherwise.
 - **Lines / colors** — set `LineStyle`, `Color`, and `LineWidth` explicitly via name-value pairs; take `Color` from `colorOrder` and `LineWidth` from the style block. **Never** use shorthand format strings (`'r-'`, `'b--'`, `'k:'`).
@@ -134,21 +137,98 @@ Add a colorbar only when color encodes a quantity not already on an axis (see 3-
 
 - Plot ≤ `maxDefaultSeries` (6) series by default. More than 6 candidates → plot the first 6 only; plot more only when the user asks, then cycle `colorOrder`.
 - The legend lists exactly the plotted series, capped at `maxDefaultSeries`. If the user forces more than 6, list the first 6 and note the omission.
-- A legend is present on every axes. Choose location from `legendLocationCandidates` only — the one with least data overlap, preferring `northoutside` when crowded.
-- Columns by entry count: **1–3 → 1 column, 4–6 → 2 columns**.
+- A legend is present on every axes, **inside the plot box by default**. Location and columns follow the entry count:
+
+| Entries | Location | Columns |
+|---|---|---|
+| 1–3 | `legendLocationFew` (`northeast`) | 1 |
+| 4–6 | `legendLocationMany` (`north`) | `ceil(n/2)` — 2 for 4 entries, 3 for 5–6, so always 2 rows |
+
+- **Keep the legend off the data by raising the upper `ylim`, not by moving the legend to another corner.** Call `finalizeYLimits` (below) once per axes, **last** — after the limits, aspect ratio, and per-axes styling of that axes — because it measures the rendered legend and ticks.
+- **`northoutside` is the fallback, never the default.** The helper switches to it automatically when the legend is too large to sit inside. Set it by hand when the helper is not called and the inside legend would cover data.
+- **Do not call the helper** on an axes whose `ylim` must not move or that it cannot read — handle these by hand, keeping the outermost ticks inside the box:
+  - the user fixed `ylim` → keep theirs exactly;
+  - `axis equal` / symmetric limits (closed curves, Nyquist) → see the X–Y module;
+  - `yyaxis` dual axis → headroom and inset go into the tick ranges (time-series module);
+  - 3-D axes and 2-D field plots (`imagesc`, `pcolor`, `contour`) → the helper reads line/scatter data only.
 
 ```matlab
-% 범례: 표시 개수 제한 + 개수에 따른 열 수
+% 범례: 축 안에 배치 — 1~3개는 northeast 1열, 4~6개는 north 2행
 numLegendEntries = min(numel(legendLabelsDisplayed), maxDefaultSeries);
 if numLegendEntries <= 3
-    numLegendColumns = 1;
+    legendLocation = legendLocationFew;   numLegendColumns = 1;
 else
-    numLegendColumns = 2;
+    legendLocation = legendLocationMany;  numLegendColumns = ceil(numLegendEntries / 2);
 end
-legend(ax, hPlot(1:numLegendEntries), legendLabelsDisplayed(1:numLegendEntries), ...
-       'Location', 'northoutside', 'NumColumns', numLegendColumns, ...
-       'FontSize', fontSize, 'FontName', fontName);
+lgd = legend(ax, hPlot(1:numLegendEntries), legendLabelsDisplayed(1:numLegendEntries), ...
+             'Location', legendLocation, 'NumColumns', numLegendColumns, ...
+             'FontSize', fontSize, 'FontName', fontName);
+finalizeYLimits(ax, lgd, legendMaxHeightFrac, yTickInsetFrac);   % 해당 축의 xlim/ylim·pbaspect·스타일 설정이 모두 끝난 뒤 호출
 ```
+
+### `finalizeYLimits` helper
+
+Paste this function **verbatim as a local function at the end of the script** (in a function file, as a local function of that file). It is 2-D only. A script with a local function runs only as a file — in the review loop run the saved `.m` (`run_matlab_file`), never paste its text as inline code.
+
+```matlab
+function finalizeYLimits(ax, lgd, legendMaxHeightFrac, yTickInsetFrac)
+% ylim 마무리 (2-D 축 전용): ① 범례 아래를 지나는 데이터가 범례에 가리지 않게 상한을 올리고
+%                           ② y 눈금이 박스 위아래 끝에 걸리지 않게 양쪽에 여유를 둔다
+drawnow;                                              % 범례·축 위치 확정
+axPix  = getpixelposition(ax);
+lgdPix = getpixelposition(lgd);
+boxAspect = ax.PlotBoxAspectRatio;                    % pbaspect 반영한 실제 플롯 박스 (axes Position 안에서 가운데 정렬)
+boxW = min(axPix(3), axPix(4) * boxAspect(1) / boxAspect(2));
+boxH = min(axPix(4), axPix(3) * boxAspect(2) / boxAspect(1));
+boxLeft = axPix(1) + (axPix(3) - boxW) / 2;
+boxTop  = axPix(2) + (axPix(4) + boxH) / 2;
+legendGap  = boxTop - (lgdPix(2) + lgdPix(4));        % 박스 상단~범례 상단 간격 → 범례 아래에도 같은 간격 확보
+legendFrac = (boxTop - lgdPix(2) + legendGap) / boxH; % h: 범례 띠 높이 / 플롯 박스 높이
+isLogY = strcmp(ax.YScale, 'log');
+xFwd = @(v) v;  yFwd = @(v) v;  yInv = @(v) v;        % log 축은 log10 공간에서 계산
+if strcmp(ax.XScale, 'log'); xFwd = @log10; end
+if isLogY; yFwd = @log10; yInv = @(v) 10.^v; end
+xl = xFwd(xlim(ax));  yl = yFwd(ylim(ax));
+if isLogY
+    yl = [floor(yl(1) + 1e-9), ceil(yl(2) - 1e-9)];   % log 축: 한계를 decade에 맞춰 decade 눈금 유지
+end
+if legendFrac > legendMaxHeightFrac || lgdPix(3) > boxW
+    lgd.Location = 'northoutside';                    % 축 안에 두기엔 너무 큼 → 축 밖, 상한은 그대로
+    if lgd.NumColumns == 1
+        lgd.NumColumns = numel(lgd.String);           % 축 밖에서는 한 줄로 펼쳐 축 높이를 덜 차지하게
+    end
+else
+    xSpan = xl(1) + ([lgdPix(1), lgdPix(1) + lgdPix(3)] - boxLeft) / boxW * diff(xl);   % 범례 좌우 끝의 x 값
+    yTop = -Inf;                                      % 범례 x 구간 아래를 지나는 데이터의 최댓값
+    hData = findobj(ax.Children, '-property', 'YData');
+    for k = 1:numel(hData)
+        x = xFwd(double(hData(k).XData(:)));  y = yFwd(double(hData(k).YData(:)));
+        under = x >= xSpan(1) & x <= xSpan(2);        % 구간 안의 점
+        cross = min(x(1:end-1), x(2:end)) <= xSpan(2) & max(x(1:end-1), x(2:end)) >= xSpan(1);   % 구간을 가로지르는 선분
+        under = under | [cross; false] | [false; cross];
+        yTop = max([yTop; y(under)]);
+    end
+    yHi = yl(1) + (yTop - yl(1)) / (1 - legendFrac);  % ① yTop이 범례 띠 하단에 오도록 하는 상한
+    if isLogY; yHi = ceil(yHi - 1e-9); end            % log 축은 decade 단위로 올림
+    yl(2) = max(yl(2), yHi);
+end
+ylim(ax, yInv(yl));
+yTickValues = yticks(ax);                             % ① 반영 후의 눈금
+yTick = yFwd(yTickValues);
+yTick = yTick(yTick >= yl(1) & yTick <= yl(2));       % 박스 안의 눈금만
+yInset = yTickInsetFrac * diff(yl);
+ylim(ax, yInv([min([yl(1), yTick - yInset]), max([yl(2), yTick + yInset])]));   % ② 양 끝 눈금을 박스 안쪽으로
+if ~isequal(yticks(ax), yTickValues)
+    yticks(ax, yTickValues);                          % 한계 변경으로 자동 눈금이 바뀌면(주로 log 축) 원래 눈금 유지
+end
+end
+```
+
+- **① Legend headroom** — with `h` = legend band height ÷ plot-box height and `yTop` = the highest data under the legend's x-span, it sets the upper limit to `yHi = yLo + (yTop − yLo) / (1 − h)`, which puts `yTop` at the bottom edge of the legend band. On a log y axis the formula runs in log10 and both limits are snapped outward to whole decades, so the decade ticks survive. The limit only ever goes up: a legend over an empty corner (decaying response, low-pass magnitude) leaves the upper limit untouched.
+- **② Tick inset** — then it widens `ylim` just enough that the lowest and highest y tick sit `yTickInsetFrac` of the range inside the box (`[0, 8]` → `[-0.4, 8.4]`; on a log axis the inset is in decades). Limits whose outermost ticks are already inside stay as they are. If the wider limits make MATLAB re-pick its automatic ticks (typical on a log axis, where non-decade limits drop most decade labels), it pins the ticks it measured before widening.
+- **Automatic fallback** — when `h > legendMaxHeightFrac` or the legend is wider than the plot box, it sets `northoutside`, spreads a 1-column legend into one row so it takes less of the panel height, and skips ①. Typical trigger: 3+ entries on a short stacked panel at `fontSize` 24. Lowering `fontSize` first (review step 4) can bring the legend back inside.
+- **What it sees** — objects with `XData`/`YData` (`plot`, `loglog`, `stairs`, `scatter`, …). `yline`/`xline` and annotations are invisible to it; if one of those sits under the legend, raise the upper `ylim` by hand.
+- **Other languages** — same logic with the target's API, e.g. matplotlib `loc='upper right'` / `'upper center'` with `ncol`, measuring `legend.get_window_extent()` against `ax.get_window_extent()` after `fig.canvas.draw()`.
 
 ## Figure organization
 
@@ -196,9 +276,10 @@ Export **per axes, never per figure**: `exportgraphics(ax, ...)` crops to that p
 
 The review loop still needs a rendered PNG when the delivered script has `optionSave = false`: during your own review run, export a temporary PNG (e.g. to the session temp folder) to read back, and leave no file in the user's working folder — the delivered script keeps the user's flag value.
 
-3. **Review.** Read every saved axes PNG back with the **Read tool** (the files from step 2 — the MATLAB MCP only runs the code that saves them; it returns text, not images) and verify each against **every rule in "Figure window", "Required on every axes", and "Series and legend"**, plus rendered-image faults: clipped data, legend overlap, distorted aspect, or fewer than 3 grid lines on an axis.
+3. **Review.** Read every saved axes PNG back with the **Read tool** (the files from step 2 — the MATLAB MCP only runs the code that saves them; it returns text, not images) and verify each against **every rule in "Figure window", "Required on every axes", and "Series and legend"**, plus rendered-image faults: clipped data, legend covering data, a y tick on the top or bottom edge of the box, distorted aspect, or fewer than 3 grid lines on an axis.
 4. **Fix vs ask.**
-   - **Fix unambiguous style violations directly** — missing units, shorthand color, wrong font/grid/linewidth, absent limits, distorted aspect, clipped data, legend overlap — and note what you changed.
+   - **Fix unambiguous style violations directly** — missing units, shorthand color, wrong font/grid/linewidth, absent limits, distorted aspect, clipped data, legend covering data, y tick on a box edge — and note what you changed.
+   - **Legend covering data** — first confirm `finalizeYLimits` is the last call for that axes. If it is and the legend still covers something (an object the helper does not see), raise the upper `ylim` by hand. Do not move the legend to another corner.
    - **Font size is the first lever for crowded text.** When tick labels, axis labels, or legend text crowd, overlap, or clip, adjust the base `fontSize` within **12–32** (default 24) before reaching for legend relocation or column changes. If the text still does not fit at `fontSize` 12, treat it as a layout problem (panel split, fewer series) rather than shrinking further. Note the new `fontSize` whenever you change it.
    - **Ask only when the fix changes interpretation** — which tick values to force on a sparse axis (<3 grid lines), whether a non-zero time start is intended, choosing a colormap/representation, or anything where multiple valid readings of the data exist.
 5. **Revise (one pass).** Apply the fixes (and any user-approved interpretive changes), re-save, and re-review **once**. Stop after this single revise — do not loop. If violations still remain after the one pass, list them for the user with the suggested fix rather than re-rendering again.
@@ -207,7 +288,7 @@ The review loop still needs a rendered PNG when the delivered script has `option
 
 - Still emit the save block (per-axes PNG + FIG, or the language's equivalent) so the user can render and review.
 - Self-check the **code** against every rule in "Figure window", "Required on every axes", and "Series and legend".
-- State explicitly that the image was **not** visually verified, and list the rendered-image faults the user should check by eye (clipped data, legend overlap, distorted aspect, <3 grid lines).
+- State explicitly that the image was **not** visually verified, and list the rendered-image faults the user should check by eye (clipped data, legend covering data, y tick on a box edge, distorted aspect, <3 grid lines).
 - Never claim a plot is verified from code alone.
 
 ## Output behavior
