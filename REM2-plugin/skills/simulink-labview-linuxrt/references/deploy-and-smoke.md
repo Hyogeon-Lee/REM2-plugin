@@ -48,13 +48,13 @@ ssh <target> "ls -l <deploy-dir>; sha256sum <deploy-dir>/*.so; /lib/libc.so.6 | 
 
 | 파일 | 용도 | 확인 상태 |
 | --- | --- | --- |
-| `scripts/mit_smoke.c` | 일반 도구. 모델 N개 로드, 인터페이스 출력, 경로로 파라미터 설정, 포트 연결, N 스텝 실행, 출력 범위·스텝 시간 출력 | 타깃(PXIe-8840)과 WSL에서 확인. 그 뒤 고친 부분(아래)은 WSL에서만 확인 |
+| `scripts/mit_smoke.c` | 일반 도구. 모델 N개 로드, 인터페이스 출력, 경로로 파라미터 설정, 포트 연결, N 스텝 실행, 출력 범위·스텝 시간 출력 | 타깃(PXIe-8840)과 WSL에서 확인(아래 세 곳을 고친 소스 포함) |
 | `examples/mit_smoke_example.c` | 예제 두 모델 전용 시나리오. 단계별 파라미터 변경과 참값 대비 RMSE | 타깃과 WSL에서 확인 |
 
-`scripts/mit_smoke.c`는 3.2절의 타깃 실행 뒤에 세 곳을 고쳤습니다. 고친 파일은 크로스 컴파일하고 WSL에서만 실행했습니다(예제 두 모델에서 고치기 전과 출력이 같음). 타깃에서는 다시 실행하지 않았습니다.
+`scripts/mit_smoke.c`는 첫 타깃 실행 뒤에 세 곳을 고쳤습니다. 고친 소스를 WSL과 타깃에서 다시 실행했고, 3.2절의 모든 경우에서 고치기 전과 결과가 같았습니다. 오류 문구 출력과 `NIRT_FinalizeModel` 생략 경로는 해당 오류가 나지 않아 실행되지 않았습니다.
 
 - NIRT 오류 문구 출력: `NIRT_ModelError`는 오류 문구가 있을 때 `NI_ERROR`(1)를 반환합니다. 반환값이 0일 때만 문구를 출력하던 조건을 문구 길이로 판단하게 바꿨습니다.
-- inport 버퍼 크기: MF 2020의 `tmw\codegen\NiPortLib.tlc`를 보면 `NIRT_InitializeModel`이 돌려주는 inport 수는 신호 수라서 벡터 inport도 1로 셉니다(outport 수는 원소 수). 스텝 함수는 원소마다 값을 하나씩 읽으므로, inport 원소 수를 `NIRT_GetExtIOSpec`의 포트 목록(각 inport의 `dimX × dimY` 합)에서 구합니다. 스칼라가 아닌 inport를 가진 실제 모델로는 확인하지 않았습니다.
+- inport 버퍼 크기: MF 2020의 `tmw\codegen\NiPortLib.tlc`를 보면 `NIRT_InitializeModel`이 돌려주는 inport 수는 신호 수라서 벡터 inport도 1로 셉니다(outport 수는 `niTotalNumOutports`, 즉 각 outport의 `Dimensions[0] × Dimensions[1]` 합이라 원소 수). 스텝 함수는 원소마다 값을 하나씩 읽으므로, inport 원소 수를 `NIRT_GetExtIOSpec`의 포트 목록(각 inport의 `dimX × dimY` 합)에서 구합니다. 스칼라가 아닌 inport를 가진 실제 모델로는 확인하지 않았습니다.
 - 필요한 심볼이 없는 `.so`: 초기화하지 않은 모델에 `NIRT_FinalizeModel`을 부르지 않습니다.
 
 ### 3.1 크로스 컴파일 (호스트)
@@ -101,7 +101,7 @@ ssh <target> "chmod +x /tmp/mit_smoke && /tmp/mit_smoke -n 0 <deploy-dir>/noise_
 /tmp/mit_smoke -s signal_filter/filter_mode=0 -w 1:0=0:1 <deploy-dir>/noise_gen.so <deploy-dir>/signal_filter.so
 ```
 
-2026-11-27 PXIe-8840(NI Linux RT 8.6) 결과(`<deploy-dir>` = `/home/lvuser/models`, 3.1절 명령으로 경고 없이 빌드, 위의 세 곳을 고치기 전 소스):
+2026-11-27 PXIe-8840(NI Linux RT 8.6) 결과(`<deploy-dir>` = `/home/lvuser/models`, 3.1절 명령으로 경고 없이 빌드. 위의 세 곳을 고치기 전 소스와 고친 소스에서 값이 같음):
 
 | 인자 (모델 인자 `noise_gen.so signal_filter.so` 생략) | 결과 |
 | --- | --- |
@@ -109,10 +109,9 @@ ssh <target> "chmod +x /tmp/mit_smoke && /tmp/mit_smoke -n 0 <deploy-dir>/noise_
 | `-w 1:0=0:1` (기본값, Kalman) | PASS. `y_noisy` -1.703~1.618, `y_filt` -1.136~1.161. 스텝 시간 평균 0.3 µs, 최대 12.8 µs |
 | `-s signal_filter/filter_mode=0 -w 1:0=0:1` | PASS. `y_filt`의 min/max/last가 `y_noisy`와 정확히 같음(bypass) |
 | `-s noise_gen/Ts=1e-3 -s signal_filter/Ts=1e-3 -w 1:0=0:1` | PASS. `y_filt` -1.433~1.329. 10 kHz보다 덜 평활(3.4절 RMSE 0.1011과 같은 경향) |
-| `-s signal_filter/filter_mode=5 -s signal_filter/pf_N=1000 -w 1:0=0:1` | PASS. 스텝 시간 평균 110.0 µs, 최대 176.8 µs. 측정 중 같은 타깃에서 LabVIEW RT VI(`lvrt`)가 두 모델로 Timed Loop를 돌리고 있었으므로 기준값으로 쓰지 않음(3.4절 평균 45.7 µs 참고) |
+| `-s signal_filter/filter_mode=5 -s signal_filter/pf_N=1000 -w 1:0=0:1` | PASS. 첫 스텝 전에 `pf_N` 1000을 설정하면 스텝 시간 평균 110 µs(1000·10000·40000 스텝에서 같음), 최대 176~245 µs. 3.4절처럼 `pf_N` 200 실행 뒤 1000으로 바꾸면 평균 46 µs. 같은 타깃 상태, 같은 코어(`taskset`)에서 재현했고 원인은 찾지 못함 |
 | 없는 파라미터, `-w 0:0=1:0`(연결 순서 오류), `-w 1:1=0:1`(범위 밖 element), 없는 `.so` | 각각 `parameter ... not found`, `bad wire ...`, `dlopen ... No such file` 메시지 후 FAIL, exit 1 |
 
-- 스텝 시간을 잴 때는 같은 타깃의 다른 RT VI를 멈춥니다. 실행 중인 `lvrt`와 CPU를 나눠 쓰면 값이 커집니다.
 - WSL Ubuntu 24.04에서 R2025b Update 7 빌드로 실행했을 때도 인터페이스와 bypass 결과, 오류 처리가 같았습니다. 인자 형식이 틀리면(예: `-s signal_filter/filter_mode=`) 사용법을 출력하고 exit 2로 끝납니다.
 
 ### 3.3 타깃 전에 WSL에서 확인 (선택)
@@ -158,4 +157,4 @@ ssh <target> "chmod +x /tmp/mit_smoke_example && /tmp/mit_smoke_example <deploy-
 - 노이즈 표준편차는 `y_noisy − y_clean`의 표준편차입니다. 0.2에 가까우면 outport 순서(0번 `y_clean`, 1번 `y_noisy`)가 맞습니다.
 - RMSE는 Simulink 결과(`model-authoring.md` 4.4절)와 같은 수준입니다. Kalman 0.0457 → 0.0442, bypass 0.1988 → 0.1982.
 - 같은 RMSE 값이 R2025b Update 7 빌드를 WSL에서 실행했을 때도 그대로 나왔습니다(난수 순서가 같음).
-- 스텝 시간은 일반 우선순위 프로세스에서 잰 값이라 최대값에 다른 작업에 의한 지연이 섞여 있습니다. 10 kHz(100 µs)에서 `pf_N` 1000은 평균만 46 µs이므로, `pf_N`은 500 이하에서 시작해 `Finished Late?`로 확인합니다. Timed Loop(실시간 우선순위)에서의 스텝 시간은 재지 않았습니다.
+- 스텝 시간은 일반 우선순위 프로세스에서 잰 값이라 최대값에 다른 작업에 의한 지연이 섞여 있습니다. `pf_N` 1000의 평균은 실행 순서에 따라 46 µs 또는 110 µs(3.2절)이고, 110 µs는 10 kHz 주기(100 µs)를 넘습니다. `pf_N`은 500 이하에서 시작해 `Finished Late?`로 확인합니다. Timed Loop(실시간 우선순위)에서의 스텝 시간은 재지 않았습니다.
