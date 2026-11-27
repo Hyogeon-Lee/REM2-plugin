@@ -49,7 +49,7 @@ Ask for these when not given. Use the example values only as examples.
 | 6 | Verify the `.so` | `readelf`, `nm`, `objdump` from the cross toolchain | ELF64 x86-64, 29 `NIRT_*` exports, `rt_InitInfAndNaN` = `W`, no undefined `rt_*`/model symbols, glibc ≤ 2.14 | `build-and-verify.md` |
 | 7 | Deploy | `scp` to the deploy folder | `-rw-r--r--`, SHA-256 matches | `deploy-and-smoke.md` |
 | 8 | Smoke test without LabVIEW | Cross-compile `scripts/mit_smoke.c`, run on the target (optionally first on WSL) | `PASS`; outputs plausible (example: RMSE as in Simulink) | `deploy-and-smoke.md` |
-| 9 | LabVIEW load test | Load NI's `libsinewave64.so` first, then each model | No error; port and parameter counts match | `labview-mit.md` §2 |
+| 9 | LabVIEW load test | Load NI's `libsinewave64.so` first (copy it to the target; it is not there by default), then each model | No error; port and parameter counts match | `labview-mit.md` §2 |
 | 10 | Chain models, change parameters at run time | Timed Loop, Set Parameter Inline inside the loop, model wires on shift registers | Parameter change shows in the output | `labview-mit.md` §2.1 |
 | 11 | Full RT VI + host VI | RT FIFO, Network Streams, commands `[code, id, value]` | `late count` stays 0; host RMSE close to Simulink | `labview-mit.md` §3–5 (unverified) |
 
@@ -79,7 +79,7 @@ LabVIEW MIT:
 
 ## Verification status
 
-Confirmed (2026-11-27): Simulink simulation and error analysis of the example; MATLAB R2025b Update 6 + MF 2020 (3 patches) + cross compiler 2017 build; R2025b Update 7 rebuild with this skill's `build_mit` (same `.so` sizes and verification values); `malloc`/`emxArray` = 0 in generated code; deployment and `mit_smoke` on the PXIe-8840 (Kalman RMSE 0.0442, bypass 0.1982, parameter and `Ts` changes); the same `mit_smoke` results reproduced on WSL Ubuntu 24.04 from the Update 7 build; two models chained in one LabVIEW Timed Loop at 10 kHz with run-time `filter_mode` switching (host MIT 20.0.0, target MIT 20.4.0); `RTLD_GLOBAL` loading breaks two models in one process.
+Confirmed (2026-11-27): Simulink simulation and error analysis of the example; MATLAB R2025b Update 6 + MF 2020 (3 patches) + cross compiler 2017 build; R2025b Update 7 rebuild with this skill's `build_mit` (same `.so` sizes and verification values); `malloc`/`emxArray` = 0 in generated code; deployment and `mit_smoke` on the PXIe-8840 (Kalman RMSE 0.0442, bypass 0.1982, parameter and `Ts` changes); the same `mit_smoke` results reproduced on WSL Ubuntu 24.04 from the Update 7 build; the generalized `scripts/mit_smoke.c` on the PXIe-8840 (interfaces, chained Kalman and bypass runs, `Ts` change, `pf_N` 1000, error paths); two models chained in one LabVIEW Timed Loop at 10 kHz with run-time `filter_mode` switching (host MIT 20.0.0, target MIT 20.4.0); `RTLD_GLOBAL` loading breaks two models in one process.
 
 Not confirmed — state this when relevant:
 - The full RT VI (RT FIFO, Network Streams) and host VI (`labview-mit.md` §3–4).
@@ -88,12 +88,11 @@ Not confirmed — state this when relevant:
 - The standard Simulink make path (MATLAB without `NoDefaultCurrentDirectoryInExePath`).
 - Linking the `.so` with `-Wl,-Bsymbolic`.
 - Whether `ni-labview-2020-simulation-x86` is needed for MIT.
-- The generalized `scripts/mit_smoke.c` on the target itself (checked on WSL only; `examples/mit_smoke_example.c` is the target-verified original).
 
 ## Files
 
 - `scripts/build_mit.m` — `build_mit(models, OutputDir=..., GenCodeOnly=..., SystemTargetFile=...)`; returns the `.so` paths.
 - `scripts/mit_smoke.c` — general smoke test: load N models, print interfaces, set parameters by path, chain ports, step, report. Usage in its header and `deploy-and-smoke.md`.
 - `scripts/patches/*.patch` — MF 2020 patches for R2025b (keep byte-exact; `.gitattributes` disables line-ending conversion).
-- `examples/` — worked example: `noise_gen.slx` (sine + noise), `signal_filter.slx` (6 selectable filters), `*_core.m`, `test_filters.m` (Simulink verification), `mit_smoke_example.c` (the target-verified scenario for these two models).
+- `examples/` — worked example: `noise_gen.slx` (sine + noise), `signal_filter.slx` (6 selectable filters), `*_core.m`, `test_filters.m` (Simulink verification), `mit_smoke_example.c` (fixed scenario for these two models with RMSE against the clean signal).
 - `references/` — `environment.md`, `mf2020-r2025b-patches.md`, `model-authoring.md`, `build-and-verify.md`, `deploy-and-smoke.md`, `labview-mit.md`, `troubleshooting.md`.

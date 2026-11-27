@@ -47,7 +47,7 @@
 | --- | --- | --- |
 | Load Model 오류 1, 메시지 끝에 `<Not A Path>` (`File/Directory Info in ... Load Library.vi`) (실제 발생) | Windows 화면의 Path 컨트롤에 Linux 경로를 입력 | 문자열 상수나 String 컨트롤 → String to Path |
 | Load Model 오류 -383200 | MIT 형식이 아닌 파일. 경로 오타, 32-bit/ARM `.so` | 경로와 `readelf -h` 확인 |
-| `libsinewave64.so`도 로드되지 않음 | 타깃에 MIT가 없음 | 사용자가 NI MAX에서 MIT 설치(`deploy-and-smoke.md` 1절) |
+| `libsinewave64.so`도 로드되지 않음 | 파일이 타깃에 없음(기본으로 없고, 공용 타깃에서는 지워질 수 있음), 또는 타깃에 MIT가 없음 | 먼저 `ssh <target> "ls -l <deploy-dir>"`로 파일 확인 후 없으면 복사(`deploy-and-smoke.md` 2절). 파일이 있는데도 실패하면 사용자가 NI MAX에서 MIT 설치(1절) |
 | `libsinewave64.so`는 되고 빌드한 `.so`만 안 됨 | 빌드 문제 | `build-and-verify.md` 3절 기준값과 비교, `mit_smoke` 실행, 오류 코드와 메시지 기록 |
 | Set Parameter Inline 오류 -383700 (실제 발생) | `Update Parameters In Line?` = TRUE를 쓰지 않았거나, Set Parameter Inline의 모델 입력이 Property Node 뒤쪽 와이어가 아님(미연결, 앞에서 분기, 노드 위를 지나가기만 함) | Property Node 뒤쪽 와이어에 직렬 연결. 노드를 끌어 연결 여부 확인 |
 | 오류는 없는데 출력이 입력과 같고 파라미터를 바꿔도 그대로 (실제 발생) | 모델 와이어를 루프 경계에서 터널로 넘김 | 시프트 레지스터로 바꿈 |

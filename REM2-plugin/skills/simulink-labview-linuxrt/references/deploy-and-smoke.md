@@ -21,7 +21,7 @@ ssh <target> "opkg list-installed | grep -E 'labview-realtime|model-interface|ve
 
 ## 2. `.so` 복사
 
-배포할 파일: 빌드한 모델 `.so`와, NI MIT 예제 모델 `libsinewave64.so`(`C:\Program Files (x86)\National Instruments\LabVIEW 2020\examples\Control and Simulation\Model Interface\Models\`, x86-64용). `libsinewave64.so`는 타깃에서 모델이 로드되지 않을 때 원인이 MIT 설치인지 빌드인지 가르는 기준 모델입니다.
+배포할 파일: 빌드한 모델 `.so`와, NI MIT 예제 모델 `libsinewave64.so`(`C:\Program Files (x86)\National Instruments\LabVIEW 2020\examples\Control and Simulation\Model Interface\Models\`, x86-64용). `libsinewave64.so`는 타깃에서 모델이 로드되지 않을 때 원인이 MIT 설치인지 빌드인지 가르는 기준 모델입니다. 타깃에 기본으로 있지 않고 다른 사람이 지울 수도 있으므로, 쓰기 전에 `ls`로 확인하고 없으면 직접 복사합니다.
 
 ```powershell
 ssh <target> "mkdir -p <deploy-dir>"
@@ -48,8 +48,8 @@ ssh <target> "ls -l <deploy-dir>; sha256sum <deploy-dir>/*.so; /lib/libc.so.6 | 
 
 | 파일 | 용도 | 확인 상태 |
 | --- | --- | --- |
-| `scripts/mit_smoke.c` | 일반 도구. 모델 N개 로드, 인터페이스 출력, 경로로 파라미터 설정, 포트 연결, N 스텝 실행, 출력 범위·스텝 시간 출력 | WSL(x86-64 Linux)에서 확인. 타깃 실행은 미확인 |
-| `examples/mit_smoke_example.c` | 예제 두 모델 전용 시나리오. 단계별 파라미터 변경과 참값 대비 RMSE | 타깃에서 확인 |
+| `scripts/mit_smoke.c` | 일반 도구. 모델 N개 로드, 인터페이스 출력, 경로로 파라미터 설정, 포트 연결, N 스텝 실행, 출력 범위·스텝 시간 출력 | 타깃(PXIe-8840)과 WSL에서 확인 |
+| `examples/mit_smoke_example.c` | 예제 두 모델 전용 시나리오. 단계별 파라미터 변경과 참값 대비 RMSE | 타깃과 WSL에서 확인 |
 
 ### 3.1 크로스 컴파일 (호스트)
 
@@ -93,7 +93,19 @@ ssh <target> "chmod +x /tmp/mit_smoke && /tmp/mit_smoke -n 0 <deploy-dir>/noise_
 /tmp/mit_smoke -s signal_filter/filter_mode=0 -w 1:0=0:1 <deploy-dir>/noise_gen.so <deploy-dir>/signal_filter.so
 ```
 
-WSL Ubuntu 24.04에서 R2025b Update 7 빌드로 실행한 결과(발췌): 두 모델의 인터페이스가 `model-authoring.md` 4.1절 표와 같고, bypass에서 `model 1 outport element 0`의 min/max/last가 `model 0 outport element 1`(`y_noisy`)과 같았습니다. 잘못된 연결, 없는 파라미터, 잘못된 값, 없는 파일은 각각 오류 메시지와 `FAIL`(또는 사용법 출력)로 끝났습니다.
+2026-11-27 PXIe-8840(NI Linux RT 8.6) 결과(`<deploy-dir>` = `/home/lvuser/models`, 3.1절 명령으로 경고 없이 빌드):
+
+| 인자 (모델 인자 `noise_gen.so signal_filter.so` 생략) | 결과 |
+| --- | --- |
+| `-n 0` | `noise_gen` inport 0 / outport 2 / 파라미터 5, `signal_filter` inport 1 / outport 1 / 파라미터 7. 경로와 index가 `model-authoring.md` 4.1절 표와 같음. PASS |
+| `-w 1:0=0:1` (기본값, Kalman) | PASS. `y_noisy` -1.703~1.618, `y_filt` -1.136~1.161. 스텝 시간 평균 0.3 µs, 최대 12.8 µs |
+| `-s signal_filter/filter_mode=0 -w 1:0=0:1` | PASS. `y_filt`의 min/max/last가 `y_noisy`와 정확히 같음(bypass) |
+| `-s noise_gen/Ts=1e-3 -s signal_filter/Ts=1e-3 -w 1:0=0:1` | PASS. `y_filt` -1.433~1.329. 10 kHz보다 덜 평활(3.4절 RMSE 0.1011과 같은 경향) |
+| `-s signal_filter/filter_mode=5 -s signal_filter/pf_N=1000 -w 1:0=0:1` | PASS. 스텝 시간 평균 110.0 µs, 최대 176.8 µs. 측정 중 같은 타깃에서 LabVIEW RT VI(`lvrt`)가 두 모델로 Timed Loop를 돌리고 있었으므로 기준값으로 쓰지 않음(3.4절 평균 45.7 µs 참고) |
+| 없는 파라미터, `-w 0:0=1:0`(연결 순서 오류), `-w 1:1=0:1`(범위 밖 element), 없는 `.so` | 각각 `parameter ... not found`, `bad wire ...`, `dlopen ... No such file` 메시지 후 FAIL, exit 1 |
+
+- 스텝 시간을 잴 때는 같은 타깃의 다른 RT VI를 멈춥니다. 실행 중인 `lvrt`와 CPU를 나눠 쓰면 값이 커집니다.
+- WSL Ubuntu 24.04에서 R2025b Update 7 빌드로 실행했을 때도 인터페이스와 bypass 결과, 오류 처리가 같았습니다. 인자 형식이 틀리면(예: `-s signal_filter/filter_mode=`) 사용법을 출력하고 exit 2로 끝납니다.
 
 ### 3.3 타깃 전에 WSL에서 확인 (선택)
 
