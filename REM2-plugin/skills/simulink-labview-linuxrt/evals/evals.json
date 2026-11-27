@@ -1,0 +1,95 @@
+{
+  "skill_name": "simulink-labview-linuxrt",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "blockidx-tlc-error-patch1",
+      "prompt": "R2025b에서 build_mit 돌렸더니 signal_filter에서 'Unable to find BlockIdx within the ExternalInput scope' TLC 오류가 나요.",
+      "expected_output": "Agent identifies the R2025b + Model Framework 2020 incompatibility for models with a root Inport and points to patch 1 (NiUtilityLib.tlc.patch). Before applying it asks the user, checks for existing .orig files and whether the patch is already applied (reverse dry-run: patch -p1 -R -N --dry-run --binary), runs patch -p1 -b --binary --dry-run, and deletes slprj, *.slxc and *_veristand_rtw before rebuilding",
+      "files": ["scripts/patches/NiUtilityLib.tlc.patch"]
+    },
+    {
+      "id": 1,
+      "eval_name": "dw-undeclared-patch2-cache",
+      "prompt": "빌드하면 'noise_gen_DW' undeclared 컴파일 오류가 나고 noise_gen.c 파일이 거의 비어 있어요.",
+      "expected_output": "Agent explains that R2025b TLC truncates files opened with \"r+\" and points to patch 2 (NIVeriStand_codegen.tlc.patch). It first checks whether the patch is already applied (.orig file, reverse dry-run) and asks the user before changing the Model Framework install; if the patch is already applied, it names the build cache as the cause. In both cases it states that slprj, *.slxc and *_veristand_rtw must be deleted before rebuilding, or Simulink reuses the stale generated code",
+      "files": ["scripts/patches/NIVeriStand_codegen.tlc.patch"]
+    },
+    {
+      "id": 2,
+      "eval_name": "not-a-path-string-to-path",
+      "prompt": "LabVIEW RT VI에서 Load Model이 오류 1을 내고 메시지 끝에 <Not A Path>가 붙어요. 경로는 /home/lvuser/models/noise_gen.so 로 Path 컨트롤에 넣었어요.",
+      "expected_output": "Agent says a Linux path typed into a Path control on the Windows host becomes Not A Path, and tells the user to pass the path as a string constant or String control through String to Path, which runs on the target",
+      "files": []
+    },
+    {
+      "id": 3,
+      "eval_name": "set-parameter-inline-383700",
+      "prompt": "Set Parameter Inline에서 -383700 오류가 나요. Update Parameters In Line? 은 TRUE로 했는데요.",
+      "expected_output": "Agent explains that the MIT model wire is a by-value class, so TRUE only travels on the wire after the Property Node; Set Parameter Inline must be wired in series to that output wire, not left unconnected, branched before the Property Node, or merely passing over the node",
+      "files": []
+    },
+    {
+      "id": 4,
+      "eval_name": "tunnel-instead-of-shift-register",
+      "prompt": "오류는 없는데 Timed Loop 안에서 signal_filter 출력이 입력이랑 똑같고 filter_mode를 바꿔도 그대로예요.",
+      "expected_output": "Agent identifies that the model wire crosses the loop border through a tunnel, so the updated by-value model object never reaches the next iteration; the fix is to pass the model wire (and inport array, error) through shift registers",
+      "files": []
+    },
+    {
+      "id": 5,
+      "eval_name": "parameter-change-not-applied",
+      "prompt": "실행 중에 프런트 패널에서 filter_mode를 바꿔도 반영이 안 돼요. Set Parameter Inline은 루프 앞에 있어요.",
+      "expected_output": "Agent says a Set Parameter Inline outside the loop runs only once at start; move it and its control inside the loop, and keep only one control per parameter so a second control does not overwrite the value every step",
+      "files": []
+    },
+    {
+      "id": 6,
+      "eval_name": "sem-init-lpthread",
+      "prompt": "타깃에서 .so를 직접 dlopen하는 테스트 프로그램을 돌리니 undefined symbol: sem_init 이 나와요.",
+      "expected_output": "Agent explains that the MF 2020 .so uses sem_* but does not list libpthread in NEEDED, LabVIEW's lvrt already provides it, and a standalone loader must link with -lpthread; it also recommends RTLD_LOCAL when loading several model .so files in one process",
+      "files": ["scripts/mit_smoke.c"]
+    },
+    {
+      "id": 7,
+      "eval_name": "shared-target-no-reinstall",
+      "prompt": "PXI 타깃의 MIT가 20.4.0인데 내 호스트는 20.0.0이야. NI MAX로 타깃 소프트웨어 다시 설치해서 맞춰줘.",
+      "expected_output": "Agent does not reinstall target software itself. It explains that reinstalling from this host overwrites the shared target with the host versions and can break other users' setups, that a VI built with host MIT 20.0.0 ran on target MIT 20.4.0, and recommends deploying as-is first and coordinating with the other users only if LabVIEW reports a version mismatch",
+      "files": []
+    },
+    {
+      "id": 8,
+      "eval_name": "build-new-models-collect-inputs",
+      "prompt": "내 Simulink 모델 두 개(plant_sim, controller)를 PXIe-8840 LabVIEW RT에서 돌리고 싶어. 빌드부터 배포까지 해줘.",
+      "expected_output": "Agent collects missing inputs (target address or SSH alias, deploy folder default /home/lvuser/models, loop rate, model chaining, run-time parameters), checks the MATLAB release for the MF patch requirement, checks the model rules (Simulink.Parameter in the model workspace, Inlined, single rate, Ts-based timing), builds with build_mit([\"plant_sim\",\"controller\"], OutputDir=...), verifies each .so against the reference values, and never puts a password in commands or files; it says the LabVIEW VI steps are done by the user (VIs cannot be generated) and gives the wiring rules instead",
+      "files": ["scripts/build_mit.m"]
+    },
+    {
+      "id": 9,
+      "eval_name": "full-rt-vi-stated-unverified",
+      "prompt": "RT FIFO랑 Network Streams로 호스트에서 그래프 보고 파라미터도 바꾸는 완성형 RT VI 구조 알려줘. 이거 검증된 구조야?",
+      "expected_output": "Agent gives the design from references/labview-mit.md sections 3-4 (Timed Loop plus a communication loop, data and command RT FIFOs, rt_data/rt_cmd Network Streams, command format [code, id, value], no array-building nodes inside the Timed Loop) and states plainly that this full RT VI and the host VI were designed but not built or run; only the load test and the two-model Timed Loop with run-time filter_mode switching were confirmed. It does not present the design as tested",
+      "files": []
+    },
+    {
+      "id": 10,
+      "eval_name": "mit-smoke-chain-before-labview",
+      "prompt": "LabVIEW 열기 전에 타깃에서 noise_gen.so랑 signal_filter.so가 제대로 도는지 먼저 확인하고 싶어. SSH 별칭은 mypxi이고 모델은 /home/lvuser/models 에 있어.",
+      "expected_output": "Agent cross-compiles scripts/mit_smoke.c with x86_64-nilrt-linux-gcc (--sysroot of core2-64-nilrt-linux, -ldl -lm -lpthread), copies the binary to /tmp on the target with the given alias, runs it with the two .so paths in the order noise_gen, signal_filter and the wire -w 1:0=0:1 (signal_filter.u from noise_gen.y_noisy), reports PASS/FAIL with the printed interface, and deletes the binary from /tmp afterwards. It never asks for or stores a password and does not change RTLD_LOCAL to RTLD_GLOBAL",
+      "files": ["scripts/mit_smoke.c"]
+    },
+    {
+      "id": 11,
+      "eval_name": "arm-target-not-covered",
+      "prompt": "같은 방법으로 cRIO-9068(ARM)에도 Simulink 모델을 올릴 수 있어?",
+      "expected_output": "Agent says the skill covers NI Linux RT x64 targets only (Linux64 toolchain, hardware Intel->x86-64 (Linux 64), x86-64 .so checks) and that ARM targets are outside what was verified; it does not present the x64 steps or reference values as confirmed for ARM",
+      "files": []
+    },
+    {
+      "id": 12,
+      "eval_name": "anti-trigger-simulink-real-time",
+      "prompt": "Speedgoat 타깃에 Simulink Real-Time으로 모델 올려서 실행하려는데 slrealtime 연결이 안 돼.",
+      "expected_output": "simulink-labview-linuxrt does NOT trigger - Simulink Real-Time/Speedgoat is out of scope (the skill covers NI MIT .so files run from LabVIEW RT on NI Linux RT x64)"
+    }
+  ]
+}

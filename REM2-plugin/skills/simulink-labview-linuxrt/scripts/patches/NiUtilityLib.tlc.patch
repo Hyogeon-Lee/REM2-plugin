@@ -1,0 +1,16 @@
+--- a/tmw/codegen/NiUtilityLib.tlc
++++ b/tmw/codegen/NiUtilityLib.tlc
+@@ -272,8 +272,12 @@
+ 
+             %% Using the block's formatted name length, we can remove it from the base path and append the unformatted SLName
+             %assign fullPath = NiLibFevalError(FEVAL("NiFncTlcErrorHandler", "NIVeriStand_TLC_functions", "getsubstr", blockPath, strlen)) + block.SLName
+-        %else
++        %elseif ISFIELD(block, "BlockIdx")
+             %assign fullPath = LibGetBlockPath(block)
++        %else
++            %% Local patch for R2025b (original: NiUtilityLib.tlc.orig): ExternalInput records carry
++            %% no BlockIdx, which LibGetBlockPath needs. Same fallback LibGetBlockPath uses itself.
++            %assign fullPath = LibUnmangledPathName(block.Name)
+         %endif
+     %endwith
+     %return fullPath

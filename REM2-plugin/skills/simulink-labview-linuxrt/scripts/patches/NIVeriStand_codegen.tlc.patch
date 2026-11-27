@@ -1,0 +1,25 @@
+--- a/tmw/codegen/NIVeriStand_codegen.tlc
++++ b/tmw/codegen/NIVeriStand_codegen.tlc
+@@ -208,14 +208,18 @@
+ 		%assign editSourceMsg = "Modifying source file %<NiModelInformation.sourceFile>"
+ 		%<NiLibPrintMessagePrefix(editSourceMsg)>
+ 		%% We need to make sure the first define is the first in the main model file, before #include <model>.h, so we open as w.
++		%% Local patch for R2025b (original: NIVeriStand_codegen.tlc.orig): R2025b TLC truncates a file
++		%% opened with "r+", which deleted the model code. Read the file first, then rewrite it with the define on top.
+ 		%if EXISTS(target)
+-			%openfile fileHandle = target, "r+"
++			%assign niSrcPath = target
+ 		%else
+-			%openfile fileHandle = "%<NiModelInformation.sourceFile>", "r+"
++			%assign niSrcPath = "%<NiModelInformation.buildDirectory>\\%<NiModelInformation.sourceFile>"
+ 		%endif
++		%assign niSrcText = FEVAL("regexprep", FEVAL("fileread", niSrcPath), "\\r", "")
++		%openfile fileHandle = niSrcPath, "w"
+ 		%selectfile fileHandle
+-		%assign ::NiMainDefine = "\r\n#define NI_VERISTAND_MAINMODELFILE\n/*"
+-		%<::NiMainDefine>
++		#define NI_VERISTAND_MAINMODELFILE
++		%<niSrcText>
+ 		%closefile fileHandle
+ 		%% With that define out of the way, open the file with "a" to append at the end.
+ 		%if EXISTS(target)
