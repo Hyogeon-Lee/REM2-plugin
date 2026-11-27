@@ -16,8 +16,9 @@ MATLAB 과학/공학 플롯 스타일과 측정 FRF 기반 제어기 설계 워�
 | `lean-comments` | 소스 코드 주석 최소화 규칙 — 코드에서 복원할 수 없는 비자명 정보만 남기고 나머지는 삭제, 언어 무관 (awesome-copilot 이식) |
 | `github-release` | `gh`+`git`으로 릴리스 end-to-end — 마지막 태그 이후 diff 분석 → SemVer 결정 → Keep a Changelog 작성 → 릴리스 브랜치·PR (awesome-copilot 이식) |
 | `readme_style` | 코드베이스 탐색 후 상세 README.md 작성·갱신 — 로컬 설정, 아키텍처, 환경 변수, 스크립트, 테스트, 배포, 트러블슈팅 (sickn33/agentic-awesome-skills 이식, 원저작 Shpigford) |
+| `obsidian-research-db` | 논문 PDF → 이미지 중심 Obsidian 선행 연구 DB — 만들기 전에 용도·카드 그림·묶는 기준·PDF 확보 방식을 묻고 그에 맞춰 구성. 기본값: 논문별 노트(PDF에서 자른 대표 그림 커버), Bases 카드 갤러리, 트랙(기본: 연구 주장)별 Canvas 지도와 관련 논문 연결선. JSON 하나 + 재실행 가능한 Python 생성기(`pymupdf`) |
 
-플롯 코드를 새로 작성하거나 수정할 때 자동으로 적용됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시 트리거됩니다. Git 규약 스킬 5종(`git-commit`, `conventional-commit`, `commit-message-storyteller`, `lean-comments`, `github-release`)은 [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)의 스킬을 이식한 것입니다(MIT, 스킬 폴더별 LICENSE 포함). frontmatter를 Claude Code·Codex 호환으로 맞추고, Copilot 전용 문구(확인 없는 자동 커밋, "Copilot에 붙여넣기" 등)만 에이전트 중립으로 고쳤으며 규칙 본문은 그대로입니다. `readme_style`은 [sickn33/agentic-awesome-skills](https://github.com/sickn33/agentic-awesome-skills/tree/main/skills/readme)에서 이식했습니다(MIT, 원저작 Shpigford/skills). frontmatter를 다시 쓰고, 기존 README.md를 덮어쓰기 전 확인 단계를 추가했습니다.
+플롯 코드를 새로 작성하거나 수정할 때 자동으로 적용됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시, obsidian-research-db는 선행 연구·논문 DB 정리 요청 시 트리거됩니다. Git 규약 스킬 5종(`git-commit`, `conventional-commit`, `commit-message-storyteller`, `lean-comments`, `github-release`)은 [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)의 스킬을 이식한 것입니다(MIT, 스킬 폴더별 LICENSE 포함). frontmatter를 Claude Code·Codex 호환으로 맞추고, Copilot 전용 문구(확인 없는 자동 커밋, "Copilot에 붙여넣기" 등)만 에이전트 중립으로 고쳤으며 규칙 본문은 그대로입니다. `readme_style`은 [sickn33/agentic-awesome-skills](https://github.com/sickn33/agentic-awesome-skills/tree/main/skills/readme)에서 이식했습니다(MIT, 원저작 Shpigford/skills). frontmatter를 다시 쓰고, 기존 README.md를 덮어쓰기 전 확인 단계를 추가했습니다.
 
 ## 설치
 
@@ -53,7 +54,7 @@ codex /plugins
 
 ### ChatGPT (workspace skill)
 
-`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`, `readme_style.zip`)을 ChatGPT workspace skill 관리 화면에서 업로드합니다. 절차는 [`dist/chatgpt/README.md`](dist/chatgpt/README.md) 참고.
+`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`, `readme_style.zip`, `obsidian-research-db.zip`)을 ChatGPT workspace skill 관리 화면에서 업로드합니다. 절차는 [`dist/chatgpt/README.md`](dist/chatgpt/README.md) 참고.
 
 ## 사용법
 
@@ -64,6 +65,7 @@ codex /plugins
 REM2 스타일로 Bode plot 그려줘
 이 플롯 규칙을 matplotlib로 변환해줘
 이 FRF 엑셀 파일로 제어기 설계해줘
+이 논문 PDF들로 옵시디언 선행 연구 DB 만들어줘
 ```
 
 규칙 전문은 각 스킬의 `SKILL.md`, 케이스·프리셋별 세부 규칙은 각 스킬의 `references/`, 실행 예제는 `examples/` 참고 — 예: [`plot-style/SKILL.md`](REM2-plugin/skills/plot-style/SKILL.md).
@@ -84,6 +86,7 @@ REM2-plugin/                         ← 플러그인 본체
   skills/lean-comments/              ← 최소 주석 규칙 스킬 (awesome-copilot 이식)
   skills/github-release/             ← SemVer·Changelog 릴리스 스킬 (awesome-copilot 이식)
   skills/readme_style/               ← 상세 README 생성 스킬 (agentic-awesome-skills 이식)
+  skills/obsidian-research-db/       ← 이미지 중심 Obsidian 선행 연구 DB 스킬
 dist/chatgpt/                        ← ChatGPT 업로드용 zip (스킬별)
 ```
 

@@ -1,0 +1,75 @@
+{
+  "skill_name": "obsidian-research-db",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "vague-request-asks-first",
+      "prompt": "논문 DB 하나 만들어줘.",
+      "expected_output": "Agent creates no files and runs no script; in one message it asks the open questions that shape the DB (purpose and readers, where the papers come from and whether it should look for open-access PDFs, what a card should show, how to group papers, which relations matter, Canvas / Base / both, label language, new vault or existing one and where) with the bundled default next to each, questions without a default first, and says briefly why these choices matter",
+      "files": []
+    },
+    {
+      "id": 1,
+      "eval_name": "pdf-folder-asks-only-open-questions",
+      "prompt": "D:\\Papers 폴더에 모아 둔 PDF 20개로 옵시디언 선행 연구 DB 만들어줘. 그림 위주로 한눈에 보이게.",
+      "expected_output": "Agent may list the PDF folder but creates no vault files in this turn; it does not ask where the papers come from or whether to download PDFs, since the PDFs exist; it asks the remaining open questions (purpose, grouping and its order, what figure a card should show, relations, outputs, label language, vault location) with defaults and waits for the answer",
+      "files": []
+    },
+    {
+      "id": 2,
+      "eval_name": "settled-request-builds-without-interview",
+      "prompt": "D:\\Papers의 PDF로 C:\\Vaults\\TactileDB에 새 vault 만들어줘. 내 석사 논문 선행 연구용이고, 트랙은 C 제안 방식, B 기존 방식의 한계, A 기존 촉각 센서 순서야. 나머지는 전부 기본값으로.",
+      "expected_output": "Agent asks no interview questions; it states the plan in a few lines and builds: copies assets/template (including .obsidian/) and build_db.py into C:\\Vaults\\TactileDB, writes the three tracks in the given order, writes one entry per PDF with rule-conforming filenames, copies the PDFs into the vault under those names and leaves the originals in D:\\Papers, runs build_db.py, reports the summary line and the Windows path budget, fills the 이 DB의 결정 사항 table in 00_Guide.md, and tells the user to open C:\\Vaults\\TactileDB itself as a vault",
+      "files": []
+    },
+    {
+      "id": 3,
+      "eval_name": "add-paper-follows-vault-guide",
+      "prompt": "00_Guide.md 규칙대로 이 논문 추가해줘: 10.1109/LRA.2022.3184777. PDF는 아직 없어.",
+      "expected_output": "Precondition: the working directory is a vault built from the default template with a few papers. Agent reads the vault's 00_Guide.md and 00_candidates.json instead of running the full interview; dedupes by DOI and normalized title; adds one entry with the next id, a rule-conforming filename and status 대기; for the missing PDF it follows the PDF source in the guide's 이 DB의 결정 사항 table (default: the user supplies it, so it asks the user to drop the PDF into the vault), or asks when the guide records none, and downloads nothing on its own; runs build_db.py so the paper appears in the table view",
+      "files": []
+    },
+    {
+      "id": 4,
+      "eval_name": "open-access-fetch-on-request",
+      "prompt": "DOI만 있고 PDF 없는 논문들 있잖아. 오픈액세스로 받을 수 있는 건 네가 받아줘.",
+      "expected_output": "Precondition: a vault built from the default template whose 00_candidates.json has several entries with DOIs and no PDFs. Agent looks only for open-access copies (arXiv, the publisher's open-access version, OpenAlex best_oa_location.pdf_url); saves each in pdf/ under the entry's exact filename; leaves paywalled papers to the user and lists them; re-runs build_db.py; records the new PDF source in the guide's 이 DB의 결정 사항 table",
+      "files": []
+    },
+    {
+      "id": 5,
+      "eval_name": "tailor-grouping-and-card",
+      "prompt": "지금 이 vault의 DB를 연구실 신입생 온보딩용으로 바꾸고 싶어. 트랙 대신 연도별로 묶고, 카드에는 장치 사진 말고 대표 결과 그래프를 넣어줘.",
+      "expected_output": "Precondition: a vault built from the default template with claim tracks, covers and a canvas. Agent adapts instead of insisting on claim tracks: proposes period keys in tracks and assigns each paper from its year; warns that placed canvas cards stay in their old groups and the Base keeps the old track views, and asks before deleting 00_Map.canvas (hand layout and edge labels are lost) or offers to move cards by hand; explains that result plots are usually vector graphics that auto extraction skips, so covers need hand crops (_c7 or higher) with hw set to them; makes label or view changes in the vault's copy of build_db.py or in 00_Database.base, not in the bundled scripts/build_db.py; updates the guide's 이 DB의 결정 사항 table",
+      "files": []
+    },
+    {
+      "id": 6,
+      "eval_name": "existing-vault-subfolder",
+      "prompt": "새 vault 말고 내가 쓰던 옵시디언 vault 안에 Research/Papers 폴더로 넣어줘.",
+      "expected_output": "Agent explains that canvas file paths and the Base folder filter resolve from the vault root, so the standalone layout breaks inside a subfolder; asks the still-open questions before creating files; then applies the subfolder setup from references/tailoring.md to the vault's copy of build_db.py (note_rel returns Research/Papers/detail/..., notes written via NOTES, Base filter file.inFolder(\"Research/Papers/detail\")) before the first run, copies the template without .obsidian/ and asks the user to check that Bases and Canvas are enabled in the host vault, or offers a standalone vault instead; leaves the bundled script unchanged",
+      "files": []
+    },
+    {
+      "id": 7,
+      "eval_name": "scanned-pdf-manual-crop",
+      "prompt": "방금 넣은 논문이 'PDF 있으나 대표 그림 없음'에 떠. 스캔본 같아. 장치 사진으로 커버 만들어줘.",
+      "expected_output": "Precondition: a vault built from the default template where one paper's PDF is a scanned document. Agent explains that a scanned page is filtered out as >85 % of the page, renders the page with a coordinate grid on an in-memory copy, reads the device photo's bounding box, crops it from a fresh document at dpi 200 to img/DB_<name>_c7.png, sets hw: [7] in the note properties, and re-runs build_db.py; the managed properties and memo text are untouched",
+      "files": []
+    },
+    {
+      "id": 8,
+      "eval_name": "relations-as-edges",
+      "prompt": "P012가 P004의 후속 연구야. 캔버스에서 둘 관계가 보이게 해줘.",
+      "expected_output": "Precondition: a vault built from the default template containing P004 and P012. Agent adds \"related\": [\"P004\"] to P012 in 00_candidates.json (not a hand-drawn edge only) and re-runs build_db.py; reports 'canvas +0 cards +1 edges' when both papers have covers, or explains that the edge appears only after both papers are on the canvas; suggests labelling the edge in Obsidian since labels survive re-runs",
+      "files": []
+    },
+    {
+      "id": 9,
+      "eval_name": "near-miss-single-note",
+      "prompt": "이 옵시디언 노트에 callout이랑 위키링크 넣어서 예쁘게 정리해줘.",
+      "expected_output": "Skill does not trigger; this is single-note Obsidian formatting (obsidian-markdown), with no paper database, PDFs or canvas map involved",
+      "files": []
+    }
+  ]
+}
