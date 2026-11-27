@@ -5,10 +5,10 @@ language: none
 category: [claude-plugin, codex-plugin]
 author: Hyogeon Lee
 year: 2026
-dependencies: [Claude Code, Codex CLI, MATLAB MCP]
+dependencies: [Claude Code, Codex CLI, MATLAB MCP, Python (pymupdf, pyyaml)]
 status: draft
-tags: [plugin, skill, matlab, plotting]
-related: ["[[plot-style]]", "[[frf-ms-design]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]", "[[readme_style]]"]
+tags: [plugin, skill, matlab, plotting, obsidian]
+related: ["[[plot-style]]", "[[frf-ms-design]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]", "[[readme_style]]", "[[obsidian-research-db]]"]
 ---
 
 # REM2 Plugin
@@ -47,6 +47,11 @@ REM2-plugin/
       references/                  ← semver-rules.md, commit-classification.md
     readme_style/                  ← 상세 README 생성 워크플로 (agentic-awesome-skills 이식)
       references/                  ← detailed-guide.md — 탐색 절차·섹션 구조·작성 원칙
+    obsidian-research-db/
+      SKILL.md                     ← 이미지 중심 선행 연구 DB 규약 (트랙·대표 그림·캔버스)
+      scripts/                     ← build_db.py 생성기 + selftest.py
+      assets/template/             ← 새 vault 시작 파일 (JSON, 00_Guide.md, .obsidian/)
+      references/                  ← JSON 스키마, 그림 후보 점수·수동 크롭
   README.md / README_EN.md
 ```
 
@@ -74,7 +79,7 @@ codex /plugins
 
 ### ChatGPT (workspace skill)
 
-`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`, `readme_style.zip`)을 업로드 — 절차는 [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) 참고.
+`dist/chatgpt/` 아래 스킬별 zip(`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`, `readme_style.zip`, `obsidian-research-db.zip`)을 업로드 — 절차는 [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) 참고.
 
 ## 현재 수록 스킬
 
@@ -88,8 +93,9 @@ codex /plugins
 | `lean-comments` | 소스 코드 주석 최소화 — 코드에서 복원할 수 없는 비자명 정보만 남김, 언어 무관. awesome-copilot 이식 | stable |
 | `github-release` | `gh`+`git` 릴리스 end-to-end — 마지막 태그 이후 diff 분석 → SemVer 결정 → Keep a Changelog → 릴리스 브랜치·PR. awesome-copilot 이식 | stable |
 | `readme_style` | 코드베이스 탐색 후 상세 README.md 작성·갱신 — 로컬 설정·아키텍처·환경 변수·스크립트·테스트·배포·트러블슈팅. sickn33/agentic-awesome-skills 이식(MIT, 원저작 Shpigford) | stable |
+| `obsidian-research-db` | 논문 PDF → 이미지 중심 Obsidian 선행 연구 DB — 만들기 전에 용도·카드 그림·묶는 기준·PDF 확보 방식을 묻고 그에 맞춰 구성. 기본값: 논문별 노트(PDF에서 자른 대표 그림 커버), Bases 카드 갤러리, 트랙(기본: 연구 주장)별 Canvas 지도와 관련 논문 연결선. JSON 하나 + 재실행 가능한 Python 생성기(`pymupdf`) | draft |
 
-플롯 코드를 새로 작성·수정할 때 자동 트리거됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시 트리거됩니다. Git 규약 스킬 5종은 [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)에서 이식했습니다(MIT, 스킬 폴더별 LICENSE). frontmatter를 Claude Code·Codex 호환으로 맞추고, Copilot 전용 문구(확인 없는 자동 커밋, "Copilot에 붙여넣기" 등)만 에이전트 중립으로 고쳤으며 규칙 본문은 그대로입니다. 출처 커밋은 각 SKILL.md의 `metadata.source-commit`에 기록되어 있습니다. `readme_style`은 [sickn33/agentic-awesome-skills](https://github.com/sickn33/agentic-awesome-skills/tree/main/skills/readme)에서 이식했습니다(MIT, 원저작 Shpigford/skills). frontmatter를 다시 쓰고, 기존 README.md를 덮어쓰기 전 확인 단계를 추가했습니다.
+플롯 코드를 새로 작성·수정할 때 자동 트리거됩니다. Python(matplotlib 등)을 명시하면 동등 규칙으로 번역 적용합니다. frf-ms-design은 측정 FRF 기반 제어기 설계 요청 시, obsidian-research-db는 선행 연구·논문 DB 정리 요청 시 트리거됩니다. Git 규약 스킬 5종은 [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills)에서 이식했습니다(MIT, 스킬 폴더별 LICENSE). frontmatter를 Claude Code·Codex 호환으로 맞추고, Copilot 전용 문구(확인 없는 자동 커밋, "Copilot에 붙여넣기" 등)만 에이전트 중립으로 고쳤으며 규칙 본문은 그대로입니다. 출처 커밋은 각 SKILL.md의 `metadata.source-commit`에 기록되어 있습니다. `readme_style`은 [sickn33/agentic-awesome-skills](https://github.com/sickn33/agentic-awesome-skills/tree/main/skills/readme)에서 이식했습니다(MIT, 원저작 Shpigford/skills). frontmatter를 다시 쓰고, 기존 README.md를 덮어쓰기 전 확인 단계를 추가했습니다.
 
 ## 비고
 

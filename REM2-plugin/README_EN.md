@@ -5,10 +5,10 @@ language: none
 category: [claude-plugin, codex-plugin]
 author: Hyogeon Lee
 year: 2026
-dependencies: [Claude Code, Codex CLI, MATLAB MCP]
+dependencies: [Claude Code, Codex CLI, MATLAB MCP, Python (pymupdf, pyyaml)]
 status: draft
-tags: [plugin, skill, matlab, plotting]
-related: ["[[plot-style]]", "[[frf-ms-design]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]", "[[readme_style]]"]
+tags: [plugin, skill, matlab, plotting, obsidian]
+related: ["[[plot-style]]", "[[frf-ms-design]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]", "[[readme_style]]", "[[obsidian-research-db]]"]
 ---
 
 # REM2 Plugin
@@ -47,6 +47,11 @@ REM2-plugin/
       references/                  ← semver-rules.md, commit-classification.md
     readme_style/                  ← thorough README generation workflow (ported from agentic-awesome-skills)
       references/                  ← detailed-guide.md — exploration steps, section structure, writing principles
+    obsidian-research-db/
+      SKILL.md                     ← image-first research DB conventions (tracks, covers, canvas)
+      scripts/                     ← build_db.py generator + selftest.py
+      assets/template/             ← new-vault starter files (JSON, 00_Guide.md, .obsidian/)
+      references/                  ← JSON schema, figure scoring and manual crops
   README.md / README_EN.md
 ```
 
@@ -74,7 +79,7 @@ In the plugin directory (TUI) opened by `codex /plugins`, switch to the `rem2-la
 
 ### ChatGPT (workspace skill)
 
-Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`, `readme_style.zip`) — see [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) for the procedure.
+Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`, `readme_style.zip`, `obsidian-research-db.zip`) — see [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) for the procedure.
 
 ## Included skills
 
@@ -88,8 +93,9 @@ Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `frf-ms-desig
 | `lean-comments` | Minimal source-code comments — keep only non-obvious information the code cannot recover, language-agnostic. Ported from awesome-copilot | stable |
 | `github-release` | End-to-end release with `gh` + `git` — diff since last tag → SemVer bump → Keep a Changelog → release branch and PR. Ported from awesome-copilot | stable |
 | `readme_style` | Explores the codebase, then writes or updates a thorough README.md — local setup, architecture, environment variables, scripts, testing, deployment, troubleshooting. Ported from sickn33/agentic-awesome-skills (MIT, original by Shpigford) | stable |
+| `obsidian-research-db` | Paper PDFs → image-first Obsidian prior-research database, tailored after asking about purpose, card picture, grouping and PDF sourcing. Default: per-paper notes with covers cut from the PDFs, a Bases card gallery, and a Canvas map grouped by track (research claim by default) with relation edges. One JSON list + a re-runnable Python generator (`pymupdf`) | draft |
 
-The skills trigger automatically when writing or modifying plotting code. When you explicitly request Python (matplotlib, etc.), the rules are translated to their closest equivalents. frf-ms-design triggers on measured-FRF controller design requests. The five Git-convention skills are ported from [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) (MIT, LICENSE in each skill folder). The frontmatter is adjusted for Claude Code and Codex, and only Copilot-specific wording (unconfirmed auto-commit, "paste into Copilot") was made agent-neutral; the rules themselves are unchanged. The upstream commit is recorded in each SKILL.md under `metadata.source-commit`. The `readme_style` skill is ported from [sickn33/agentic-awesome-skills](https://github.com/sickn33/agentic-awesome-skills/tree/main/skills/readme) (MIT, original: Shpigford/skills). The frontmatter was rewritten and a confirmation step before overwriting an existing README.md was added.
+The skills trigger automatically when writing or modifying plotting code. When you explicitly request Python (matplotlib, etc.), the rules are translated to their closest equivalents. frf-ms-design triggers on measured-FRF controller design requests, and obsidian-research-db on requests to organize prior research or a paper database in Obsidian. The five Git-convention skills are ported from [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) (MIT, LICENSE in each skill folder). The frontmatter is adjusted for Claude Code and Codex, and only Copilot-specific wording (unconfirmed auto-commit, "paste into Copilot") was made agent-neutral; the rules themselves are unchanged. The upstream commit is recorded in each SKILL.md under `metadata.source-commit`. The `readme_style` skill is ported from [sickn33/agentic-awesome-skills](https://github.com/sickn33/agentic-awesome-skills/tree/main/skills/readme) (MIT, original: Shpigford/skills). The frontmatter was rewritten and a confirmation step before overwriting an existing README.md was added.
 
 ## Notes
 
