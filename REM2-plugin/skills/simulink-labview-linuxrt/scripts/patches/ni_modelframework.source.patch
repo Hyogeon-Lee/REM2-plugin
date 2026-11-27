@@ -1,0 +1,17 @@
+--- a/tmw/src/ni_modelframework.source
++++ b/tmw/src/ni_modelframework.source
+@@ -569,6 +569,14 @@
+   return NI_OK;
+ }
+ 
++/* Local patch for R2025b (original: ni_modelframework.source.orig): R2025b's rt_nonfinite.c
++ * initializes rtInf/rtNaN statically and no longer defines rt_InitInfAndNaN, which left an
++ * undefined symbol in the .so. This weak no-op keeps the call valid; the real function from
++ * older releases overrides it at link time. */
++#if defined(__GNUC__)
++__attribute__((weak)) void rt_InitInfAndNaN(size_t realSize) { (void)realSize; }
++#endif
++
+ /*========================================================================*
+  * Function: NIRT_InitializeModel
+  *

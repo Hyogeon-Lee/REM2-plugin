@@ -8,7 +8,7 @@ year: 2026
 dependencies: [Claude Code, Codex CLI, MATLAB MCP]
 status: draft
 tags: [plugin, skill, matlab, plotting]
-related: ["[[plot-style]]", "[[frf-ms-design]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]", "[[readme_style]]"]
+related: ["[[plot-style]]", "[[frf-ms-design]]", "[[simulink-labview-linuxrt]]", "[[git-commit]]", "[[conventional-commit]]", "[[commit-message-storyteller]]", "[[lean-comments]]", "[[github-release]]", "[[readme_style]]"]
 ---
 
 # REM2 Plugin
@@ -38,6 +38,11 @@ REM2-plugin/
       references/                  ← Excel format + workflow order
       scripts/                     ← read → fit → design → analyze → plot pipeline
       examples/                    ← example workbooks + blank template
+    simulink-labview-linuxrt/
+      SKILL.md                     ← Simulink → MIT .so → LabVIEW RT flow, core rules, verification status
+      references/                  ← environment, MF patches, model authoring, build/verify, deploy/smoke test, LabVIEW MIT, troubleshooting
+      scripts/                     ← build_mit.m, mit_smoke.c, MF 2020 patches for R2025b
+      examples/                    ← noise_gen / signal_filter example models and verification script
     git-commit/                    ← Conventional Commits commit workflow (ported from awesome-copilot)
     conventional-commit/           ← Conventional Commits message XML template (ported from awesome-copilot)
     commit-message-storyteller/    ← narrative commit-message rules (ported from awesome-copilot)
@@ -74,7 +79,7 @@ In the plugin directory (TUI) opened by `codex /plugins`, switch to the `rem2-la
 
 ### ChatGPT (workspace skill)
 
-Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `frf-ms-design.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`, `readme_style.zip`) — see [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) for the procedure.
+Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `frf-ms-design.zip`, `simulink-labview-linuxrt.zip`, `git-commit.zip`, `conventional-commit.zip`, `commit-message-storyteller.zip`, `lean-comments.zip`, `github-release.zip`, `readme_style.zip`) — see [`../dist/chatgpt/README.md`](../dist/chatgpt/README.md) for the procedure.
 
 ## Included skills
 
@@ -82,6 +87,7 @@ Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `frf-ms-desig
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
 | `plot-style`    | Consistent scientific/engineering plot styling for MATLAB — common rules (one figure, one tab per plot) plus time-series / X–Y / 3-D / frequency-response modules, with runnable before/after examples                                                                                       | stable |
 | `frf-ms-design` | Measured SISO FRF Excel → s-domain plant fit with explicit time delay (`tfest`) → automatic lag / lead-lag loop shaping → margin and step-response prediction. MATLAB only (no Simulink); format errors fail fast and are resolved interactively with the user | stable |
+| `simulink-labview-linuxrt` | Simulink model → NI MIT `.so` (VeriStand Model Framework 2020 + NI Linux RT cross compiler) → LabVIEW RT Timed Loop. MIT-ready model rules, `build_mit`, MF patches for R2025b, `.so` verification, deployment, LabVIEW-free target smoke test (`mit_smoke`), MIT VI wiring rules and troubleshooting. The full RT VI (RT FIFO, Network Streams) is unverified | draft |
 | `git-commit` | Conventional Commits commits — analyzes the diff for type/scope, generates the message, stages and commits. Ported from github/awesome-copilot (MIT) | stable |
 | `conventional-commit` | Conventional Commits message structure (type/scope/description/body/footer), examples, and validation rules as an XML template. Ported from awesome-copilot | stable |
 | `commit-message-storyteller` | Narrative Conventional Commits messages that explain *why* — writes the message only, never runs git. Ported from awesome-copilot | stable |
@@ -89,7 +95,7 @@ Upload the per-skill zips under `dist/chatgpt/` (`plot-style.zip`, `frf-ms-desig
 | `github-release` | End-to-end release with `gh` + `git` — diff since last tag → SemVer bump → Keep a Changelog → release branch and PR. Ported from awesome-copilot | stable |
 | `readme_style` | Explores the codebase, then writes or updates a thorough README.md — local setup, architecture, environment variables, scripts, testing, deployment, troubleshooting. Ported from sickn33/agentic-awesome-skills (MIT, original by Shpigford) | stable |
 
-The skills trigger automatically when writing or modifying plotting code. When you explicitly request Python (matplotlib, etc.), the rules are translated to their closest equivalents. frf-ms-design triggers on measured-FRF controller design requests. The five Git-convention skills are ported from [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) (MIT, LICENSE in each skill folder). The frontmatter is adjusted for Claude Code and Codex, and only Copilot-specific wording (unconfirmed auto-commit, "paste into Copilot") was made agent-neutral; the rules themselves are unchanged. The upstream commit is recorded in each SKILL.md under `metadata.source-commit`. The `readme_style` skill is ported from [sickn33/agentic-awesome-skills](https://github.com/sickn33/agentic-awesome-skills/tree/main/skills/readme) (MIT, original: Shpigford/skills). The frontmatter was rewritten and a confirmation step before overwriting an existing README.md was added.
+The skills trigger automatically when writing or modifying plotting code. When you explicitly request Python (matplotlib, etc.), the rules are translated to their closest equivalents. frf-ms-design triggers on measured-FRF controller design requests, and simulink-labview-linuxrt on running Simulink models in LabVIEW RT (NI Linux RT) or on MIT build and deployment errors. The five Git-convention skills are ported from [github/awesome-copilot](https://github.com/github/awesome-copilot/tree/main/skills) (MIT, LICENSE in each skill folder). The frontmatter is adjusted for Claude Code and Codex, and only Copilot-specific wording (unconfirmed auto-commit, "paste into Copilot") was made agent-neutral; the rules themselves are unchanged. The upstream commit is recorded in each SKILL.md under `metadata.source-commit`. The `readme_style` skill is ported from [sickn33/agentic-awesome-skills](https://github.com/sickn33/agentic-awesome-skills/tree/main/skills/readme) (MIT, original: Shpigford/skills). The frontmatter was rewritten and a confirmation step before overwriting an existing README.md was added.
 
 ## Notes
 

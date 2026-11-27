@@ -1,7 +1,7 @@
 {
   "name": "rem2-plugin",
-  "version": "0.19.0",
-  "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB (axes, legends, labels, time-series, X-Y, 3-D, frequency-response), and a measured-FRF control design workflow (tfest plant fit with time delay, lag / lead-lag loop shaping, margin and step prediction — MATLAB only). Also ships Git conventions ported from github/awesome-copilot (MIT): Conventional Commits commit workflow and message template, narrative commit messages, lean source-code comments, and SemVer + Keep a Changelog GitHub releases. Plus a thorough README generator ported from sickn33/agentic-awesome-skills (MIT, original by Shpigford).",
+  "version": "0.20.0",
+  "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB (axes, legends, labels, time-series, X-Y, 3-D, frequency-response), and a measured-FRF control design workflow (tfest plant fit with time delay, lag / lead-lag loop shaping, margin and step prediction — MATLAB only). Also ships Git conventions ported from github/awesome-copilot (MIT): Conventional Commits commit workflow and message template, narrative commit messages, lean source-code comments, and SemVer + Keep a Changelog GitHub releases. Plus a thorough README generator ported from sickn33/agentic-awesome-skills (MIT, original by Shpigford). Plus a Simulink → NI MIT .so → LabVIEW Real-Time (NI Linux RT x64) workflow: MIT-ready model rules, a build script with MATLAB R2025b patches for VeriStand Model Framework 2020, .so verification, deployment, a LabVIEW-free target smoke test, and MIT VI wiring rules.",
   "author": {
     "name": "Hyogeon Lee",
     "url": "https://github.com/Hyogeon-Lee"
@@ -28,13 +28,17 @@
     "changelog",
     "semver",
     "release",
-    "readme"
+    "readme",
+    "simulink",
+    "labview",
+    "ni-linux-rt",
+    "model-interface-toolkit"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "REM2 Plugin",
-    "shortDescription": "REM2 plot styling, FRF control design, Git commit / comment / release conventions, and README generation.",
-    "longDescription": "Unofficial personal project — not an official Yonsei University or REM2 lab product. Apply consistent scientific and engineering plot styling to MATLAB plotting code and the closest equivalents in Python plotting libraries. Includes common figure rules plus time-series, X-Y, 3-D, and frequency-response modules, and a measured-FRF control design skill (s-domain plant fit with time delay via tfest, automatic lag / lead-lag loop shaping with integral lag, margin and closed-loop step prediction — MATLAB only, no Simulink). Also includes five Git-convention skills ported from github/awesome-copilot (MIT): git-commit, conventional-commit, commit-message-storyteller, lean-comments, and github-release. Plus a readme_style skill ported from sickn33/agentic-awesome-skills (MIT, original by Shpigford) that explores a codebase and writes a thorough README.md.",
+    "shortDescription": "REM2 plot styling, FRF control design, Simulink to LabVIEW RT workflow, Git commit / comment / release conventions, and README generation.",
+    "longDescription": "Unofficial personal project — not an official Yonsei University or REM2 lab product. Apply consistent scientific and engineering plot styling to MATLAB plotting code and the closest equivalents in Python plotting libraries. Includes common figure rules plus time-series, X-Y, 3-D, and frequency-response modules, and a measured-FRF control design skill (s-domain plant fit with time delay via tfest, automatic lag / lead-lag loop shaping with integral lag, margin and closed-loop step prediction — MATLAB only, no Simulink). Also includes five Git-convention skills ported from github/awesome-copilot (MIT): git-commit, conventional-commit, commit-message-storyteller, lean-comments, and github-release. Plus a readme_style skill ported from sickn33/agentic-awesome-skills (MIT, original by Shpigford) that explores a codebase and writes a thorough README.md. Plus simulink-labview-linuxrt, which builds Simulink models as NI Model Interface Toolkit .so files for NI Linux Real-Time x64 targets and runs them from LabVIEW RT (build script, Model Framework 2020 patches for MATLAB R2025b, .so verification, deployment, target smoke test, MIT VI rules).",
     "developerName": "Hyogeon Lee",
     "category": "Productivity",
     "capabilities": [
@@ -50,7 +54,8 @@
       "Design a controller from this measured FRF Excel file.",
       "Write a conventional commit message for my staged changes.",
       "Cut a new release for this repo with an updated changelog.",
-      "Write a thorough README for this project."
+      "Write a thorough README for this project.",
+      "Build this Simulink model as an MIT .so and run it in LabVIEW RT on the NI Linux RT target."
     ],
     "brandColor": "#2563EB"
   }

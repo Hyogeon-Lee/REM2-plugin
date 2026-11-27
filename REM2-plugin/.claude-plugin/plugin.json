@@ -1,7 +1,7 @@
 {
   "name": "rem2",
-  "version": "0.19.0",
-  "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB (axes, legends, labels, time-series, X–Y, 3-D, frequency-response), and a measured-FRF control design workflow — s-domain plant fit with time delay (tfest), automatic lag / lead-lag loop shaping, margin and step-response prediction (MATLAB only, no Simulink). Also ships Git conventions ported from github/awesome-copilot (MIT): Conventional Commits commit workflow and message template, narrative commit messages, lean source-code comments, and SemVer + Keep a Changelog GitHub releases. Plus a thorough README generator ported from sickn33/agentic-awesome-skills (MIT, original by Shpigford).",
+  "version": "0.20.0",
+  "description": "Unofficial — NOT an official Yonsei University or REM2 lab plugin. Built by a grad student who couldn't bear his juniors' daring figures and wanted to ease the pain, if only a little. Consistent scientific/engineering plot styling for MATLAB (axes, legends, labels, time-series, X–Y, 3-D, frequency-response), and a measured-FRF control design workflow — s-domain plant fit with time delay (tfest), automatic lag / lead-lag loop shaping, margin and step-response prediction (MATLAB only, no Simulink). Also ships Git conventions ported from github/awesome-copilot (MIT): Conventional Commits commit workflow and message template, narrative commit messages, lean source-code comments, and SemVer + Keep a Changelog GitHub releases. Plus a thorough README generator ported from sickn33/agentic-awesome-skills (MIT, original by Shpigford). Plus a Simulink → NI MIT .so → LabVIEW Real-Time (NI Linux RT x64) workflow: MIT-ready model rules, a build script with MATLAB R2025b patches for VeriStand Model Framework 2020, .so verification, deployment, a LabVIEW-free target smoke test, and MIT VI wiring rules.",
   "author": {
     "name": "Hyogeon Lee"
   },
@@ -26,6 +26,10 @@
     "changelog",
     "semver",
     "release",
-    "readme"
+    "readme",
+    "simulink",
+    "labview",
+    "ni-linux-rt",
+    "model-interface-toolkit"
   ]
 }

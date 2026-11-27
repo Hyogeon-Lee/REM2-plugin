@@ -1,0 +1,2 @@
+# Keep the NI patch files byte-exact (mixed CRLF/LF); applied with patch --binary.
+*.patch -text
