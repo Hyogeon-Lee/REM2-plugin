@@ -24,7 +24,7 @@
 | `.so`에 `U rt_InitInfAndNaN` (실제 발생) | R2025b `rt_nonfinite.c`에 이 함수가 없음 | 패치 3, 캐시 삭제 |
 | 패치 후에도 같은 오류 (실제 발생) | 빌드 캐시로 이전 코드 재사용 | `slprj`, `*.slxc`, `*_veristand_rtw` 삭제 후 재빌드 |
 | `'<모델>.bat' is not recognized as an internal or external command` (실제 발생) | `NoDefaultCurrentDirectoryInExePath`가 있는 MATLAB에서 `slbuild`를 직접 부름 | `build_mit` 사용(자동 처리). 환경변수를 끄지 않음 |
-| `patch: **** malformed patch` 또는 hunk 실패 | MF 버전이 20.0.0이 아니거나 이미 패치됨, 또는 패치 파일의 줄 끝이 바뀜 | `.orig` 존재와 `patch -R --dry-run` 확인. 패치 파일을 다시 저장하지 않음, `--binary` 사용 |
+| `patch: **** malformed patch` 또는 hunk 실패 | MF 버전이 20.0.0이 아니거나 이미 패치됨, 또는 패치 파일의 줄 끝이 바뀜 | `.orig` 존재와 `patch -p1 -R -N --dry-run --binary` 확인(`mf2020-r2025b-patches.md` 2절). 패치 파일을 다시 저장하지 않음, `--binary` 사용 |
 | `build_mit:noSo` | 빌드는 끝났지만 `.so`가 없음 | 빌드 로그의 컴파일러 출력 확인. `GenCodeOnly`가 아닌지 확인 |
 | 컴파일 옵션이 `-O0` | 기본 빌드 구성 `Faster Builds` | `build_mit`이 `Faster Runs`로 설정. 직접 빌드할 때 확인 |
 
@@ -33,7 +33,8 @@
 | 증상 | 원인 | 조치 |
 | --- | --- | --- |
 | `readelf`가 ELF32 또는 ARM | 다른 툴체인으로 빌드 | Linux64 툴체인, 하드웨어 `Intel->x86-64 (Linux 64)` |
-| 타깃 크기 검사 오류(`rtwtypes.h`) | 하드웨어 Windows64(`long` 32 bit) | 하드웨어를 `Intel->x86-64 (Linux 64)`로(`build_mit` 기본값) |
+| `rtwtypes.h` 크기 검사 오류(예방 항목, 실제로 겪지 않음) | 하드웨어 Windows64(`long` 32 bit). Linux x64는 `long`이 64 bit | 하드웨어를 `Intel->x86-64 (Linux 64)`로(`build_mit` 기본값) |
+| `mit_smoke`가 `dlopen ...: cannot open shared object file`인데 파일은 있음 | 모델 인자를 파일 이름만으로 줌. `dlopen`은 `/`가 없는 이름을 현재 폴더에서 찾지 않음 | `./noise_gen.so`처럼 경로로 줌 |
 | `undefined symbol: sem_init` | `libpthread`가 없는 프로세스에서 `.so`를 엶 | 테스트 프로그램은 `-lpthread`로 링크. LabVIEW Load Model에서 이 오류가 나면 `.so` 링크에 `libpthread`를 추가해 다시 빌드해야 함(확인하지 않은 경우) |
 | 두 모델을 연 테스트 프로그램에서 포트 수가 바뀌거나 segfault (실제 발생) | `RTLD_GLOBAL`로 열어 같은 이름의 심볼이 섞임 | `RTLD_LOCAL`로 열기(`build-and-verify.md` 4절) |
 | `ldd: command not found` | NI Linux RT에는 `ldd`가 없음 | `/lib/libc.so.6` 실행으로 glibc 확인 |
@@ -47,7 +48,7 @@
 | --- | --- | --- |
 | Load Model 오류 1, 메시지 끝에 `<Not A Path>` (`File/Directory Info in ... Load Library.vi`) (실제 발생) | Windows 화면의 Path 컨트롤에 Linux 경로를 입력 | 문자열 상수나 String 컨트롤 → String to Path |
 | Load Model 오류 -383200 | MIT 형식이 아닌 파일. 경로 오타, 32-bit/ARM `.so` | 경로와 `readelf -h` 확인 |
-| `libsinewave64.so`도 로드되지 않음 | 파일이 타깃에 없음(기본으로 없고, 공용 타깃에서는 지워질 수 있음), 또는 타깃에 MIT가 없음 | 먼저 `ssh <target> "ls -l <deploy-dir>"`로 파일 확인 후 없으면 복사(`deploy-and-smoke.md` 2절). 파일이 있는데도 실패하면 사용자가 NI MAX에서 MIT 설치(1절) |
+| `libsinewave64.so`도 로드되지 않음 | 파일이 타깃에 없음(기본으로 없고, 공용 타깃에서는 지워질 수 있음), 또는 타깃에 MIT가 없음 | 먼저 `ssh <target> "ls -l <deploy-dir>"`로 파일 확인 후 없으면 복사(`deploy-and-smoke.md` 2절). 파일이 있는데도 실패하면 사용자가 NI MAX에서 MIT 설치(`deploy-and-smoke.md` 1절) |
 | `libsinewave64.so`는 되고 빌드한 `.so`만 안 됨 | 빌드 문제 | `build-and-verify.md` 3절 기준값과 비교, `mit_smoke` 실행, 오류 코드와 메시지 기록 |
 | Set Parameter Inline 오류 -383700 (실제 발생) | `Update Parameters In Line?` = TRUE를 쓰지 않았거나, Set Parameter Inline의 모델 입력이 Property Node 뒤쪽 와이어가 아님(미연결, 앞에서 분기, 노드 위를 지나가기만 함) | Property Node 뒤쪽 와이어에 직렬 연결. 노드를 끌어 연결 여부 확인 |
 | 오류는 없는데 출력이 입력과 같고 파라미터를 바꿔도 그대로 (실제 발생) | 모델 와이어를 루프 경계에서 터널로 넘김 | 시프트 레지스터로 바꿈 |

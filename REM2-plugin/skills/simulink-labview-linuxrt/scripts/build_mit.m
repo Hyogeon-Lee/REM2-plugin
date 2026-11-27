@@ -19,7 +19,8 @@ function soFiles = build_mit(models, opts)
 %     - C & C++ Development Tools for NI Linux Real-Time 2017 (registry key
 %       gccToolchain\17.0). Without it MF does not register the Linux64
 %       toolchain, and only a code-generation-only run works.
-%     - MATLAB newer than R2020a: the MF 2020 patches in scripts/patches.
+%     - MATLAB R2025b: the MF 2020 patches in scripts/patches (MF 2020 supports up to
+%       R2020a; R2020b to R2025a are unverified).
 %
 %   Each model is built from a temporary copy of its active configuration set
 %   switched to the given target. The copy is removed afterwards, also on

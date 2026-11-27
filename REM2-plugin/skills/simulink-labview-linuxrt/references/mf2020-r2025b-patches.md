@@ -30,12 +30,12 @@ Model Framework 2020은 공식적으로 MATLAB R2020a까지 지원합니다(`NiE
 
 시스템 설치 파일을 고치는 작업이므로 사용자에게 먼저 확인합니다. Git Bash에서 다음 순서로 진행합니다. `<skill>`은 이 스킬 폴더입니다.
 
-1. 이미 적용됐는지 확인합니다. `.orig` 파일이 있으면 누군가 이미 패치했을 가능성이 큽니다. 역방향 dry-run이 오류 없이 끝나면 이미 적용된 상태이므로 다시 적용하지 않습니다.
+1. 이미 적용됐는지 확인합니다. `.orig` 파일이 있으면 누군가 이미 패치했을 가능성이 큽니다. 역방향 dry-run이 `checking file ...` 줄만 출력하고 끝나면(종료 코드 0) 이미 적용된 상태이므로 다시 적용하지 않습니다. `Unreversed patch detected!  Skipping patch.`가 나오면(종료 코드 1) 아직 적용되지 않은 상태입니다. `-N`은 이때 `patch`가 되묻지 않게 합니다.
 
 ```bash
 cd /c/VeriStand/2020/ModelInterface
 ls tmw/codegen/*.orig tmw/src/*.orig
-for p in "<skill>"/scripts/patches/*.patch; do patch -p1 -R --dry-run --binary < "$p"; done
+for p in "<skill>"/scripts/patches/*.patch; do patch -p1 -R -N --dry-run --binary < "$p"; done
 ```
 
 2. 적용 전 dry-run. 오류가 없어야 합니다.
@@ -57,7 +57,7 @@ Remove-Item -Recurse -Force slprj, *_veristand_rtw, *.slxc -ErrorAction Silently
 ```
 
 - 패치 파일은 원본(`.orig`)에 적용하면 패치된 파일과 바이트 단위로 같아지는 것을 확인했습니다(2026-11-27). 줄 끝이 CRLF/LF로 섞여 있으므로 `--binary`로 적용하고, 패치 파일을 편집기로 다시 저장하지 않습니다.
-- Git Bash가 없으면 3절의 diff를 보고 직접 고칩니다. `+` 줄을 넣고 `-` 줄을 지웁니다.
+- Git Bash가 없으면 `scripts/patches/`의 patch 파일(줄 번호와 주석을 포함한 전체 diff)을 보고 직접 고칩니다. `+` 줄을 넣고 `-` 줄을 지웁니다. 3절은 핵심 줄만 줄여 실은 것입니다.
 - Model Framework를 재설치하거나 복구하면 패치가 지워집니다. 다시 적용합니다.
 - 되돌리려면 각 `.orig`를 원래 이름으로 복사합니다.
 

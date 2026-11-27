@@ -1,6 +1,6 @@
 # 타깃 준비, 배포, LabVIEW 없이 실행 확인
 
-아래 명령의 `<target>`은 SSH 접속 대상입니다(`admin@<target-ip>` 또는 SSH 별칭, 예: `pxi8840`). `<deploy-dir>`의 기본값은 `/home/lvuser/models`입니다. 비밀번호는 명령이나 파일에 넣지 않습니다.
+아래 명령의 `<target>`은 SSH 접속 대상입니다(`admin@<target-ip>` 또는 `%USERPROFILE%\.ssh\config`에 등록한 SSH 별칭). `<deploy-dir>`의 기본값은 `/home/lvuser/models`입니다. 비밀번호는 명령이나 파일에 넣지 않습니다.
 
 ## 1. 타깃 준비
 
@@ -48,8 +48,14 @@ ssh <target> "ls -l <deploy-dir>; sha256sum <deploy-dir>/*.so; /lib/libc.so.6 | 
 
 | 파일 | 용도 | 확인 상태 |
 | --- | --- | --- |
-| `scripts/mit_smoke.c` | 일반 도구. 모델 N개 로드, 인터페이스 출력, 경로로 파라미터 설정, 포트 연결, N 스텝 실행, 출력 범위·스텝 시간 출력 | 타깃(PXIe-8840)과 WSL에서 확인 |
+| `scripts/mit_smoke.c` | 일반 도구. 모델 N개 로드, 인터페이스 출력, 경로로 파라미터 설정, 포트 연결, N 스텝 실행, 출력 범위·스텝 시간 출력 | 타깃(PXIe-8840)과 WSL에서 확인. 그 뒤 고친 부분(아래)은 WSL에서만 확인 |
 | `examples/mit_smoke_example.c` | 예제 두 모델 전용 시나리오. 단계별 파라미터 변경과 참값 대비 RMSE | 타깃과 WSL에서 확인 |
+
+`scripts/mit_smoke.c`는 3.2절의 타깃 실행 뒤에 세 곳을 고쳤습니다. 고친 파일은 크로스 컴파일하고 WSL에서만 실행했습니다(예제 두 모델에서 고치기 전과 출력이 같음). 타깃에서는 다시 실행하지 않았습니다.
+
+- NIRT 오류 문구 출력: `NIRT_ModelError`는 오류 문구가 있을 때 `NI_ERROR`(1)를 반환합니다. 반환값이 0일 때만 문구를 출력하던 조건을 문구 길이로 판단하게 바꿨습니다.
+- inport 버퍼 크기: MF 2020의 `tmw\codegen\NiPortLib.tlc`를 보면 `NIRT_InitializeModel`이 돌려주는 inport 수는 신호 수라서 벡터 inport도 1로 셉니다(outport 수는 원소 수). 스텝 함수는 원소마다 값을 하나씩 읽으므로, inport 원소 수를 `NIRT_GetExtIOSpec`의 포트 목록(각 inport의 `dimX × dimY` 합)에서 구합니다. 스칼라가 아닌 inport를 가진 실제 모델로는 확인하지 않았습니다.
+- 필요한 심볼이 없는 `.so`: 초기화하지 않은 모델에 `NIRT_FinalizeModel`을 부르지 않습니다.
 
 ### 3.1 크로스 컴파일 (호스트)
 
@@ -72,6 +78,8 @@ mit_smoke [-n steps] [-s model/param=value]... [-w dst:in=src:out]... a.so [b.so
                          모델 번호는 인자 순서로 0부터, src < dst (반복 가능). 연결하지 않은 inport는 0
 ```
 
+- 모델 인자는 `/`가 들어간 경로로 줍니다(현재 폴더면 `./noise_gen.so`). 파일 이름만 주면 `dlopen`이 현재 폴더를 찾지 않아 `cannot open shared object file`로 실패합니다.
+- `-w`의 `in`, `out`은 포트 번호가 아니라 원소 번호입니다. 모델의 모든 inport(또는 outport)를 포트 순서대로 펼친 배열에서 0부터 셉니다. 예제에서는 LabVIEW `Outports Array out`의 순서(0번 `y_clean`, 1번 `y_noisy`)와 같았습니다.
 - 모델은 인자 순서대로 같은 스텝 안에서 실행됩니다. RT VI에서 Take Model Time Step을 차례로 부르는 것과 같아서 모델 사이에 한 샘플 지연이 없습니다.
 - 단일 rate 모델만 지원합니다(태스크가 2개 이상이면 FAIL).
 - 로드·파라미터·스텝 오류나 NaN/Inf 출력이 있으면 `FAIL`, 아니면 `PASS`. 종료 코드 0/1(인자 오류는 2).
@@ -93,7 +101,7 @@ ssh <target> "chmod +x /tmp/mit_smoke && /tmp/mit_smoke -n 0 <deploy-dir>/noise_
 /tmp/mit_smoke -s signal_filter/filter_mode=0 -w 1:0=0:1 <deploy-dir>/noise_gen.so <deploy-dir>/signal_filter.so
 ```
 
-2026-11-27 PXIe-8840(NI Linux RT 8.6) 결과(`<deploy-dir>` = `/home/lvuser/models`, 3.1절 명령으로 경고 없이 빌드):
+2026-11-27 PXIe-8840(NI Linux RT 8.6) 결과(`<deploy-dir>` = `/home/lvuser/models`, 3.1절 명령으로 경고 없이 빌드, 위의 세 곳을 고치기 전 소스):
 
 | 인자 (모델 인자 `noise_gen.so signal_filter.so` 생략) | 결과 |
 | --- | --- |
@@ -120,7 +128,15 @@ ssh <target> "chmod +x /tmp/mit_smoke && /tmp/mit_smoke -n 0 <deploy-dir>/noise_
 
 ### 3.4 예제 시나리오 (`examples/mit_smoke_example.c`)
 
-빌드 명령은 3.1과 같고 소스만 다릅니다. 실행 인자는 `[모델 폴더, 기본 /home/lvuser/models] [단계별 스텝 수, 기본 10000]`입니다.
+빌드 명령은 3.1과 같고 소스와 출력 이름만 다릅니다. 실행 인자는 `[모델 폴더, 기본 /home/lvuser/models] [단계별 스텝 수, 기본 10000]`입니다. 모델 폴더에 `noise_gen.so`와 `signal_filter.so`가 있어야 합니다.
+
+```powershell
+& "$bin\x86_64-nilrt-linux-gcc.exe" --sysroot=C:/build/17.0/x64/sysroots/core2-64-nilrt-linux -std=gnu99 -O2 -Wall -o mit_smoke_example <skill>\examples\mit_smoke_example.c -ldl -lm -lpthread
+```
+
+```powershell
+scp mit_smoke_example <target>:/tmp/
+```
 
 ```powershell
 ssh <target> "chmod +x /tmp/mit_smoke_example && /tmp/mit_smoke_example <deploy-dir> 10000; rm -f /tmp/mit_smoke_example"

@@ -18,7 +18,8 @@ so = build_mit(["noise_gen", "signal_filter"], OutputDir='<project>')
 | `build_mit(models, SystemTargetFile=stf)` | 다른 NI target 파일을 쓸 때 |
 | `so = build_mit(...)` | 만든 `.so`의 전체 경로(string 열 벡터) |
 
-- 모델 파일과 MATLAB Function 블록이 부르는 파일(`*_core.m` 등)은 `OutputDir`에 있거나 MATLAB 경로에 있어야 합니다. 없으면 `build_mit:noModel`.
+- 모델 파일과 MATLAB Function 블록이 부르는 파일(`*_core.m` 등)은 `OutputDir`에 있거나 MATLAB 경로에 있어야 합니다. 모델이 없으면 `build_mit:noModel`로 멈추고, `*_core.m`이 없으면 MATLAB Function 블록 오류가 납니다(`troubleshooting.md` 1절).
+- `OutputDir`는 스킬 폴더 밖의 프로젝트 폴더로 줍니다. 예제를 빌드할 때는 `examples/`를 그 폴더로 복사합니다. 빌드 폴더와 캐시가 `OutputDir`에 생기기 때문입니다.
 - 같은 이름의 모델이 다른 폴더에서 이미 로드되어 있으면 `build_mit:otherCopyLoaded`로 멈춥니다. 로드된 모델이 디스크 파일보다 우선하기 때문입니다. `close_system`으로 닫고 다시 실행합니다.
 - `NIVeriStandAddPaths` 출력에 `### VeriStand Linux64 toolchain not found`가 없어야 합니다.
 - 각 모델의 active configuration set을 복사해 target(`VeriStand.tlc`), 툴체인(`VeriStand Compiler for Linux64 targets | gmake makefile (64-bit Linux)`), 하드웨어(`Intel->x86-64 (Linux 64)`), 빌드 구성(`Faster Runs`, `-O2`), `StopTime = inf`를 넣고, 빌드 후(오류가 나도) 원래 설정으로 되돌린 뒤 복사본을 지웁니다. `.slx` 파일과 미저장 편집은 바뀌지 않습니다.
@@ -33,7 +34,7 @@ so = build_mit(["noise_gen", "signal_filter"], OutputDir='<project>')
 - `Update the system target file 'VeriStand.tlc' to support the enhanced TLC block interface ...`
 - 루트 수준 출력을 `Dataset` 형식으로 기록할 수 없다는 경고
 
-빌드 시간(예제, 이 PC): `noise_gen` 약 20 s, `signal_filter` 약 70 s(캐시 없는 첫 빌드).
+빌드 시간(예제, 확인한 PC): `noise_gen` 약 20 s, `signal_filter` 약 70 s(캐시 없는 첫 빌드).
 
 ## 2. 검증 명령
 
@@ -56,7 +57,7 @@ $bin = "C:\build\17.0\x64\sysroots\i686-nilrtsdk-mingw32\usr\bin\x86_64-nilrt-li
 | `NIRT_*` export 수 | 29 |
 | `rt_InitInfAndNaN` | `W`(약한 심볼, 정의됨). `U`이면 패치 3이 빠진 것 |
 | 미해결 심볼 | C 런타임(`malloc`, `fopen`, `printf` 등), 수학 함수(`sin`, `exp`, `sqrt` 등), 세마포어(`sem_*`)만. `rt_` 또는 모델 이름으로 시작하는 미해결 심볼이 있으면 안 됨 |
-| 필요한 glibc | 최대 `GLIBC_2.14`. 타깃 glibc가 이보다 높아야 함(예제 타깃 2.24) |
+| 필요한 glibc | 최대 `GLIBC_2.14`. 타깃 glibc가 2.14 이상이어야 함(예제 타깃 2.24) |
 | 크기 (예제) | `noise_gen.so` 95,663 B, `signal_filter.so` 119,545 B. R2025b Update 6과 Update 7에서 같음. 해시는 빌드마다 다름 |
 
 - 미해결 `malloc`은 NI 래퍼 코드(신호 이름 조회 등)가 씁니다. 모델 스텝 함수에는 동적 할당이 없습니다.

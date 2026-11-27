@@ -20,6 +20,8 @@
  *                            argument order and src < dst (repeatable). Unwired inports stay 0.
  *   Example: ./mit_smoke -s signal_filter/filter_mode=0 -w 1:0=0:1 \
  *                /home/lvuser/models/noise_gen.so /home/lvuser/models/signal_filter.so
+ *   Give each model as a path with a slash (./a.so in the current folder): dlopen does not
+ *   search the current folder for a bare file name.
  * -lpthread is required: the MF 2020 .so files use sem_* without listing libpthread as a
  * dependency, so the loading process must provide it (lvrt already does).
  * RTLD_LOCAL is required: every MF 2020 .so exports the same global names (MdlOutputs, S,
@@ -48,6 +50,7 @@ typedef struct {
     int32_t (*setp)(uint32_t, uint32_t, double);
     int32_t (*pspec)(int32_t *, char *, int32_t *, char *, int32_t *, int32_t *, int32_t *, int32_t *);
     int32_t (*errmsg)(char *, int32_t *);
+    int32_t (*extio)(int32_t, int32_t *, char *, int32_t *, int32_t *, int32_t *, int32_t *);
     int32_t (*fin)(void);
     double ts;
     int32_t nin, nout, ntask;
@@ -78,7 +81,10 @@ static void print_err(const Model *m, const char *what)
     char msg[512];
     int32_t len = sizeof msg;
     msg[0] = '\0';
-    if (m->errmsg != NULL && m->errmsg(msg, &len) == 0 && len > 0) printf("  %s: %.*s\n", what, (int)len, msg);
+    /* NIRT_ModelError returns NI_ERROR when it has a message, so use the length, not the return value. */
+    if (m->errmsg != NULL) m->errmsg(msg, &len);
+    else len = 0;
+    if (len > 0) printf("  %s: %.*s\n", what, (int)len, msg);
     else printf("  %s failed\n", what);
 }
 
@@ -98,11 +104,20 @@ static int load(Model *m, int num, const char *path)
     *(void **)&m->setp = sym(m->h, "NIRT_SetScalarParameterInline", &ok);
     *(void **)&m->pspec = sym(m->h, "NIRT_GetParameterSpec", &ok);
     *(void **)&m->errmsg = sym(m->h, "NIRT_ModelError", &ok);
+    *(void **)&m->extio = sym(m->h, "NIRT_GetExtIOSpec", &ok);
     *(void **)&m->fin = sym(m->h, "NIRT_FinalizeModel", &ok);
-    if (!ok) return 0;
+    if (!ok) { m->fin = NULL; return 0; }   /* never initialized: main must not call FinalizeModel */
 
     if (m->init(-1.0, &m->ts, &m->nin, &m->nout, &m->ntask) != 0) { print_err(m, "InitializeModel"); return 0; }
     if (m->start() != 0) { print_err(m, "ModelStart"); return 0; }
+    /* InitializeModel counts inport signals (a vector inport counts once), but a step reads one
+     * value per element. Size the inport buffer from the port list instead. */
+    m->nin = 0;
+    for (int32_t i = 0, nio = m->extio(-1, NULL, NULL, NULL, NULL, NULL, NULL); i < nio; i++) {
+        int32_t type = -1, dims[2] = {0, 0}, nd = 2;
+        m->extio(i, NULL, NULL, NULL, &type, dims, &nd);
+        if (type == 0) m->nin += dims[0] * dims[1];   /* 0 = EXT_IN */
+    }
     printf("model %d %s: base step %g s, inport elements %d, outport elements %d, tasks %d\n",
            num, path, m->ts, m->nin, m->nout, m->ntask);
     if (m->ntask > 1) { printf("  multirate models are not supported\n"); return 0; }

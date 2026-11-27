@@ -10,7 +10,7 @@
 | LabVIEW | LabVIEW 2020 SP1 32-bit (`LabVIEW.exe` 20.0.1f1, 패키지 `ni-labview-2020-core-x86-en` 20.1.1) | 같아야 함 |
 | LabVIEW Real-Time Module | 2020 (`ni-labview-2020-rt-module-x86-en` 20.0.0) | 같아야 함 |
 | Model Interface Toolkit (MIT) | 2020 (`ni-labview-2020-model-interface-toolkit-x86` 20.0.0) | 같아야 함 |
-| VeriStand Model Framework | 2020 (`ni-veristand-2020-matlab-support-x86` 20.0.0), 기본 위치 `C:\VeriStand\2020` | 같아야 함. R2020a보다 새 MATLAB이면 패치 필요 |
+| VeriStand Model Framework | 2020 (`ni-veristand-2020-matlab-support-x86` 20.0.0), 기본 위치 `C:\VeriStand\2020` | 같아야 함. R2025b에서는 패치 3개 필요. R2020b~R2025a는 확인하지 않음(`mf2020-r2025b-patches.md` 4절) |
 | 크로스 컴파일러 | C & C++ Development Tools for NI Linux Real-Time, Eclipse Edition 2017 (gcc 4.9.2), 기본 위치 `C:\build\17.0` | 같은 제품(2017판). 다른 연도판은 확인하지 않음 |
 | NI MAX / PXI Platform Services | 20.5 / 20.5 | 비슷한 버전이면 됨 |
 | 드라이버 | NI-DAQmx 20.1, FlexRIO 20.6, CompactRIO 20.5, LabVIEW FPGA Module 20.0.1 | 사람마다 다름. 3절 |

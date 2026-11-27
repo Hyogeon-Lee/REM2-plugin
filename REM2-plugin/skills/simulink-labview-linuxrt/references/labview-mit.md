@@ -74,6 +74,8 @@ RT 타깃 → New → VI로 `MIT_LoadTest.vi`를 만듭니다.
    - 마지막 반복의 `Outports Array out`을 `Last Outports`로 내보냅니다. 출력 터널을 Tunnel Mode → Last Value로 바꿉니다.
 5. 루프 뒤 Unload Model(Clear Errors를 거친 error 와이어), Merge Errors → `error out`.
 
+Run 버튼으로 실행합니다(타깃에 배포한 뒤 대화식 실행). `Model Path`를 바꿔 모델을 차례로 확인합니다.
+
 예제의 기대 결과:
 
 | 모델 | 기대 결과 |
@@ -193,6 +195,7 @@ Timed Loop 안에서 Build Array, 문자열 연결, 그래프 갱신을 쓰지 �
 - Create Network Stream Writer Endpoint: `writer name` = `rt_data`, DBL 1D, `writer buffer size` = 100000.
 - Create Network Stream Reader Endpoint: `reader name` = `rt_cmd`, DBL 1D.
 - 두 함수 모두 URL을 비워 두고 호스트가 연결해 오기를 기다립니다. 처음에는 timeout -1(무한 대기).
+- 타깃에 Network Streams가 없다는 오류가 나면 사용자가 NI MAX에서 그 항목만 추가로 설치합니다(`deploy-and-smoke.md` 1절).
 
 루프 안:
 
@@ -224,7 +227,7 @@ Network Streams의 Read/Write Multiple Elements는 스칼라 타입에만 쓸 �
 | 항목 | 방법 | 기준 |
 | --- | --- | --- |
 | 모델 로드 | 단계 A | 모든 모델 오류 없음, 경로와 개수가 2절 표와 같음 |
-| 실시간성 | `late count` | 10 kHz에서 0 유지. 예제는 `filter_mode` 4에서 확인 후 5(`pf_N` 200)로 늘려 봄. 10 kHz에서 `pf_N`은 500 이하에서 시작 |
+| 실시간성 | `late count` | 10 kHz에서 0 유지. 예제는 `filter_mode` 4에서 확인 후 5(`pf_N` 200)로 늘려 봄. 10 kHz에서 `pf_N`은 500 이하에서 시작. LabVIEW 밖에서 잰 스텝 시간 참고값은 `deploy-and-smoke.md` 3.4절 |
 | 성능 | 호스트 RMSE(`RMS PtByPt`, 1000 샘플) | 기본 파라미터, `M` = 1에서 Simulink 결과와 비슷(예제: bypass 약 0.199, Kalman 약 0.046) |
 | Ts 변경 | `Ts` = 1e-3 전송 | 주파수 특성 유지(예제: 사인 10 Hz), `late count` 증가 없음 |
 | 모드 전환 | 실행 중 모드 변경 | 출력이 발산하지 않고 큰 과도 응답이 없음 |

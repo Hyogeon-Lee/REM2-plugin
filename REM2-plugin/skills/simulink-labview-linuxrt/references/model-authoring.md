@@ -77,12 +77,12 @@ y_noisy[k] = y_clean[k] + noise_std · w[k],     w[k] ~ N(0, 1)
 
 - 모드 1, 2: Butterworth 저역통과. 원형 `H(s) = ωc/(s + ωc)`, `H(s) = ωc²/(s² + √2·ωc·s + ωc²)`, `ωc = 2π·lpf_fc`. `butter(n, Wn)`, `Wn = 2·lpf_fc·Ts`로 사전 왜곡 후 쌍선형 변환한 계수를 `Wn`이 바뀔 때만 다시 계산하고, 매 샘플 `filter(b, a, u, z)`로 처리합니다. 모드 진입 시 `filtic(b, a, u, u)`로 정상상태 초기조건을 줍니다.
 - 모드 3: 이동평균 `y[k] = (1/L)·Σ_{i=0}^{L−1} u[k−i]`. 길이 1000 고정 FIR 계수 `[1/L … 1/L 0 … 0]`. 군지연 `(L−1)/2` 샘플.
-- 모드 4: Kalman(`trackingKF`, 1-D constant velocity). `x = [p; v]`, `F = [1 Ts; 0 1]`, `G = [Ts²/2; Ts]`, 가속도 분산 `σa² = proc_q/Ts`, `H = [1 0]`, 측정 분산 `meas_r`. 정상상태에서 감쇠비 약 0.707인 2차 저역통과처럼 동작하고 대역폭은 `ωn ≈ (proc_q/(meas_r·Ts))^(1/4)`(기본값 약 400 rad/s ≈ 63 Hz)입니다.
+- 모드 4: Kalman(`trackingKF`, 1-D constant velocity). `x = [p; v]`, `F = [1 Ts; 0 1]`, `G = [Ts²/2; Ts]`, 가속도 분산 `σa² = proc_q/Ts`, `H = [1 0]`, 측정 분산 `meas_r`. 정상상태에서 감쇠비 약 0.707인 2차 저역통과처럼 동작하고 대역폭은 `ωn ≈ (proc_q/(meas_r·Ts))^(1/4)`(기본값 약 400 rad/s ≈ 63 Hz)입니다. `proc_q`를 키우면 추종이 빨라지고 노이즈가 더 통과합니다. `meas_r`를 키우면 그 반대입니다.
 - 모드 5: bootstrap SIR 파티클 필터(직접 구현, 고정 크기 1000). 전파 `a_i ~ N(0, proc_q/Ts)`, 가중치 `w_i ∝ exp(−(z − p_i)²/(2·meas_r))`(log 가중치에서 최댓값을 빼서 underflow 방지), 추정 `y = Σw_i·p_i/Σw_i`, systematic resampling. 스텝당 연산량이 `pf_N`에 비례합니다.
 
 ### 4.4 MATLAB 검증 (`examples/test_filters.m`)
 
-NI 소프트웨어 없이 실행됩니다. 예제 폴더를 현재 폴더로 두고 `test_filters`를 실행하면 다음을 확인합니다.
+NI 소프트웨어 없이 실행됩니다. Signal Processing Toolbox와 Sensor Fusion and Tracking Toolbox가 필요합니다. 스크립트가 현재 폴더에 `slprj`, `*.slxc`, `image_fig/`를 만들므로 `examples/`를 작업 폴더로 복사한 뒤, 그 폴더를 현재 폴더로 두고 `test_filters`를 실행합니다. 다음을 확인합니다.
 
 1. `noise_gen`을 10 kHz로 0.5 s 시뮬레이션해 `y_clean`, `y_noisy`를 얻습니다.
 2. `y_noisy`를 `signal_filter`의 Inport에 넣고 `filter_mode` 0~5를 각각 시뮬레이션합니다.
